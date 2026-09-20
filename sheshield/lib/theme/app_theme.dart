@@ -5,22 +5,23 @@ import 'package:google_fonts/google_fonts.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primary = Color(0xFF6C3CE9); // deep violet
-  static const Color primaryDark = Color(0xFF4A22B8);
-  static const Color secondary = Color(0xFFFF5C8A); // warm rose
+  static const Color primary = Color(0xFFFF2E7E); // hot pink
+  static const Color primaryDark = Color(0xFFC2185B); // deep rose
+  static const Color secondary = Color(0xFFFF8FB3); // soft pink
   static const Color sosStart = Color(0xFFFF4B6E);
   static const Color sosEnd = Color(0xFFC2185B);
-  static const Color background = Color(0xFFF7F5FC);
+  static const Color background = Color(0xFFFFF8FB); // pale blush white
   static const Color surface = Colors.white;
-  static const Color textPrimary = Color(0xFF231B3B);
-  static const Color textSecondary = Color(0xFF867F9B);
+  static const Color textPrimary = Color(0xFF3B1330);
+  static const Color textSecondary = Color(0xFF9E7A8C);
   static const Color success = Color(0xFF2FC28E);
   static const Color warning = Color(0xFFFFA94D);
-  static const Color chipBackground = Color(0xFFF0EBFB);
+  static const Color chipBackground = Color(0xFFFFE1EC);
 
-  static const List<Color> heroGradient = [Color(0xFF7B2FF7), Color(0xFFB53FE0)];
+  static const List<Color> heroGradient = [Color(0xFFFF6FA5), Color(0xFFFF2E7E)];
   static const List<Color> sosGradient = [sosStart, sosEnd];
-  static const List<Color> aiGradient = [Color(0xFF3F5EFB), Color(0xFF9C42F5)];
+  static const List<Color> aiGradient = [Color(0xFFFF6FB3), Color(0xFFB83280)];
+  static const List<Color> helperGradient = [Color(0xFF3F5EFB), Color(0xFF7C3AED)];
 }
 
 class AppTheme {

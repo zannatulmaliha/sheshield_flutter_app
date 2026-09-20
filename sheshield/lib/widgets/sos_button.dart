@@ -1,10 +1,15 @@
-import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'dart:async';
 
-/// Large pulsing SOS button. Tapping opens a confirmation sheet before
-/// the emergency alert is "sent" (simulated for this UI).
+import 'package:flutter/material.dart';
+import '../state/game_scope.dart';
+import '../theme/app_theme.dart';
+import 'level_up_overlay.dart';
+import 'xp_toast.dart';
+
+/// Large pulsing SOS button. Tapping immediately starts a 5-second
+/// countdown that auto-sends the alert unless the user cancels it.
 class SosButton extends StatefulWidget {
-  const SosButton({super.key, this.size = 132});
+  const SosButton({super.key, this.size = 168});
 
   final double size;
 
@@ -31,11 +36,12 @@ class _SosButtonState extends State<SosButton> with SingleTickerProviderStateMix
   }
 
   void _handleTap() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => const _SosConfirmSheet(),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black87,
+        pageBuilder: (_, _, _) => const _SosCountdownOverlay(),
+      ),
     );
   }
 
@@ -115,108 +121,66 @@ class _SosButtonState extends State<SosButton> with SingleTickerProviderStateMix
   }
 }
 
-class _SosConfirmSheet extends StatelessWidget {
-  const _SosConfirmSheet();
+/// Full-screen overlay that counts down from 5 and auto-sends the SOS
+/// alert unless the user taps Cancel before it reaches zero.
+class _SosCountdownOverlay extends StatefulWidget {
+  const _SosCountdownOverlay();
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: softShadow(opacity: 0.18),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 42,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              alignment: Alignment.center,
-              width: 64,
-              height: 64,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(colors: AppColors.sosGradient),
-              ),
-              child: const Icon(Icons.warning_rounded, color: Colors.white, size: 32),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Send emergency alert?',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your live location and an SOS message will be sent to all your trusted contacts immediately.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFFE3DEF5)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.sosEnd,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                          opaque: false,
-                          barrierColor: Colors.black87,
-                          pageBuilder: (_, _, _) => const _SosActivatedOverlay(),
-                        ),
-                      );
-                    },
-                    child: const Text('Send SOS', style: TextStyle(fontWeight: FontWeight.w800)),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  State<_SosCountdownOverlay> createState() => _SosCountdownOverlayState();
 }
 
-class _SosActivatedOverlay extends StatelessWidget {
-  const _SosActivatedOverlay();
+class _SosCountdownOverlayState extends State<_SosCountdownOverlay> {
+  static const int _startSeconds = 5;
+  int _secondsLeft = _startSeconds;
+  bool _sent = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), _tick);
+  }
+
+  void _tick(Timer timer) {
+    if (_secondsLeft <= 1) {
+      timer.cancel();
+      setState(() {
+        _secondsLeft = 0;
+        _sent = true;
+      });
+      _awardXp();
+      return;
+    }
+    setState(() => _secondsLeft--);
+  }
+
+  void _awardXp() {
+    final game = GameScope.read(context);
+    final leveledUp = game.addXp(30);
+    final newBadge = game.unlockBadge('ninja_reflexes');
+    Future.delayed(Duration(milliseconds: leveledUp ? 900 : 400), () {
+      if (!mounted) return;
+      if (leveledUp) {
+        showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+      } else if (newBadge) {
+        showXpToast(context, 30, label: 'Ninja Reflexes unlocked');
+      } else {
+        showXpToast(context, 30);
+      }
+    });
+  }
+
+  void _cancel() {
+    _timer?.cancel();
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,53 +189,134 @@ class _SosActivatedOverlay extends StatelessWidget {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: _sent ? _SentContent(onDismiss: () => Navigator.of(context).pop()) : _CountdownContent(secondsLeft: _secondsLeft, onCancel: _cancel),
+        ),
+      ),
+    );
+  }
+}
+
+class _CountdownContent extends StatelessWidget {
+  const _CountdownContent({required this.secondsLeft, required this.onCancel});
+
+  final int secondsLeft;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = secondsLeft / _SosCountdownOverlayState._startSeconds;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 140,
+          height: 140,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 700),
-                curve: Curves.elasticOut,
-                builder: (context, value, child) => Transform.scale(scale: value, child: child),
-                child: Container(
-                  width: 96,
-                  height: 96,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(colors: AppColors.sosGradient),
-                  ),
-                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 52),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'SOS Alert Sent',
-                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Your trusted contacts have been notified with your live location.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
-              ),
-              const SizedBox(height: 32),
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppColors.sosEnd,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                width: 140,
+                height: 140,
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 1, end: progress),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.linear,
+                  builder: (context, value, _) => CircularProgressIndicator(
+                    value: value,
+                    strokeWidth: 7,
+                    backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation(Colors.white),
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel Alert', style: TextStyle(fontWeight: FontWeight.w800)),
                 ),
+              ),
+              Text(
+                '$secondsLeft',
+                style: const TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w800),
               ),
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 28),
+        const Text(
+          'Sending SOS alert...',
+          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          'Your live location will be shared with your trusted contacts automatically.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white70, fontSize: 13.5, height: 1.4),
+        ),
+        const SizedBox(height: 32),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.sosEnd,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            onPressed: onCancel,
+            child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w800)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SentContent extends StatelessWidget {
+  const _SentContent({required this.onDismiss});
+
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 700),
+          curve: Curves.elasticOut,
+          builder: (context, value, child) => Transform.scale(scale: value, child: child),
+          child: Container(
+            width: 96,
+            height: 96,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: AppColors.sosGradient),
+            ),
+            child: const Icon(Icons.check_rounded, color: Colors.white, size: 52),
+          ),
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'SOS Alert Sent',
+          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          'Your trusted contacts have been notified with your live location.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+        ),
+        const SizedBox(height: 32),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.sosEnd,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            onPressed: onDismiss,
+            child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w800)),
+          ),
+        ),
+      ],
     );
   }
 }

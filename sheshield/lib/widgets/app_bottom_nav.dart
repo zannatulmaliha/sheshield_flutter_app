@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
@@ -25,64 +26,76 @@ class AppBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: Container(
-        height: 72,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: softShadow(opacity: 0.14),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(navItems.length, (index) {
-            final item = navItems[index];
-            final isActive = index == currentIndex;
-            return Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24),
-                onTap: () => onTap(index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutCubic,
-                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-                  padding: EdgeInsets.symmetric(horizontal: isActive ? 14 : 0),
-                  decoration: BoxDecoration(
-                    color: isActive ? AppColors.chipBackground : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isActive ? item.activeIcon : item.icon,
-                        color: isActive ? AppColors.primary : AppColors.textSecondary,
-                        size: 24,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            height: 72,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.82),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.6), width: 1),
+              boxShadow: softShadow(opacity: 0.14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(navItems.length, (index) {
+                final item = navItems[index];
+                final isActive = index == currentIndex;
+                return Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: () => onTap(index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
+                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                      padding: EdgeInsets.symmetric(horizontal: isActive ? 14 : 0),
+                      decoration: BoxDecoration(
+                        color: isActive ? AppColors.chipBackground : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeOutCubic,
-                        child: isActive
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: Text(
-                                  item.label,
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(width: 0, height: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedScale(
+                            scale: isActive ? 1.15 : 1.0,
+                            duration: const Duration(milliseconds: 320),
+                            curve: Curves.elasticOut,
+                            child: Icon(
+                              isActive ? item.activeIcon : item.icon,
+                              color: isActive ? AppColors.primary : AppColors.textSecondary,
+                              size: 24,
+                            ),
+                          ),
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            child: isActive
+                                ? Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      item.label,
+                                      style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(width: 0, height: 0),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }),
+                );
+              }),
+            ),
+          ),
         ),
       ),
     );

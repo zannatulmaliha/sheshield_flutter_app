@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/badge_grid.dart';
+import '../widgets/helper_dashboard.dart';
+import '../widgets/segmented_toggle.dart';
+import '../widgets/staggered_fade_in.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  int _tab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -12,19 +23,59 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
           Text('Profile', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 20),
-          const _ProfileHeader(),
-          const SizedBox(height: 22),
-          const _EmergencyInfoCard(),
-          const SizedBox(height: 26),
-          const Text(
-            'Settings',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+          const SizedBox(height: 16),
+          SegmentedToggle(
+            labels: const ['My Profile', 'Helper Dashboard'],
+            selectedIndex: _tab,
+            onChanged: (i) => setState(() => _tab = i),
           ),
-          const SizedBox(height: 12),
-          _SettingsList(),
+          const SizedBox(height: 20),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 320),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 0.03), end: Offset.zero).animate(animation),
+                child: child,
+              ),
+            ),
+            child: _tab == 0
+                ? const _MyProfileContent(key: ValueKey('my_profile'))
+                : const HelperDashboard(key: ValueKey('helper_dashboard')),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _MyProfileContent extends StatelessWidget {
+  const _MyProfileContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredFadeIn(
+      children: [
+        const _ProfileHeader(),
+        const SizedBox(height: 22),
+        const _EmergencyInfoCard(),
+        const SizedBox(height: 26),
+        const Text(
+          'Achievements',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 12),
+        const BadgeGrid(),
+        const SizedBox(height: 26),
+        const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+        ),
+        const SizedBox(height: 12),
+        _SettingsList(),
+      ],
     );
   }
 }
@@ -47,18 +98,24 @@ class _ProfileHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 68,
-            height: 68,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.2),
-              border: Border.all(color: Colors.white, width: 2.5),
-            ),
-            child: const Center(
-              child: Text(
-                'ZM',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 22),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) => Transform.scale(scale: value, child: child),
+            child: Container(
+              width: 68,
+              height: 68,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.2),
+                border: Border.all(color: Colors.white, width: 2.5),
+              ),
+              child: const Center(
+                child: Text(
+                  'ZM',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 22),
+                ),
               ),
             ),
           ),
