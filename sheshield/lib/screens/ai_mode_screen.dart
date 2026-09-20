@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import '../state/game_scope.dart';
 import '../theme/app_theme.dart';
+import '../widgets/level_up_overlay.dart';
+import '../widgets/staggered_fade_in.dart';
+import '../widgets/xp_toast.dart';
 
 class AiModeScreen extends StatefulWidget {
   const AiModeScreen({super.key});
@@ -44,6 +48,24 @@ class _AiModeScreenState extends State<AiModeScreen> {
     ),
   ];
 
+  void _handleToggle(_AiFeature feature, bool enabled) {
+    setState(() => feature.enabled = enabled);
+    if (!enabled) return;
+
+    final game = GameScope.read(context);
+    final leveledUp = game.addXp(5);
+    final allOn = _features.every((f) => f.enabled);
+    final newBadge = allOn && game.unlockBadge('ai_sentinel');
+
+    if (leveledUp) {
+      showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+    } else if (newBadge) {
+      showXpToast(context, 5, label: 'AI Sentinel unlocked');
+    } else {
+      showXpToast(context, 5);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -51,25 +73,29 @@ class _AiModeScreenState extends State<AiModeScreen> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
-          Text('AI Guardian', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 4),
-          const Text(
-            'Smart protection that watches out for you, quietly.',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+          StaggeredFadeIn(
+            children: [
+              Text('AI Guardian', style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 4),
+              const Text(
+                'Smart protection that watches out for you, quietly.',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 20),
+              const _SafetyScoreCard(),
+              const SizedBox(height: 26),
+              Text('Active Features', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 14),
+              ..._features.map(
+                (f) => _FeatureCard(
+                  feature: f,
+                  onChanged: (v) => _handleToggle(f, v),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const _AskAiBar(),
+            ],
           ),
-          const SizedBox(height: 20),
-          const _SafetyScoreCard(),
-          const SizedBox(height: 26),
-          Text('Active Features', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 14),
-          ..._features.map(
-            (f) => _FeatureCard(
-              feature: f,
-              onChanged: (v) => setState(() => f.enabled = v),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const _AskAiBar(),
         ],
       ),
     );

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/trusted_contact.dart';
 import '../theme/app_theme.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/level_card.dart';
 import '../widgets/section_title.dart';
 import '../widgets/sos_button.dart';
+import '../widgets/staggered_fade_in.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.onOpenContacts});
@@ -16,38 +19,63 @@ class HomeScreen extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
-          _TopBar(),
-          const SizedBox(height: 24),
-          const Center(
-            child: Column(
-              children: [
-                SosButton(),
-                SizedBox(height: 14),
-                Text(
-                  'Tap for Emergency Alert',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
+          StaggeredFadeIn(
+            children: [
+              _TopBar(),
+              const SizedBox(height: 24),
+              const _SosHero(),
+              const SizedBox(height: 20),
+              const LevelCard(),
+              const SizedBox(height: 20),
+              _StatusCard(),
+              const SizedBox(height: 28),
+              const SectionTitle(title: 'Quick Actions'),
+              const SizedBox(height: 14),
+              const _QuickActionsGrid(),
+              const SizedBox(height: 28),
+              SectionTitle(
+                title: 'Trusted Contacts',
+                actionLabel: 'See all',
+                onAction: onOpenContacts,
+              ),
+              const SizedBox(height: 14),
+              _ContactsPreview(onTap: onOpenContacts),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SosHero extends StatelessWidget {
+  const _SosHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(vertical: 26),
+      child: Column(
+        children: [
+          const SosButton(),
+          const SizedBox(height: 16),
+          Text(
+            'Tap for Emergency SOS',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
             ),
           ),
-          const SizedBox(height: 28),
-          _StatusCard(),
-          const SizedBox(height: 28),
-          const SectionTitle(title: 'Quick Actions'),
-          const SizedBox(height: 14),
-          const _QuickActionsGrid(),
-          const SizedBox(height: 28),
-          SectionTitle(
-            title: 'Trusted Contacts',
-            actionLabel: 'See all',
-            onAction: onOpenContacts,
+          const SizedBox(height: 4),
+          Text(
+            'Auto-sends to trusted contacts in 5 seconds',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
           ),
-          const SizedBox(height: 14),
-          _ContactsPreview(onTap: onOpenContacts),
         ],
       ),
     );

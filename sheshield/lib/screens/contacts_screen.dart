@@ -1,9 +1,48 @@
 import 'package:flutter/material.dart';
 import '../models/trusted_contact.dart';
+import '../state/game_scope.dart';
 import '../theme/app_theme.dart';
+import '../widgets/level_up_overlay.dart';
+import '../widgets/staggered_fade_in.dart';
+import '../widgets/xp_toast.dart';
 
-class ContactsScreen extends StatelessWidget {
+class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
+
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
+  static const _extraContacts = [
+    TrustedContact(name: 'Rima Chowdhury', relation: 'Cousin', phone: '+880 177 445 2210', color: Color(0xFFFFA94D)),
+    TrustedContact(name: 'Shafiq Islam', relation: 'Neighbor', phone: '+880 188 302 9981', color: Color(0xFF2FC28E)),
+    TrustedContact(name: 'Farhana Akter', relation: 'Colleague', phone: '+880 199 774 5563', color: Color(0xFFB83280)),
+  ];
+
+  void _addContact() {
+    final nextIndex = demoContacts.length - 4;
+    if (nextIndex < 0 || nextIndex >= _extraContacts.length) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Demo contact list is full 💜')),
+      );
+      return;
+    }
+
+    setState(() => demoContacts.add(_extraContacts[nextIndex]));
+
+    final game = GameScope.read(context);
+    final leveledUp = game.addXp(15);
+    final newBadge = demoContacts.length >= 5 && game.unlockBadge('circle_guardian');
+
+    if (leveledUp) {
+      showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+    } else if (newBadge) {
+      showXpToast(context, 15, label: 'Circle Guardian unlocked');
+    } else {
+      showXpToast(context, 15, label: 'Contact added');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,45 +53,45 @@ class ContactsScreen extends StatelessWidget {
           ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
             children: [
-              Text('Trusted Contacts', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 4),
-              const Text(
-                'These people will be notified when you send an SOS alert.',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.chipBackground,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 20),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Add at least 3 contacts for reliable emergency coverage.',
-                        style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.w600, fontSize: 12.5),
-                      ),
+              StaggeredFadeIn(
+                children: [
+                  Text('Trusted Contacts', style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'These people will be notified when you send an SOS alert.',
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.chipBackground,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Add at least 3 contacts for reliable emergency coverage.',
+                            style: TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.w600, fontSize: 12.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ...demoContacts.map((c) => _ContactTile(contact: c)),
+                ],
               ),
-              const SizedBox(height: 20),
-              ...demoContacts.map((c) => _ContactTile(contact: c)),
             ],
           ),
           Positioned(
             right: 4,
             bottom: 140,
             child: FloatingActionButton.extended(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Add contact flow coming soon')),
-                );
-              },
+              onPressed: _addContact,
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.person_add_alt_1_rounded),
               label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.w700)),
