@@ -5,6 +5,7 @@ import "time"
 type Contact struct {
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
+	Relation    string    `json:"relation"`
 	Phone       string    `json:"phone"`
 	CountryCode string    `json:"countryCode"`
 	CreatedAt   time.Time `json:"createdAt"`
@@ -12,6 +13,7 @@ type Contact struct {
 
 type CreateContactRequest struct {
 	Name        string `json:"name"`
+	Relation    string `json:"relation"`
 	Phone       string `json:"phone"`
 	CountryCode string `json:"countryCode"`
 }

@@ -28,7 +28,7 @@ Check it's up: open http://localhost:8080/health -- it should say `ok`.
 | POST   | `/api/v1/auth/login`  | no   | `{email,password}`                                                 |
 | GET    | `/api/v1/auth/me`     | yes  | —                                                                  |
 | GET    | `/api/v1/contacts`    | yes  | —                                                                  |
-| POST   | `/api/v1/contacts`    | yes  | `{name,phone,countryCode}`                                        |
+| POST   | `/api/v1/contacts`    | yes  | `{name,relation?,phone,countryCode}` — phone is digits only (6-15), countryCode like `+880`; max 10 per user, no duplicate numbers |
 | DELETE | `/api/v1/contacts/{id}` | yes | —                                                                  |
 | GET    | `/health`             | no   | —                                                                  |
 

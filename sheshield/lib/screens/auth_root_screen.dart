@@ -3,7 +3,7 @@ import '../services/auth_controller.dart';
 import '../widgets/app_bottom_nav.dart';
 import 'ai_mode_screen.dart';
 import 'auth_profile_screen.dart';
-import 'contacts_screen.dart';
+import 'auth_contacts_screen.dart';
 import 'home_screen.dart';
 
 /// Same as RootScreen, except the Profile tab is [AuthProfileScreen] so it
@@ -27,7 +27,7 @@ class _AuthRootScreenState extends State<AuthRootScreen> {
   Widget build(BuildContext context) {
     final screens = [
       HomeScreen(onOpenContacts: () => _goTo(1)),
-      const ContactsScreen(),
+      AuthContactsScreen(controller: widget.controller),
       const AiModeScreen(),
       AuthProfileScreen(controller: widget.controller),
     ];
