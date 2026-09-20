@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- DEBUG BUILDS ONLY: lets the app call the local backend over plain
+         http:// (Android 9+ blocks that by default). Release builds use the
+         main manifest, which does not have this, so production stays HTTPS-only. -->
+    <application android:usesCleartextTraffic="true"/>
 </manifest>
