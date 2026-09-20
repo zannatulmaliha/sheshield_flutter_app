@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sheshield/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('SheShield app loads home screen with SOS button', (WidgetTester tester) async {
+    await tester.pumpWidget(const SheShieldApp());
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('SOS'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.byIcon(Icons.auto_awesome_outlined), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.tap(find.byIcon(Icons.people_alt_outlined));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Trusted Contacts'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.auto_awesome_outlined));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('AI Guardian'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.person_outline_rounded));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Profile'), findsWidgets);
+
+    // Tapping the SOS button should open the confirmation sheet.
+    await tester.tap(find.byIcon(Icons.home_outlined));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('SOS'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Send emergency alert?'), findsOneWidget);
   });
 }
