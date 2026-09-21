@@ -73,6 +73,20 @@ class AuthService {
     }
   }
 
+  /// Re-reads the account from the server. Unlike [restoreSession] this
+  /// throws, so callers can tell "server said no" from "server unreachable".
+  Future<AppUser> fetchMe() async {
+    try {
+      final res = await _dio.get(ApiConstants.me);
+      return AppUser.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw AuthException(
+        ApiClient.messageFromError(e),
+        unauthorized: e.response?.statusCode == 401,
+      );
+    }
+  }
+
   /// Sends only the fields that were given; the server changes only those.
   /// Email, gender, role and verification can't be changed from here.
   Future<AppUser> updateProfile({

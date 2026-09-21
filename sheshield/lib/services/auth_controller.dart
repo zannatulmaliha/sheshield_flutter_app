@@ -78,6 +78,17 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  /// Re-reads the account from the server, e.g. after an admin approved a
+  /// helper. Quiet on network errors; signs out if the login has expired.
+  Future<void> refreshUser() async {
+    try {
+      currentUser = await _service.fetchMe();
+      notifyListeners();
+    } on AuthException catch (e) {
+      if (e.unauthorized) await logout();
+    } catch (_) {}
+  }
+
   /// Returns null on success, or a message to show the user. If the login has
   /// expired this signs the user out (the app then shows the login screen).
   Future<String?> updateProfile({
