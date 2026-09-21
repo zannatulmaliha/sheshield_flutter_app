@@ -10,6 +10,7 @@ type User struct {
 	Name             string    `json:"name"`
 	Phone            string    `json:"phone"`
 	CountryCode      string    `json:"countryCode"`
+	Address          string    `json:"address"`
 	Email            string    `json:"email"`
 	Gender           string    `json:"gender"` // "female" | "male" | "other" | "preferNotToSay"
 	UserType         string    `json:"userType"`

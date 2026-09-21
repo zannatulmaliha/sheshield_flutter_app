@@ -48,14 +48,14 @@ func (r *Repository) Create(u User, passwordHash string) (User, error) {
 // sign-in's bcrypt comparison — never serialized back to the client.
 func (r *Repository) FindByEmail(email string) (User, string, error) {
 	row := r.db.QueryRow(`
-		SELECT uid, name, email, password_hash, phone, country_code, gender, user_type, is_helper_verified, fcm_token, created_at
+		SELECT uid, name, email, password_hash, phone, country_code, address, gender, user_type, is_helper_verified, fcm_token, created_at
 		FROM users WHERE email = ?`, email)
 	return scanUserWithHash(row)
 }
 
 func (r *Repository) FindByUID(uid string) (User, error) {
 	row := r.db.QueryRow(`
-		SELECT uid, name, email, password_hash, phone, country_code, gender, user_type, is_helper_verified, fcm_token, created_at
+		SELECT uid, name, email, password_hash, phone, country_code, address, gender, user_type, is_helper_verified, fcm_token, created_at
 		FROM users WHERE uid = ?`, uid)
 	u, _, err := scanUserWithHash(row)
 	return u, err
@@ -64,7 +64,7 @@ func (r *Repository) FindByUID(uid string) (User, error) {
 func scanUserWithHash(row *sql.Row) (User, string, error) {
 	var u User
 	var hash, createdAt string
-	err := row.Scan(&u.UID, &u.Name, &u.Email, &hash, &u.Phone, &u.CountryCode, &u.Gender, &u.UserType, &u.IsHelperVerified, &u.FCMToken, &createdAt)
+	err := row.Scan(&u.UID, &u.Name, &u.Email, &hash, &u.Phone, &u.CountryCode, &u.Address, &u.Gender, &u.UserType, &u.IsHelperVerified, &u.FCMToken, &createdAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return User{}, "", ErrNotFound
 	}
@@ -80,4 +80,20 @@ func isUniqueConstraintErr(err error) bool {
 	// typed constraint error -- matching the message is the accepted approach
 	// with this driver.
 	return err != nil && strings.Contains(err.Error(), "UNIQUE constraint failed")
+}
+
+// UpdateProfile saves the editable profile fields. Nothing else about the
+// account (email, gender, role, verified flag) can be written from here.
+func (r *Repository) UpdateProfile(u User) error {
+	res, err := r.db.Exec(
+		`UPDATE users SET name = ?, phone = ?, country_code = ?, address = ? WHERE uid = ?`,
+		u.Name, u.Phone, u.CountryCode, u.Address, u.UID,
+	)
+	if err != nil {
+		return err
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return ErrNotFound
+	}
+	return nil
 }

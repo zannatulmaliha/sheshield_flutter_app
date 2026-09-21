@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/zannatulmaliha/sheshield-backend/internal/middleware"
+	"github.com/zannatulmaliha/sheshield-backend/internal/phone"
 )
 
 var ErrInvalidCredentials = errors.New("Incorrect email or password.")
@@ -52,6 +53,11 @@ func (s *Service) SignUp(req SignUpRequest) (AuthResponse, error) {
 		return AuthResponse{}, ErrRoleNotAllowed
 	}
 
+	countryCode, phoneNumber, msg := phone.Normalize(req.CountryCode, req.Phone)
+	if msg != "" {
+		return AuthResponse{}, errors.New(msg)
+	}
+
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return AuthResponse{}, err
@@ -60,8 +66,8 @@ func (s *Service) SignUp(req SignUpRequest) (AuthResponse, error) {
 	user := User{
 		Name:        strings.TrimSpace(req.Name),
 		Email:       email,
-		Phone:       strings.TrimSpace(req.Phone),
-		CountryCode: strings.TrimSpace(req.CountryCode),
+		Phone:       phoneNumber,
+		CountryCode: countryCode,
 		Gender:      req.Gender,
 		UserType:    req.UserType,
 	}
@@ -102,4 +108,21 @@ func (s *Service) SignIn(req SignInRequest) (AuthResponse, error) {
 
 func (s *Service) Me(uid string) (User, error) {
 	return s.repo.FindByUID(uid)
+}
+
+// UpdateProfile applies the editable fields and returns the saved user.
+// A ValidationError means the input was bad; any other error is a server fault.
+func (s *Service) UpdateProfile(uid string, req UpdateProfileRequest) (User, error) {
+	cur, err := s.repo.FindByUID(uid)
+	if err != nil {
+		return User{}, err
+	}
+	updated, msg := applyProfileUpdate(cur, req)
+	if msg != "" {
+		return User{}, ValidationError(msg)
+	}
+	if err := s.repo.UpdateProfile(updated); err != nil {
+		return User{}, err
+	}
+	return updated, nil
 }

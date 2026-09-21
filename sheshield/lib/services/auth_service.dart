@@ -73,5 +73,30 @@ class AuthService {
     }
   }
 
+  /// Sends only the fields that were given; the server changes only those.
+  /// Email, gender, role and verification can't be changed from here.
+  Future<AppUser> updateProfile({
+    String? name,
+    String? phone,
+    String? countryCode,
+    String? address,
+  }) async {
+    final body = <String, dynamic>{
+      if (name != null) 'name': name,
+      if (phone != null) 'phone': phone,
+      if (countryCode != null) 'countryCode': countryCode,
+      if (address != null) 'address': address,
+    };
+    try {
+      final res = await _dio.patch(ApiConstants.me, data: body);
+      return AppUser.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw AuthException(
+        ApiClient.messageFromError(e),
+        unauthorized: e.response?.statusCode == 401,
+      );
+    }
+  }
+
   Future<void> logout() => TokenStorage.instance.clear();
 }

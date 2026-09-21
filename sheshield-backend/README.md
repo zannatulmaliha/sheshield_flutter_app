@@ -30,6 +30,8 @@ Check it's up: open http://localhost:8080/health -- it should say `ok`.
 | GET    | `/api/v1/contacts`    | yes  | —                                                                  |
 | POST   | `/api/v1/contacts`    | yes  | `{name,relation?,phone,countryCode}` — phone is digits only (6-15), countryCode like `+880`; max 10 per user, no duplicate numbers |
 | DELETE | `/api/v1/contacts/{id}` | yes | —                                                                  |
+| POST   | `/api/v1/alerts`      | yes  | `{latitude?,longitude?,accuracyMeters?,notifiedByDevice?}` — `notifiedByDevice` = contact ids the phone already texted from its own SIM; the server texts the rest. Returns per-contact `deliveries` with `status` `sent`/`simulated`/`failed` |
+| PATCH  | `/api/v1/auth/me`     | yes  | `{name?,phone?,countryCode?,address?}` — only these fields; email, gender, role and verified status cannot be changed here |
 | GET    | `/health`             | no   | —                                                                  |
 
 Auth endpoints return `{"data": {"user": {...}, "token": "<jwt>"}}`.
@@ -56,3 +58,34 @@ Add a new feature the same way `contact/` is built: `model.go` →
 `repository.go` → `service.go` (if there's real business logic beyond
 CRUD) → `handler.go` with its own `Register(mux, jwtSecret)`, then one
 line in `cmd/api/main.go`.
+
+## SOS texts: how they are sent
+
+The app texts contacts from the phone's own SIM when it can (Android; works
+with no internet). It then tells `POST /api/v1/alerts` which contacts that
+covered, and the **server** texts the rest (iPhones, no SIM, permission denied,
+send failed) through `internal/sms`.
+
+`SMS_PROVIDER=log` (the default) sends nothing; alerts are stored and the
+messages are printed. Such deliveries are reported as `simulated`, never
+`sent`, so the app can be honest about it.
+
+## Before going public
+
+Lead times first -- start these early:
+
+- [ ] Choose a BTRC-listed SMS aggregator, register a sender ID (days to weeks)
+- [ ] Implement `Sender` for it in `internal/sms`, add a case in `sms.New`
+- [ ] Google Play: `SEND_SMS` is a restricted permission (needs an approved
+      declaration), or ship a build without it that relies on server SMS
+- [ ] Host the API publicly behind HTTPS (the app currently allows plain http
+      in debug builds only)
+
+Then:
+
+- [ ] Rate-limit `/api/v1/alerts` and login (cost and abuse protection)
+- [ ] Set a real `JWT_SECRET` and lock `CORS_ORIGIN` down
+- [ ] Move from sqlite to a hosted database, with backups
+- [ ] Privacy policy and consent flow (you store contacts' phone numbers and
+      users' locations)
+- [ ] Do not use `SMS_PROVIDER=log` in production (it logs numbers/locations)
