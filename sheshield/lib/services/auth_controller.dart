@@ -3,6 +3,7 @@ import '../models/app_user.dart';
 import '../models/gender.dart';
 import '../models/user_type.dart';
 import 'auth_exception.dart';
+import 'contact_cache.dart';
 import 'auth_service.dart';
 
 enum AuthStatus { checking, signedOut, signedIn }
@@ -77,8 +78,35 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  /// Returns null on success, or a message to show the user. If the login has
+  /// expired this signs the user out (the app then shows the login screen).
+  Future<String?> updateProfile({
+    String? name,
+    String? phone,
+    String? countryCode,
+    String? address,
+  }) async {
+    try {
+      currentUser = await _service.updateProfile(
+        name: name,
+        phone: phone,
+        countryCode: countryCode,
+        address: address,
+      );
+      notifyListeners();
+      return null;
+    } on AuthException catch (e) {
+      if (e.unauthorized) await logout();
+      return e.message;
+    } catch (_) {
+      return 'Something went wrong. Please try again.';
+    }
+  }
+
   Future<void> logout() async {
     await _service.logout();
+    // The contacts copy on this phone belongs to whoever just signed out.
+    await ContactCache().clear();
     currentUser = null;
     status = AuthStatus.signedOut;
     notifyListeners();

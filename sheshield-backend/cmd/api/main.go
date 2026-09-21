@@ -4,10 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/zannatulmaliha/sheshield-backend/internal/alert"
 	"github.com/zannatulmaliha/sheshield-backend/internal/auth"
 	"github.com/zannatulmaliha/sheshield-backend/internal/config"
 	"github.com/zannatulmaliha/sheshield-backend/internal/contact"
 	"github.com/zannatulmaliha/sheshield-backend/internal/db"
+	"github.com/zannatulmaliha/sheshield-backend/internal/sms"
 )
 
 func main() {
@@ -35,6 +37,16 @@ func main() {
 	contactRepo := contact.NewRepository(conn)
 	contact.NewHandler(contactRepo).Register(mux, cfg.JWTSecret)
 
+	sender, err := sms.New(cfg.SMSProvider)
+	if err != nil {
+		log.Fatalf("sms: %v", err)
+	}
+	if !sender.Live() {
+		log.Println("SMS: log-only mode -- the server does NOT send real texts (alerts are recorded, messages are only printed here). Set SMS_PROVIDER once a provider is configured.")
+	}
+	alertService := alert.NewService(authRepo, contactRepo, alert.NewRepository(conn), sender)
+	alert.NewHandler(alertService).Register(mux, cfg.JWTSecret)
+
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ok"))
@@ -54,7 +66,7 @@ func main() {
 func withCORS(origin string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)

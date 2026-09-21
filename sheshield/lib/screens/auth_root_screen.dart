@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../services/auth_controller.dart';
+import '../services/contacts_store.dart';
 import '../widgets/app_bottom_nav.dart';
 import 'ai_mode_screen.dart';
-import 'auth_profile_screen.dart';
 import 'auth_contacts_screen.dart';
-import 'home_screen.dart';
+import 'auth_home_screen.dart';
+import 'auth_profile_screen.dart';
 
-/// Same as RootScreen, except the Profile tab is [AuthProfileScreen] so it
-/// can show the signed-in user and offer Log Out. Kept as a separate file so
-/// your original root_screen.dart isn't modified.
+/// Same as RootScreen, but signed-in: it owns the shared contacts list (used
+/// by both Home and Contacts), and Home/Contacts/Profile are the versions
+/// that use real account data. Kept separate so your original
+/// root_screen.dart isn't modified.
 class AuthRootScreen extends StatefulWidget {
   const AuthRootScreen({super.key, required this.controller});
 
@@ -20,14 +22,35 @@ class AuthRootScreen extends StatefulWidget {
 
 class _AuthRootScreenState extends State<AuthRootScreen> {
   int _index = 0;
+  late final ContactsStore _contacts;
+
+  @override
+  void initState() {
+    super.initState();
+    _contacts = ContactsStore(
+      userId: widget.controller.currentUser?.uid ?? '',
+      onSessionExpired: widget.controller.logout,
+    );
+    _contacts.init();
+  }
+
+  @override
+  void dispose() {
+    _contacts.dispose();
+    super.dispose();
+  }
 
   void _goTo(int index) => setState(() => _index = index);
 
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(onOpenContacts: () => _goTo(1)),
-      AuthContactsScreen(controller: widget.controller),
+      AuthHomeScreen(
+        controller: widget.controller,
+        store: _contacts,
+        onOpenContacts: () => _goTo(1),
+      ),
+      AuthContactsScreen(store: _contacts),
       const AiModeScreen(),
       AuthProfileScreen(controller: widget.controller),
     ];

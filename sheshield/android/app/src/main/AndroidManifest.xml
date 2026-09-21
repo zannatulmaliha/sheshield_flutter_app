@@ -1,4 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Reach the backend (release builds need this; debug builds already have it). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- SOS location. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- SOS texts sent from the phone's own SIM. NOTE: SEND_SMS is a restricted
+         permission on Google Play (see sheshield-backend/README.md, "Before
+         going public"). -->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <!-- Optional, so tablets / Wi-Fi-only devices can still install the app. -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+
     <application
         android:label="sheshield"
         android:name="${applicationName}"

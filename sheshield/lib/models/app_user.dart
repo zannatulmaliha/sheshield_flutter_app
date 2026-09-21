@@ -10,6 +10,7 @@ class AppUser {
     required this.name,
     required this.phone,
     required this.countryCode,
+    this.address = '',
     required this.email,
     required this.gender,
     required this.userType,
@@ -22,6 +23,7 @@ class AppUser {
   final String name;
   final String phone;
   final String countryCode;
+  final String address;
   final String email;
   final Gender gender;
   final UserType userType;
@@ -34,6 +36,7 @@ class AppUser {
         name: json['name'] as String,
         phone: json['phone'] as String,
         countryCode: json['countryCode'] as String,
+        address: json['address'] as String? ?? '',
         email: json['email'] as String,
         gender: GenderJson.fromApi(json['gender'] as String),
         userType: UserTypeJson.fromApi(json['userType'] as String),

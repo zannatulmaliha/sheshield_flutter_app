@@ -9,6 +9,8 @@ class AuthTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.validator,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   final TextEditingController controller;
@@ -16,6 +18,8 @@ class AuthTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final int maxLines;
+  final int? minLines;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,8 @@ class AuthTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
+        maxLines: obscureText ? 1 : maxLines,
+        minLines: obscureText ? 1 : minLines,
         style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           labelText: label,

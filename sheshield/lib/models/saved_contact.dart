@@ -25,6 +25,17 @@ class SavedContact {
         countryCode: (json['countryCode'] as String?) ?? '',
       );
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'relation': relation,
+        'phone': phone,
+        'countryCode': countryCode,
+      };
+
+  /// International format for texting, e.g. +8801712345678.
+  String get fullNumber => '$countryCode$phone';
+
   String get displayPhone => countryCode.isEmpty ? phone : '$countryCode $phone';
 
   /// e.g. "Mother · +880 1712345678", or just the number if no relation.

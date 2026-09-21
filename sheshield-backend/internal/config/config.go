@@ -13,6 +13,10 @@ type Config struct {
 	JWTSecret   string
 	JWTTTLHours int
 	CORSOrigin  string
+
+	// SMSProvider picks how the server sends texts. "log" (default) only
+	// prints them, so nothing is sent or billed. See internal/sms.
+	SMSProvider string
 }
 
 func Load() Config {
@@ -23,6 +27,7 @@ func Load() Config {
 		JWTSecret:   os.Getenv("JWT_SECRET"),
 		JWTTTLHours: 24 * 7, // 7 days, matches a typical "stay signed in" mobile app
 		CORSOrigin:  getEnv("CORS_ORIGIN", "*"),
+		SMSProvider: getEnv("SMS_PROVIDER", "log"),
 	}
 }
 

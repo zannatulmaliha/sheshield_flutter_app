@@ -1,74 +1,37 @@
 import 'package:flutter/material.dart';
 import '../models/saved_contact.dart';
-import '../services/auth_controller.dart';
 import '../services/contact_service.dart';
+import '../services/contacts_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/auth/auth_text_field.dart';
 
 /// Same look as ContactsScreen, but the contacts live on the backend and
 /// belong to the signed-in account. Kept as a separate file so your original
 /// contacts_screen.dart isn't modified.
-class AuthContactsScreen extends StatefulWidget {
-  const AuthContactsScreen({super.key, required this.controller});
+class AuthContactsScreen extends StatelessWidget {
+  const AuthContactsScreen({super.key, required this.store});
 
-  final AuthController controller;
+  final ContactsStore store;
 
   @override
-  State<AuthContactsScreen> createState() => _AuthContactsScreenState();
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: store,
+      builder: (context, _) => _ContactsView(store: store),
+    );
+  }
 }
 
-class _AuthContactsScreenState extends State<AuthContactsScreen> {
-  final _service = ContactService();
+class _ContactsView extends StatelessWidget {
+  const _ContactsView({required this.store});
 
-  List<SavedContact> _contacts = const [];
-  bool _loading = true;
-  String? _error;
+  final ContactsStore store;
 
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  /// [showSpinner] is false for pull-to-refresh, which has its own indicator.
-  Future<void> _load({bool showSpinner = true}) async {
-    if (showSpinner) setState(() => _loading = true);
-    _error = null;
-    try {
-      final contacts = await _service.list();
-      if (!mounted) return;
-      setState(() {
-        _contacts = contacts;
-        _loading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      if (_handledExpiredSession(e)) return;
-      setState(() {
-        _error = _messageFor(e);
-        _loading = false;
-      });
-    }
-  }
-
-  /// If the token was rejected, send the user back to login instead of
-  /// showing an error they can't fix.
-  bool _handledExpiredSession(Object e) {
-    if (e is ContactException && e.unauthorized) {
-      widget.controller.logout();
-      return true;
-    }
-    return false;
-  }
-
-  String _messageFor(Object e) =>
-      e is ContactException ? e.message : 'Something went wrong. Please try again.';
-
-  void _snack(String message) {
+  void _snack(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _openAddSheet() async {
+  Future<void> _openAddSheet(BuildContext context) async {
     final added = await showModalBottomSheet<SavedContact>(
       context: context,
       isScrollControlled: true,
@@ -76,18 +39,14 @@ class _AuthContactsScreenState extends State<AuthContactsScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => _AddContactSheet(
-        service: _service,
-        onUnauthorized: widget.controller.logout,
-      ),
+      builder: (_) => _AddContactSheet(store: store),
     );
-    if (added != null && mounted) {
-      setState(() => _contacts = [..._contacts, added]);
-      _snack('${added.name} added');
+    if (added != null && context.mounted) {
+      _snack(context, '${added.name} added');
     }
   }
 
-  Future<void> _confirmDelete(SavedContact contact) async {
+  Future<void> _confirmDelete(BuildContext context, SavedContact contact) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -105,32 +64,31 @@ class _AuthContactsScreenState extends State<AuthContactsScreen> {
     if (ok != true) return;
 
     try {
-      await _service.delete(contact.id);
-      if (!mounted) return;
-      setState(() => _contacts = _contacts.where((c) => c.id != contact.id).toList());
-    } catch (e) {
-      if (!mounted) return;
-      if (_handledExpiredSession(e)) return;
-      _snack(_messageFor(e));
+      await store.remove(contact.id);
+    } on ContactException catch (e) {
+      // An expired login is already handled by the store (back to login).
+      if (!e.unauthorized && context.mounted) _snack(context, e.message);
+    } catch (_) {
+      if (context.mounted) _snack(context, 'Something went wrong. Please try again.');
     }
   }
 
-  Widget _body() {
-    if (_loading) {
+  Widget _body(BuildContext context) {
+    if (store.loading) {
       return const Padding(
         padding: EdgeInsets.only(top: 80),
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    if (_error != null) {
+    if (store.error != null && store.contacts.isEmpty) {
       return _MessageBox(
         icon: Icons.cloud_off_rounded,
-        message: _error!,
+        message: store.error!,
         actionLabel: 'Try again',
-        onAction: _load,
+        onAction: () => store.refresh(showSpinner: true),
       );
     }
-    if (_contacts.isEmpty) {
+    if (store.contacts.isEmpty) {
       return const _MessageBox(
         icon: Icons.group_add_rounded,
         message: 'No trusted contacts yet.\nTap "Add Contact" to choose who should be notified in an emergency.',
@@ -138,21 +96,22 @@ class _AuthContactsScreenState extends State<AuthContactsScreen> {
     }
     return Column(
       children: [
-        for (final c in _contacts) _ContactTile(contact: c, onDelete: () => _confirmDelete(c)),
+        for (final c in store.contacts)
+          _ContactTile(contact: c, onDelete: () => _confirmDelete(context, c)),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final showHint = !_loading && _error == null && _contacts.length < 3;
+    final showHint = !store.loading && store.error == null && store.contacts.length < 3;
 
     return SafeArea(
       bottom: false,
       child: Stack(
         children: [
           RefreshIndicator(
-            onRefresh: () => _load(showSpinner: false),
+            onRefresh: () => store.refresh(),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
@@ -186,7 +145,7 @@ class _AuthContactsScreenState extends State<AuthContactsScreen> {
                   ),
                   const SizedBox(height: 20),
                 ],
-                _body(),
+                _body(context),
               ],
             ),
           ),
@@ -195,7 +154,7 @@ class _AuthContactsScreenState extends State<AuthContactsScreen> {
             bottom: 140,
             child: FloatingActionButton.extended(
               heroTag: null,
-              onPressed: _openAddSheet,
+              onPressed: () => _openAddSheet(context),
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.person_add_alt_1_rounded),
               label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -293,10 +252,9 @@ class _MessageBox extends StatelessWidget {
 }
 
 class _AddContactSheet extends StatefulWidget {
-  const _AddContactSheet({required this.service, required this.onUnauthorized});
+  const _AddContactSheet({required this.store});
 
-  final ContactService service;
-  final VoidCallback onUnauthorized;
+  final ContactsStore store;
 
   @override
   State<_AddContactSheet> createState() => _AddContactSheetState();
@@ -340,7 +298,7 @@ class _AddContactSheetState extends State<_AddContactSheet> {
       _error = null;
     });
     try {
-      final contact = await widget.service.add(
+      final contact = await widget.store.add(
         name: _name.text.trim(),
         relation: _relation.text.trim(),
         phone: _phone.text.trim(),
@@ -350,8 +308,8 @@ class _AddContactSheetState extends State<_AddContactSheet> {
     } on ContactException catch (e) {
       if (!mounted) return;
       if (e.unauthorized) {
+        // The store already sent the user back to login.
         Navigator.of(context).pop();
-        widget.onUnauthorized();
         return;
       }
       setState(() {
