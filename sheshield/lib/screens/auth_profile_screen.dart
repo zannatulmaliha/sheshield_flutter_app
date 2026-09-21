@@ -3,6 +3,7 @@ import '../models/app_user.dart';
 import '../models/user_type.dart';
 import '../services/auth_controller.dart';
 import '../theme/app_theme.dart';
+import 'helper_verification_screen.dart';
 import 'profile_edit_sheets.dart';
 
 /// Your real account: name, phone and address are editable and saved to the
@@ -41,6 +42,12 @@ class AuthProfileScreen extends StatelessWidget {
     if (ok == true) await controller.logout();
   }
 
+  void _openVerification(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => HelperVerificationScreen(controller: controller)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -58,7 +65,7 @@ class AuthProfileScreen extends StatelessWidget {
               const SizedBox(height: 20),
               _ProfileHeader(user: user, onEdit: () => _edit(context, showEditNameSheet)),
               const SizedBox(height: 22),
-              _RoleCard(user: user),
+              _RoleCard(user: user, onVerify: () => _openVerification(context)),
               const SizedBox(height: 26),
               const _SectionLabel('Account details'),
               const SizedBox(height: 12),
@@ -217,8 +224,10 @@ class _ProfileHeader extends StatelessWidget {
 /// What the account is, and for helpers, whether the server has verified it.
 /// The verified flag only ever comes from the server; the app cannot set it.
 class _RoleCard extends StatelessWidget {
-  const _RoleCard({required this.user});
+  const _RoleCard({required this.user, required this.onVerify});
+
   final AppUser user;
+  final VoidCallback onVerify;
 
   String get _roleLabel => switch (user.userType) {
         UserType.user => 'User',
@@ -288,6 +297,23 @@ class _RoleCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (!user.isHelperVerified) ...[
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  onPressed: onVerify,
+                  child: const Text('Get verified', style: TextStyle(fontWeight: FontWeight.w800)),
+                ),
+              ),
+            ],
           ],
         ],
       ),
