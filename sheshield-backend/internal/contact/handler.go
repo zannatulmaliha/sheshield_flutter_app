@@ -1,6 +1,7 @@
 package contact
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/zannatulmaliha/sheshield-backend/internal/httpx"
@@ -39,8 +40,27 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 		httpx.Err(w, http.StatusBadRequest, "Invalid request body.")
 		return
 	}
-	if req.Name == "" || req.Phone == "" {
-		httpx.Err(w, http.StatusBadRequest, "Name and phone are required.")
+	req, msg := normalize(req)
+	if msg != "" {
+		httpx.Err(w, http.StatusBadRequest, msg)
+		return
+	}
+	count, err := h.repo.CountForUser(uid)
+	if err != nil {
+		httpx.Err(w, http.StatusInternalServerError, "Could not save contact.")
+		return
+	}
+	if count >= MaxContacts {
+		httpx.Err(w, http.StatusBadRequest, fmt.Sprintf("You can add up to %d trusted contacts.", MaxContacts))
+		return
+	}
+	dup, err := h.repo.Exists(uid, req.CountryCode, req.Phone)
+	if err != nil {
+		httpx.Err(w, http.StatusInternalServerError, "Could not save contact.")
+		return
+	}
+	if dup {
+		httpx.Err(w, http.StatusConflict, "That number is already in your contacts.")
 		return
 	}
 	c, err := h.repo.Create(uid, req)
