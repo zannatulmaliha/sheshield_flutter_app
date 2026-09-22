@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Add Emergency Contact</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-field{width:100%;box-sizing:border-box;height:50px;border-radius:12px;background:#3D2740;border:1px solid rgba(255,255,255,0.1);color:#FBF4F5;padding:0 14px;font-size:14.5px;font-family:inherit;}
+.ss-chip{padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:700;font-family:inherit;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 22px 26px 20px;">
+
+    <a href="OTPVerify.dc.html" aria-label="Back" style="width: 40px; height: 40px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none; flex-shrink: 0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+
+    <div style="margin-top: 28px;">
+      <div style="font-size: 22px; font-weight: 800; line-height: 1.3;">Add your first emergency contact</div>
+      <div style="font-size: 13px; color: #B7969E; margin-top: 8px; line-height: 1.5;">This person is notified instantly if you trigger SOS or miss a check-in. You can add more later.</div>
+    </div>
+
+    <div style="margin-top: 28px; display: flex; flex-direction: column; gap: 8px;">
+      <label for="ss-name" style="font-size: 13px; font-weight: 700;">Full name</label>
+      <input id="ss-name" type="text" placeholder="e.g. Fatima Rahman" class="ss-field">
+    </div>
+
+    <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px;">
+      <label for="ss-cphone" style="font-size: 13px; font-weight: 700;">Phone number</label>
+      <input id="ss-cphone" type="tel" placeholder="+880 1XXX-XXXXXX" class="ss-field">
+    </div>
+
+    <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 13px; font-weight: 700;">Relationship</div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+          <button type="button" onClick="{{c.onClick}}" class="ss-chip" style="background: {{c.bg}}; color: {{c.color}}; border: 1.5px solid {{c.border}};">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <a href="Main.dc.html" style="margin-top: 30px; width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Add Contact &amp; Continue</a>
+
+    <a href="Main.dc.html" style="margin-top: 14px; text-align: center; font-size: 13px; color: #B7969E; text-decoration: none; display: block;">Skip for now</a>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { relationship: 'Mother' };
+  }
+  pick(v) {
+    this.setState({ relationship: v });
+  }
+  renderVals() {
+    const options = ['Mother', 'Father', 'Partner', 'Friend', 'Other'];
+    const chips = options.map((label) => {
+      const selected = this.state.relationship === label;
+      return {
+        label,
+        onClick: () => this.pick(label),
+        bg: selected ? '#C97B84' : 'transparent',
+        color: selected ? '#2A1B2D' : '#FBF4F5',
+        border: selected ? '#C97B84' : 'rgba(255,255,255,0.2)'
+      };
+    });
+    return { chips };
+  }
+}
+</script>
+</body>
+</html>

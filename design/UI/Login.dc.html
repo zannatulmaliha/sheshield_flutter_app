@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Log In</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-field{width:100%;box-sizing:border-box;height:52px;border-radius:12px;background:#3D2740;border:1px solid rgba(255,255,255,0.1);color:#FBF4F5;padding:0 14px;font-size:15px;font-family:inherit;}
+.ss-tab{flex:1;height:42px;border-radius:10px;border:none;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 22px 26px 20px;">
+
+    <a href="Welcome.dc.html" aria-label="Back" style="width: 40px; height: 40px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none; flex-shrink: 0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+
+    <div style="margin-top: 30px;">
+      <div style="font-size: 25px; font-weight: 800;">Log in to SheShield</div>
+      <div style="font-size: 13.5px; color: #B7969E; margin-top: 8px; line-height: 1.5;">{{subtitleText}}</div>
+    </div>
+
+    <div style="margin-top: 26px; background: #241720; border-radius: 12px; padding: 4px; display: flex; gap: 4px;">
+      <button type="button" onClick="{{switchToOtp}}" class="ss-tab" style="background: {{otpTabBg}}; color: {{otpTabColor}};">OTP</button>
+      <button type="button" onClick="{{switchToPin}}" class="ss-tab" style="background: {{pinTabBg}}; color: {{pinTabColor}};">PIN / Password</button>
+    </div>
+
+    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px;">
+      <label for="ss-phone" style="font-size: 13px; font-weight: 700;">Phone number</label>
+      <div style="display: flex; align-items: stretch; background: #3D2740; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden;">
+        <div style="display: flex; align-items: center; padding: 0 14px; font-size: 14px; font-weight: 600; color: #B7969E; border-right: 1px solid rgba(255,255,255,0.1);">+880</div>
+        <input id="ss-phone" type="tel" placeholder="1XXX-XXXXXX" style="flex: 1; min-width: 0; box-sizing: border-box; height: 52px; border: none; background: transparent; color: #FBF4F5; padding: 0 14px; font-size: 15px; font-family: inherit;">
+      </div>
+    </div>
+
+    <sc-if value="{{isPin}}" hint-placeholder-val="{{false}}">
+      <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+        <label for="ss-pin" style="font-size: 13px; font-weight: 700;">PIN or password</label>
+        <input id="ss-pin" type="password" inputmode="numeric" placeholder="••••" class="ss-field">
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isOtp}}" hint-placeholder-val="{{true}}">
+      <a href="OTPVerify.dc.html" style="margin-top: 26px; width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Send Code</a>
+    </sc-if>
+    <sc-if value="{{isPin}}" hint-placeholder-val="{{false}}">
+      <a href="Main.dc.html" style="margin-top: 26px; width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Log In</a>
+      <button type="button" onClick="{{switchToOtp}}" style="margin-top: 14px; width: 100%; background: none; border: none; text-align: center; font-size: 12.5px; color: #C97B84; font-weight: 700; font-family: inherit; cursor: pointer;">Forgot your PIN? Use OTP instead</button>
+    </sc-if>
+
+  </div>
+
+  <div style="flex-shrink: 0; padding: 6px 32px 30px;">
+    <div style="font-size: 11px; color: #8A7480; text-align: center; line-height: 1.5;">By continuing, you agree to SheShield's Terms of Service and Privacy Policy.</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'otp' };
+  }
+  pick(t) {
+    this.setState({ tab: t });
+  }
+  renderVals() {
+    const isOtp = this.state.tab === 'otp';
+    const isPin = this.state.tab === 'pin';
+    return {
+      isOtp,
+      isPin,
+      otpTabBg: isOtp ? '#C97B84' : 'transparent',
+      otpTabColor: isOtp ? '#2A1B2D' : '#B7969E',
+      pinTabBg: isPin ? '#C97B84' : 'transparent',
+      pinTabColor: isPin ? '#2A1B2D' : '#B7969E',
+      subtitleText: isOtp
+        ? "We'll text you a one-time code, then confirm your PIN to finish signing in."
+        : 'Enter your phone number and PIN or password to continue.',
+      switchToOtp: () => this.pick('otp'),
+      switchToPin: () => this.pick('pin')
+    };
+  }
+}
+</script>
+</body>
+</html>

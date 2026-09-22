@@ -1,0 +1,172 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AIHelp.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "AI Help",
+      "w": 390,
+      "x": 1410,
+      "y": 964
+    },
+    "CheckIn-Active.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Check-In Active",
+      "w": 390,
+      "x": 470,
+      "y": 964
+    },
+    "CheckIn.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Timed Check-In",
+      "w": 390,
+      "x": 0,
+      "y": 964
+    },
+    "ContactSetup.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Add Emergency Contact",
+      "w": 390,
+      "x": 2350,
+      "y": 1928
+    },
+    "Contacts.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Emergency Contacts",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "CreatePIN.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Create PIN (Step 2 of 2)",
+      "w": 390,
+      "x": 1880,
+      "y": 1928
+    },
+    "HelpersNearby.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Helpers Near Me",
+      "w": 390,
+      "x": 940,
+      "y": 964
+    },
+    "LiveLocation.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Live Location (Track My Route)",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Login.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Log In",
+      "w": 390,
+      "x": 940,
+      "y": 1928
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Home",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "OTPVerify.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Verify Code (Step 1 of 2)",
+      "w": 390,
+      "x": 1410,
+      "y": 1928
+    },
+    "Onboarding.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Onboarding",
+      "w": 390,
+      "x": 470,
+      "y": 1928
+    },
+    "Profile.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Profile",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "SOS-Active.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "SOS Active",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "SafetyMap.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Safety Map (heatmap)",
+      "w": 390,
+      "x": 1880,
+      "y": 964
+    },
+    "Welcome.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Welcome",
+      "w": 390,
+      "x": 0,
+      "y": 1928
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-22T00:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "n1": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "SheShield — Rose Sentinel",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "SOS-Active.dc.html",
+    "Contacts.dc.html",
+    "LiveLocation.dc.html",
+    "Profile.dc.html",
+    "CheckIn.dc.html",
+    "CheckIn-Active.dc.html",
+    "HelpersNearby.dc.html",
+    "AIHelp.dc.html",
+    "SafetyMap.dc.html",
+    "Welcome.dc.html",
+    "Onboarding.dc.html",
+    "Login.dc.html",
+    "OTPVerify.dc.html",
+    "CreatePIN.dc.html",
+    "ContactSetup.dc.html"
+  ],
+  "pages": [],
+  "title": "SheShield"
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Onboarding</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-dot{height:8px;border-radius:999px;transition:width 0.2s ease, background 0.2s ease;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex-shrink: 0; padding: 20px 22px 0; display: flex; justify-content: flex-end;">
+    <a href="Login.dc.html" style="font-size: 13.5px; font-weight: 600; color: #B7969E; text-decoration: none;">Skip</a>
+  </div>
+
+  <div style="flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 20px 36px;">
+
+    <sc-if value="{{isSlide0}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 22px;">
+        <div style="width: 108px; height: 108px; border-radius: 50%; background: #3D2740; border: 1px solid rgba(201,123,132,0.3); display: flex; align-items: center; justify-content: center; color: #C97B84;">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div style="font-size: 22px; font-weight: 800; text-align: center;">One tap for help</div>
+        <div style="font-size: 13.5px; color: #B7969E; text-align: center; max-width: 270px; line-height: 1.55;">Hold the SOS button and we instantly alert your emergency contacts with your live location.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isSlide1}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 22px;">
+        <div style="width: 108px; height: 108px; border-radius: 50%; background: #3D2740; border: 1px solid rgba(201,123,132,0.3); display: flex; align-items: center; justify-content: center; color: #C97B84;">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div style="font-size: 22px; font-weight: 800; text-align: center;">Check in, stay safe</div>
+        <div style="font-size: 13.5px; color: #B7969E; text-align: center; max-width: 270px; line-height: 1.55;">Set a timer before you head out — we'll notify your contacts automatically if you don't check in.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isSlide2}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 22px;">
+        <div style="width: 108px; height: 108px; border-radius: 50%; background: #3D2740; border: 1px solid rgba(201,123,132,0.3); display: flex; align-items: center; justify-content: center; color: #C97B84;">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+        </div>
+        <div style="font-size: 22px; font-weight: 800; text-align: center;">Help is always near</div>
+        <div style="font-size: 13.5px; color: #B7969E; text-align: center; max-width: 270px; line-height: 1.55;">Find verified helpers nearby, check a live safety heatmap, and talk to your AI companion anytime.</div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <div style="flex-shrink: 0; padding: 10px 32px 40px; display: flex; flex-direction: column; align-items: center; gap: 26px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="ss-dot" style="width: {{dot0w}}; background: {{dot0bg}};"></span>
+      <span class="ss-dot" style="width: {{dot1w}}; background: {{dot1bg}};"></span>
+      <span class="ss-dot" style="width: {{dot2w}}; background: {{dot2bg}};"></span>
+    </div>
+
+    <sc-if value="{{notLast}}" hint-placeholder-val="{{true}}">
+      <button type="button" onClick="{{onNext}}" style="width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; border: none; font-family: inherit;">Next</button>
+    </sc-if>
+    <sc-if value="{{isLast}}" hint-placeholder-val="{{false}}">
+      <a href="Login.dc.html" style="width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Get Started</a>
+    </sc-if>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { slide: 0 };
+  }
+  next() {
+    this.setState({ slide: Math.min(this.state.slide + 1, 2) });
+  }
+  renderVals() {
+    const slide = this.state.slide;
+    const dot = (n) => (slide === n ? '#C97B84' : 'rgba(255,255,255,0.2)');
+    const width = (n) => (slide === n ? '22px' : '8px');
+    return {
+      isSlide0: slide === 0,
+      isSlide1: slide === 1,
+      isSlide2: slide === 2,
+      isLast: slide === 2,
+      notLast: slide !== 2,
+      dot0bg: dot(0), dot1bg: dot(1), dot2bg: dot(2),
+      dot0w: width(0), dot1w: width(1), dot2w: width(2),
+      onNext: () => this.next()
+    };
+  }
+}
+</script>
+</body>
+</html>
