@@ -1,0 +1,43 @@
+{
+  "@@locale": "en",
+  "appName": "SheShield",
+  "welcomeBack": "Welcome back",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "logIn": "Log In",
+  "createAccount": "Create Account",
+  "dontHaveAccount": "Don't have an account? Sign up",
+  "alreadyHaveAccount": "Already have an account? Log in",
+  "fullName": "Full name",
+  "phoneNumber": "Phone number",
+  "countryCode": "Code",
+  "gender": "Gender",
+  "genderFemale": "Female",
+  "genderMale": "Male",
+  "genderOther": "Other",
+  "genderPreferNotToSay": "Prefer not to say",
+  "errorInvalidEmail": "Enter a valid email",
+  "errorShortPassword": "Minimum 6 characters",
+  "errorInvalidPhone": "Enter a valid phone number",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "iWantTo": "I want to",
+  "country": "Country",
+  "selectCountry": "Select country",
+  "roleAskForHelp": "Ask for help",
+  "roleRespondToAlerts": "Respond to alerts",
+  "roleBoth": "Both",
+  "onlyRoleAvailable": "{role} — the only role available for this account",
+  "@onlyRoleAvailable": {
+    "placeholders": {
+      "role": {"type": "String"}
+    }
+  },
+  "helperDashboard": "Helper Dashboard",
+  "nearbyAlertsCount": "{count, plural, =0{No active alerts nearby} =1{1 alert nearby} other{{count} alerts nearby}}",
+  "@nearbyAlertsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
+}

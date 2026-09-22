@@ -1,0 +1,43 @@
+{
+  "@@locale": "bn",
+  "appName": "শী শিল্ড",
+  "welcomeBack": "আবার স্বাগতম",
+  "email": "ইমেইল",
+  "password": "পাসওয়ার্ড",
+  "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
+  "logIn": "লগ ইন",
+  "createAccount": "অ্যাকাউন্ট তৈরি করুন",
+  "dontHaveAccount": "অ্যাকাউন্ট নেই? সাইন আপ করুন",
+  "alreadyHaveAccount": "অ্যাকাউন্ট আছে? লগ ইন করুন",
+  "fullName": "পুরো নাম",
+  "phoneNumber": "ফোন নম্বর",
+  "countryCode": "কোড",
+  "gender": "লিঙ্গ",
+  "genderFemale": "নারী",
+  "genderMale": "পুরুষ",
+  "genderOther": "অন্যান্য",
+  "genderPreferNotToSay": "বলতে ইচ্ছুক নই",
+  "errorInvalidEmail": "একটি সঠিক ইমেইল দিন",
+  "errorShortPassword": "কমপক্ষে ৬ অক্ষর",
+  "errorInvalidPhone": "একটি সঠিক ফোন নম্বর দিন",
+  "errorGeneric": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
+  "iWantTo": "আমি চাই",
+  "country": "দেশ",
+  "selectCountry": "দেশ নির্বাচন করুন",
+  "roleAskForHelp": "সাহায্য চাই",
+  "roleRespondToAlerts": "অ্যালার্টে সাড়া দিন",
+  "roleBoth": "উভয়",
+  "onlyRoleAvailable": "{role} — এই অ্যাকাউন্টের জন্য একমাত্র উপলব্ধ ভূমিকা",
+  "@onlyRoleAvailable": {
+    "placeholders": {
+      "role": {"type": "String"}
+    }
+  },
+  "helperDashboard": "হেল্পার ড্যাশবোর্ড",
+  "nearbyAlertsCount": "{count, plural, =0{কাছাকাছি কোনো সক্রিয় অ্যালার্ট নেই} =1{কাছাকাছি ১টি অ্যালার্ট} other{কাছাকাছি {count}টি অ্যালার্ট}}",
+  "@nearbyAlertsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
+}

@@ -1,0 +1,60 @@
+name: sheshield
+description: "SheShield - Women's Safety Application (Flutter rebuild)"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # DI + state
+  get_it: ^7.7.0
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  image_picker: ^1.1.2
+
+  # Networking
+  dio: ^5.4.3
+  go_router: ^14.2.0
+
+  # Model codegen
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Auth session storage (JWT)
+  flutter_secure_storage: ^9.2.2
+
+  # Persistent TTL cache
+  isar: ^3.1.0
+  isar_flutter_libs: ^3.1.0
+  path_provider: ^2.1.3
+
+  # Helper-mode location + "open route" / "call"
+  geolocator: ^12.0.0
+  permission_handler: ^11.3.1
+  url_launcher: ^6.3.0
+
+
+  google_fonts: ^6.2.1
+  intl: ^0.20.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.11
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.0
+  isar_generator: ^3.1.0
+  go_router_builder: ^2.7.1
+
+flutter:
+  uses-material-design: true
+  generate: true
