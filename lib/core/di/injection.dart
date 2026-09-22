@@ -40,6 +40,10 @@ import 'package:sheshield/features/contacts/domain/usecases/add_contact_usecase.
 import 'package:sheshield/features/contacts/domain/usecases/get_contacts_usecase.dart';
 import 'package:sheshield/features/contacts/domain/usecases/remove_contact_usecase.dart';
 
+// ==================== SETTINGS ====================
+import 'package:sheshield/features/settings/data/repositories/locale_repository_impl.dart';
+import 'package:sheshield/features/settings/domain/repositories/i_locale_repository.dart';
+
 // ==================== VERIFICATION ====================
 import 'package:sheshield/features/verification/data/datasources/verification_api_datasource.dart';
 import 'package:sheshield/features/verification/data/repositories/verification_repository_impl.dart';
@@ -73,6 +77,12 @@ Future<void> configureDependencies() async {
   final cacheBox = await createCacheBox();
 
   getIt.registerSingleton<CacheBox>(cacheBox);
+
+  // ==================== SETTINGS FEATURE ====================
+
+  getIt.registerLazySingleton<ILocaleRepository>(
+    () => LocaleRepositoryImpl(getIt()),
+  );
 
   // ==================== AUTH FEATURE ====================
 

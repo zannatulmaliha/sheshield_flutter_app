@@ -108,4 +108,163 @@ class AppLocalizationsBn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get chooseLanguage => 'ভাষা বেছে নিন';
+
+  @override
+  String get language => 'ভাষা';
+
+  @override
+  String get sendEmergencyAlert => 'জরুরি সতর্কতা পাঠাবেন?';
+
+  @override
+  String get sendEmergencyAlertBody =>
+      'আপনার বিশ্বস্ত পরিচিতিরা সাথে সাথে আপনার লাইভ অবস্থান ও সাহায্যের কল পাবে।';
+
+  @override
+  String get cancel => 'বাতিল';
+
+  @override
+  String get sendSos => 'এসওএস পাঠান';
+
+  @override
+  String get sosAlertSentTitle => 'সতর্কতা পাঠানো হয়েছে';
+
+  @override
+  String get sosNotifiedFallback => 'আপনার জরুরি পরিচিতিদের জানানো হয়েছে।';
+
+  @override
+  String sosNotifiedAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'সব $count জন পরিচিতিকে জানানো হয়েছে',
+      one: '১ জন পরিচিতিকে জানানো হয়েছে',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sosNotifiedPartial(int sent, int total, int failed) {
+    return '$total জনের মধ্যে $sent জনকে জানানো হয়েছে — $failed জনের কাছে পৌঁছানো যায়নি।';
+  }
+
+  @override
+  String get imSafe => 'আমি নিরাপদ';
+
+  @override
+  String greetingHi(String name) {
+    return 'হাই, $name 👋';
+  }
+
+  @override
+  String homeTagline(String gender) {
+    String _temp0 = intl.Intl.selectLogic(
+      gender,
+      {
+        'female': 'নিরাপদ থাকুন, আত্মবিশ্বাসী থাকুন',
+        'male': 'আপনার প্রিয়জনদের খেয়াল রাখছেন',
+        'other': 'শক্ত থাকুন, প্রস্তুত থাকুন',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapForEmergencyAlert => 'জরুরি সতর্কতার জন্য ট্যাপ করুন';
+
+  @override
+  String get youAreProtected => 'আপনি সুরক্ষিত আছেন';
+
+  @override
+  String liveLocationSharingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count জন বিশ্বস্ত পরিচিতির সাথে লাইভ অবস্থান শেয়ার চালু আছে',
+      one: '১ জন বিশ্বস্ত পরিচিতির সাথে লাইভ অবস্থান শেয়ার চালু আছে',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickActions => 'দ্রুত পদক্ষেপ';
+
+  @override
+  String get fakeCall => 'ভুয়া কল';
+
+  @override
+  String get shareLocation => 'অবস্থান শেয়ার করুন';
+
+  @override
+  String get recordEvidence => 'প্রমাণ রেকর্ড করুন';
+
+  @override
+  String get safeRoute => 'নিরাপদ রুট';
+
+  @override
+  String get trustedContacts => 'বিশ্বস্ত পরিচিতি';
+
+  @override
+  String get seeAll => 'সব দেখুন';
+
+  @override
+  String get addContactToEnableSos => 'এসওএস চালু করতে একজন পরিচিতি যোগ করুন';
+
+  @override
+  String contactsWillBeAlerted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count জন পরিচিতিকে সতর্ক করা হবে',
+      one: '১ জন পরিচিতিকে সতর্ক করা হবে',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileTitle => 'প্রোফাইল';
+
+  @override
+  String get settingsTitle => 'সেটিংস';
+
+  @override
+  String get emergencyInfo => 'জরুরি তথ্য';
+
+  @override
+  String get phone => 'ফোন';
+
+  @override
+  String get role => 'ভূমিকা';
+
+  @override
+  String get userTypeUser => 'ব্যবহারকারী';
+
+  @override
+  String get userTypeHelper => 'হেল্পার';
+
+  @override
+  String get userTypeUserHelper => 'ব্যবহারকারী ও হেল্পার';
+
+  @override
+  String get homeAddress => 'বাড়ির ঠিকানা';
+
+  @override
+  String get tapToAdd => 'যোগ করতে ট্যাপ করুন';
+
+  @override
+  String get privacyPermissions => 'গোপনীয়তা ও অনুমতি';
+
+  @override
+  String get notificationSettings => 'নোটিফিকেশন সেটিংস';
+
+  @override
+  String get appTheme => 'অ্যাপ থিম';
+
+  @override
+  String get helpSupport => 'সাহায্য ও সহায়তা';
+
+  @override
+  String get logOut => 'লগ আউট';
 }

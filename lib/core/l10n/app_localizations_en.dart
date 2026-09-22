@@ -108,4 +108,164 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get chooseLanguage => 'Choose language';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get sendEmergencyAlert => 'Send Emergency Alert?';
+
+  @override
+  String get sendEmergencyAlertBody =>
+      'Your trusted contacts will get your live location and a call for help immediately.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get sendSos => 'Send SOS';
+
+  @override
+  String get sosAlertSentTitle => 'Alert Sent';
+
+  @override
+  String get sosNotifiedFallback =>
+      'Your emergency contacts have been notified.';
+
+  @override
+  String sosNotifiedAll(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'All $count contacts were notified',
+      one: '1 contact was notified',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sosNotifiedPartial(int sent, int total, int failed) {
+    return 'Notified $sent of $total contacts — $failed failed to reach.';
+  }
+
+  @override
+  String get imSafe => 'I\'m Safe';
+
+  @override
+  String greetingHi(String name) {
+    return 'Hi, $name 👋';
+  }
+
+  @override
+  String homeTagline(String gender) {
+    String _temp0 = intl.Intl.selectLogic(
+      gender,
+      {
+        'female': 'Stay safe, stay confident',
+        'male': 'Watching out for the people you love',
+        'other': 'Stay strong, stay ready',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tapForEmergencyAlert => 'Tap for Emergency Alert';
+
+  @override
+  String get youAreProtected => 'You\'re Protected';
+
+  @override
+  String liveLocationSharingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Live location sharing is ON for $count trusted contacts',
+      one: 'Live location sharing is ON for 1 trusted contact',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get fakeCall => 'Fake Call';
+
+  @override
+  String get shareLocation => 'Share Location';
+
+  @override
+  String get recordEvidence => 'Record Evidence';
+
+  @override
+  String get safeRoute => 'Safe Route';
+
+  @override
+  String get trustedContacts => 'Trusted Contacts';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get addContactToEnableSos => 'Add a contact to enable SOS';
+
+  @override
+  String contactsWillBeAlerted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count contacts will be alerted',
+      one: '1 contact will be alerted',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get emergencyInfo => 'Emergency Info';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get role => 'Role';
+
+  @override
+  String get userTypeUser => 'User';
+
+  @override
+  String get userTypeHelper => 'Helper';
+
+  @override
+  String get userTypeUserHelper => 'User & Helper';
+
+  @override
+  String get homeAddress => 'Home Address';
+
+  @override
+  String get tapToAdd => 'Tap to add';
+
+  @override
+  String get privacyPermissions => 'Privacy & Permissions';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get appTheme => 'App Theme';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get logOut => 'Log Out';
 }

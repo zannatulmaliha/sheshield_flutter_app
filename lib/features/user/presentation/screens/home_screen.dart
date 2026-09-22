@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 import 'package:sheshield/features/contacts/presentation/providers/contacts_provider.dart';
 import 'package:sheshield/features/user/presentation/widgets/section_title.dart';
 import 'package:sheshield/features/user/presentation/widgets/sos_button.dart';
@@ -16,6 +18,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return SafeArea(
       bottom: false,
       child: ListView(
@@ -25,14 +29,14 @@ class HomeScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          const Center(
+          Center(
             child: Column(
               children: [
-                SosButton(),
-                SizedBox(height: 14),
+                const SosButton(),
+                const SizedBox(height: 14),
                 Text(
-                  'Tap for Emergency Alert',
-                  style: TextStyle(
+                  l10n.tapForEmergencyAlert,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
@@ -48,8 +52,8 @@ class HomeScreen extends StatelessWidget {
 
           const SizedBox(height: 28),
 
-          const SectionTitle(
-            title: 'Quick Actions',
+          SectionTitle(
+            title: l10n.quickActions,
           ),
 
           const SizedBox(height: 14),
@@ -59,8 +63,8 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 28),
 
           SectionTitle(
-            title: 'Trusted Contacts',
-            actionLabel: 'See all',
+            title: l10n.trustedContacts,
+            actionLabel: l10n.seeAll,
             onAction: onOpenContacts,
           ),
 
@@ -75,11 +79,15 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
+class _TopBar extends ConsumerWidget {
   const _TopBar();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final user = ref.watch(authStateProvider).valueOrNull;
+    final firstName = (user?.name ?? '').trim().split(RegExp(r'\s+')).first;
+
     return Row(
       children: [
         Container(
@@ -109,12 +117,17 @@ class _TopBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hi, Zannat 👋',
+                l10n.greetingHi(firstName.isEmpty ? l10n.appName : firstName),
                 style: Theme.of(context).textTheme.titleLarge,
+                overflow: TextOverflow.ellipsis,
               ),
-              const Text(
-                'Stay safe, stay confident',
-                style: TextStyle(
+              Text(
+                // The tagline is gender-aware: the ARB entry picks a
+                // female / male / other variant via ICU `select`, so a
+                // helper who isn't a woman doesn't get a message
+                // written for the person he's protecting.
+                l10n.homeTagline(user?.gender.name ?? 'other'),
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
@@ -185,11 +198,15 @@ class _IconBadge extends StatelessWidget {
   }
 }
 
-class _StatusCard extends StatelessWidget {
+class _StatusCard extends ConsumerWidget {
   const _StatusCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final contactCount =
+        ref.watch(contactsControllerProvider).valueOrNull?.length ?? 0;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -210,17 +227,17 @@ class _StatusCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.verified_rounded,
                       color: Colors.white,
                       size: 18,
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Text(
-                      "You're Protected",
-                      style: TextStyle(
+                      l10n.youAreProtected,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
@@ -232,7 +249,7 @@ class _StatusCard extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 Text(
-                  'Live location sharing is ON for 2 trusted contacts',
+                  l10n.liveLocationSharingCount(contactCount),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 12.5,
@@ -267,31 +284,37 @@ class _StatusCard extends StatelessWidget {
 class _QuickActionsGrid extends StatelessWidget {
   const _QuickActionsGrid();
 
-  static const _actions = [
-    (
-      Icons.call_rounded,
-      'Fake Call',
-      Color(0xFFFF8FA3),
-    ),
-    (
-      Icons.share_location_rounded,
-      'Share Location',
-      Color(0xFF3F5EFB),
-    ),
-    (
-      Icons.videocam_rounded,
-      'Record Evidence',
-      Color(0xFFFFA94D),
-    ),
-    (
-      Icons.alt_route_rounded,
-      'Safe Route',
-      Color(0xFF2FC28E),
-    ),
+  static const _colors = [
+    Color(0xFFFF8FA3),
+    Color(0xFF3F5EFB),
+    Color(0xFFFFA94D),
+    Color(0xFF2FC28E),
+  ];
+
+  static const _icons = [
+    Icons.call_rounded,
+    Icons.share_location_rounded,
+    Icons.videocam_rounded,
+    Icons.alt_route_rounded,
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    // Labels can't live in the static const tuple list above --
+    // l10n getters aren't compile-time constants -- so they're
+    // looked up here and zipped with the icon/color at build time.
+    final labels = [
+      l10n.fakeCall,
+      l10n.shareLocation,
+      l10n.recordEvidence,
+      l10n.safeRoute,
+    ];
+    final actions = List.generate(
+      _icons.length,
+      (i) => (_icons[i], labels[i], _colors[i]),
+    );
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -299,7 +322,7 @@ class _QuickActionsGrid extends StatelessWidget {
       mainAxisSpacing: 14,
       crossAxisSpacing: 14,
       childAspectRatio: 2.5,
-      children: _actions.map((a) {
+      children: actions.map((a) {
         final (icon, label, color) = a;
 
         return Container(
@@ -361,6 +384,7 @@ class _ContactsPreview extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) {
+    final l10n = AppLocalizations.of(context);
     final contacts =
         ref.watch(contactsControllerProvider).valueOrNull ?? const [];
 
@@ -420,8 +444,8 @@ class _ContactsPreview extends ConsumerWidget {
             Expanded(
               child: Text(
                 contacts.isEmpty
-                    ? 'Add a contact to enable SOS'
-                    : '${contacts.length} contacts will be alerted',
+                    ? l10n.addContactToEnableSos
+                    : l10n.contactsWillBeAlerted(contacts.length),
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
@@ -440,4 +464,3 @@ class _ContactsPreview extends ConsumerWidget {
     );
   }
 }
-

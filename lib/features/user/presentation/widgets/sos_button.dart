@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
@@ -136,6 +137,7 @@ class _SosConfirmSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sosState = ref.watch(sosControllerProvider);
+    final l10n = AppLocalizations.of(context);
 
     return SafeArea(
       child: Container(
@@ -183,7 +185,7 @@ class _SosConfirmSheet extends ConsumerWidget {
             const SizedBox(height: 18),
 
             Text(
-              'Send emergency alert?',
+              l10n.sendEmergencyAlert,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
@@ -191,7 +193,7 @@ class _SosConfirmSheet extends ConsumerWidget {
             const SizedBox(height: 8),
 
             Text(
-              'Your live location and an SOS message will be sent to all your trusted contacts immediately.',
+              l10n.sendEmergencyAlertBody,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -217,7 +219,7 @@ class _SosConfirmSheet extends ConsumerWidget {
                         ? null
                         : () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      l10n.cancel,
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
@@ -282,9 +284,9 @@ class _SosConfirmSheet extends ConsumerWidget {
                               color: Colors.white,
                             ),
                           )
-                        : const Text(
-                            'Send SOS',
-                            style: TextStyle(
+                        : Text(
+                            l10n.sendSos,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -308,6 +310,7 @@ class _SosActivatedOverlay extends ConsumerWidget {
     final sentCount = alert?.sentCount ?? 0;
     final total = alert?.deliveries.length ?? 0;
     final failedCount = alert?.failedCount ?? 0;
+    final l10n = AppLocalizations.of(context);
 
     return Material(
       color: Colors.transparent,
@@ -333,17 +336,17 @@ class _SosActivatedOverlay extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'SOS Alert Sent',
-                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
+              Text(
+                l10n.sosAlertSentTitle,
+                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 10),
               Text(
                 total == 0
-                    ? 'Your trusted contacts have been notified with your live location.'
+                    ? l10n.sosNotifiedFallback
                     : failedCount == 0
-                        ? 'Notified all $total trusted contact${total == 1 ? "" : "s"} with your live location.'
-                        : 'Notified $sentCount of $total contacts. $failedCount could not be reached -- try calling them directly.',
+                        ? l10n.sosNotifiedAll(total)
+                        : l10n.sosNotifiedPartial(sentCount, total, failedCount),
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
               ),
@@ -364,7 +367,7 @@ class _SosActivatedOverlay extends ConsumerWidget {
                     ref.read(sosControllerProvider.notifier).dismiss();
                     Navigator.of(context).pop();
                   },
-                  child: const Text("I'm Safe", style: TextStyle(fontWeight: FontWeight.w800)),
+                  child: Text(l10n.imSafe, style: const TextStyle(fontWeight: FontWeight.w800)),
                 ),
               ),
             ],

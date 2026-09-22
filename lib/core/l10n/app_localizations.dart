@@ -277,6 +277,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No active alerts nearby} =1{1 alert nearby} other{{count} alerts nearby}}'**
   String nearbyAlertsCount(int count);
+
+  /// No description provided for @chooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose language'**
+  String get chooseLanguage;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @sendEmergencyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Emergency Alert?'**
+  String get sendEmergencyAlert;
+
+  /// No description provided for @sendEmergencyAlertBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trusted contacts will get your live location and a call for help immediately.'**
+  String get sendEmergencyAlertBody;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @sendSos.
+  ///
+  /// In en, this message translates to:
+  /// **'Send SOS'**
+  String get sendSos;
+
+  /// No description provided for @sosAlertSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Sent'**
+  String get sosAlertSentTitle;
+
+  /// No description provided for @sosNotifiedFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Your emergency contacts have been notified.'**
+  String get sosNotifiedFallback;
+
+  /// No description provided for @sosNotifiedAll.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 contact was notified} other{All {count} contacts were notified}}'**
+  String sosNotifiedAll(int count);
+
+  /// No description provided for @sosNotifiedPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Notified {sent} of {total} contacts — {failed} failed to reach.'**
+  String sosNotifiedPartial(int sent, int total, int failed);
+
+  /// No description provided for @imSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m Safe'**
+  String get imSafe;
+
+  /// No description provided for @greetingHi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name} 👋'**
+  String greetingHi(String name);
+
+  /// No description provided for @homeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'{gender, select, female{Stay safe, stay confident} male{Watching out for the people you love} other{Stay strong, stay ready}}'**
+  String homeTagline(String gender);
+
+  /// No description provided for @tapForEmergencyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for Emergency Alert'**
+  String get tapForEmergencyAlert;
+
+  /// No description provided for @youAreProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re Protected'**
+  String get youAreProtected;
+
+  /// No description provided for @liveLocationSharingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Live location sharing is ON for 1 trusted contact} other{Live location sharing is ON for {count} trusted contacts}}'**
+  String liveLocationSharingCount(int count);
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @fakeCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Fake Call'**
+  String get fakeCall;
+
+  /// No description provided for @shareLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Location'**
+  String get shareLocation;
+
+  /// No description provided for @recordEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Evidence'**
+  String get recordEvidence;
+
+  /// No description provided for @safeRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe Route'**
+  String get safeRoute;
+
+  /// No description provided for @trustedContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted Contacts'**
+  String get trustedContacts;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @addContactToEnableSos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact to enable SOS'**
+  String get addContactToEnableSos;
+
+  /// No description provided for @contactsWillBeAlerted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 contact will be alerted} other{{count} contacts will be alerted}}'**
+  String contactsWillBeAlerted(int count);
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @emergencyInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Info'**
+  String get emergencyInfo;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get role;
+
+  /// No description provided for @userTypeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get userTypeUser;
+
+  /// No description provided for @userTypeHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Helper'**
+  String get userTypeHelper;
+
+  /// No description provided for @userTypeUserHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'User & Helper'**
+  String get userTypeUserHelper;
+
+  /// No description provided for @homeAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Address'**
+  String get homeAddress;
+
+  /// No description provided for @tapToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add'**
+  String get tapToAdd;
+
+  /// No description provided for @privacyPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Permissions'**
+  String get privacyPermissions;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettings;
+
+  /// No description provided for @appTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'App Theme'**
+  String get appTheme;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logOut;
 }
 
 class _AppLocalizationsDelegate
