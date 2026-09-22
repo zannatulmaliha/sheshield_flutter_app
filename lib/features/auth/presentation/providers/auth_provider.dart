@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sheshield/core/di/injection.dart';
+import 'package:sheshield/core/services/push_service.dart';
+import 'package:sheshield/features/auth/domain/repositories/i_auth_repository.dart';
 import 'package:sheshield/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/sign_up_usecase.dart';
@@ -37,6 +39,7 @@ class AuthController extends _$AuthController {
     state = await AsyncValue.guard(
       () => getIt<SignInUseCase>().call(email: email, password: password),
     );
+    if (!state.hasError) getIt<PushService>().registerTokenNow();
   }
 
   Future<void> signUp({
@@ -60,10 +63,18 @@ class AuthController extends _$AuthController {
         userType: userType,
       ),
     );
+    if (!state.hasError) getIt<PushService>().registerTokenNow();
   }
 
   Future<void> signOut() async {
     state = const AsyncLoading<void>().copyWithPrevious(state);
+    // Clearing the push token needs the still-valid auth header, so this
+    // must happen before SignOutUseCase drops it -- best-effort either way,
+    // since a stale token just means this device stops getting alarmed
+    // once the account that had it linked also signs out and back in.
+    try {
+      await getIt<IAuthRepository>().updateFcmToken('');
+    } catch (_) {}
     state = await AsyncValue.guard(() => getIt<SignOutUseCase>().call());
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import '../../domain/entities/verification_status.dart';
 import '../providers/verification_provider.dart';
@@ -58,7 +59,7 @@ class VerificationScreen extends ConsumerWidget {
             title: "You're verified",
             message: 'You can now respond to alerts near you.',
             buttonLabel: 'Done',
-            onButton: () => Navigator.of(context).pop(),
+            onButton: () => context.pop(),
           ),
         ]),
       VerificationState.pending => ListView(children: [

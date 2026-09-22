@@ -1,48 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
-import 'package:sheshield/features/helper/presentation/screens/helper_shell.dart';
-import 'package:sheshield/features/user/presentation/screens/user_shell.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
 import 'package:sheshield/shared/widgets/mode_switch.dart';
 
-/// Decides what the signed-in person sees, based on role:
-/// - user       -> UserShell (Home/Contacts/AI Mode/Profile, original UI)
-/// - helper     -> HelperShell (dashboard/history/profile)
-/// - userHelper -> both, switchable via ModeSwitch
-///
-/// This is what /home routes to once signed in (see app_router.dart).
-class RootShell extends ConsumerStatefulWidget {
-  const RootShell({super.key});
+/// Wraps whichever role-shell go_router put in [child] (the user tabs or
+/// the helper tabs -- see the nested StatefulShellRoutes in
+/// app_router.dart). For a dual-role (userHelper) account, this is also
+/// where the [ModeSwitch] header lives, since it needs to see the
+/// current location to know which mode is active and route-level
+/// [redirect] already guards a plain user/helper from reaching the
+/// other role's tabs.
+class RootShell extends ConsumerWidget {
+  const RootShell({super.key, required this.child});
+  final Widget child;
 
   @override
-  ConsumerState<RootShell> createState() => _RootShellState();
-}
-
-class _RootShellState extends ConsumerState<RootShell> {
-  AppMode _mode = AppMode.user;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider).valueOrNull;
     if (user == null) return const SizedBox.shrink(); // router redirects to /login
+    if (user.userType != UserType.userHelper) return child;
 
-    switch (user.userType) {
-      case UserType.user:
-        return const UserShell();
-
-      case UserType.helper:
-        return const HelperShell();
-
-      case UserType.userHelper:
-        return Column(
-          children: [
-            ModeSwitch(mode: _mode, onChanged: (m) => setState(() => _mode = m)),
-            Expanded(
-              child: _mode == AppMode.user ? const UserShell() : const HelperShell(),
-            ),
-          ],
-        );
-    }
+    final isHelperArea = GoRouterState.of(context).matchedLocation.startsWith('/home/helper');
+    return Column(
+      children: [
+        ModeSwitch(
+          mode: isHelperArea ? AppMode.helper : AppMode.user,
+          onChanged: (m) {
+            if (m == AppMode.helper) {
+              const HelperDashboardRoute().go(context);
+            } else {
+              const UserHomeRoute().go(context);
+            }
+          },
+        ),
+        Expanded(child: child),
+      ],
+    );
   }
 }

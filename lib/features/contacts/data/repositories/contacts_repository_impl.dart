@@ -1,4 +1,5 @@
 import 'package:sheshield/core/cache/cache_box_interface.dart';
+import '../../domain/entities/contact_invite.dart';
 import '../../domain/entities/trusted_contact.dart';
 import '../../domain/repositories/i_contacts_repository.dart';
 import '../datasources/contacts_api_datasource.dart';
@@ -55,4 +56,10 @@ class ContactsRepositoryImpl implements IContactsRepository {
     await _dataSource.remove(contactId);
     await _cache.invalidate(_cacheKey);
   }
+
+  @override
+  Future<ContactInvite> invite(String contactId) => _dataSource.invite(contactId);
+
+  @override
+  Future<void> acceptInvite(String code) => _dataSource.acceptInvite(code);
 }

@@ -7,10 +7,15 @@ import '../../domain/entities/trusted_contact.dart';
 /// or "primary" field for a contact, so [_avatarColor] derives a
 /// stable color from the contact's id instead of storing one.
 class ContactTile extends StatelessWidget {
-  const ContactTile({super.key, required this.contact, required this.onDelete});
+  const ContactTile({super.key, required this.contact, required this.onDelete, required this.onInvite});
 
   final TrustedContact contact;
   final VoidCallback onDelete;
+
+  /// Only called when the contact hasn't linked their own account yet
+  /// (see [TrustedContact.hasAppLinked]) -- shows the invite flow that
+  /// lets them receive an alarm push, not just SMS, on the next SOS.
+  final VoidCallback onInvite;
 
   Color get _avatarColor {
     const palette = [
@@ -91,9 +96,26 @@ class ContactTile extends StatelessWidget {
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (contact.hasAppLinked) ...[
+                    const SizedBox(height: 4),
+                    const Row(
+                      children: [
+                        Icon(Icons.notifications_active_rounded, color: AppColors.success, size: 13),
+                        SizedBox(width: 4),
+                        Text(
+                          'Gets an instant alarm on SOS',
+                          style: TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
+            if (!contact.hasAppLinked) ...[
+              _CircleIconButton(icon: Icons.person_add_alt_1_rounded, color: AppColors.warning, onTap: onInvite),
+              const SizedBox(width: 8),
+            ],
             _CircleIconButton(icon: Icons.call_rounded, color: AppColors.success, onTap: _call),
             const SizedBox(width: 8),
             _CircleIconButton(icon: Icons.message_rounded, color: AppColors.primary, onTap: _message),

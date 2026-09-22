@@ -13,6 +13,7 @@ _$SosAlertImpl _$$SosAlertImplFromJson(Map<String, dynamic> json) =>
       deliveries: (json['deliveries'] as List<dynamic>)
           .map((e) => SosDelivery.fromJson(e as Map<String, dynamic>))
           .toList(),
+      shareUrl: json['shareUrl'] as String?,
     );
 
 Map<String, dynamic> _$$SosAlertImplToJson(_$SosAlertImpl instance) =>
@@ -20,6 +21,7 @@ Map<String, dynamic> _$$SosAlertImplToJson(_$SosAlertImpl instance) =>
       'id': instance.id,
       'createdAt': const DateTimeConverter().toJson(instance.createdAt),
       'deliveries': instance.deliveries,
+      'shareUrl': instance.shareUrl,
     };
 
 _$SosDeliveryImpl _$$SosDeliveryImplFromJson(Map<String, dynamic> json) =>

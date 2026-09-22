@@ -106,6 +106,19 @@ class AuthApiDataSource {
     }
   }
 
+  /// PATCH /auth/fcm-token -- registers (or, with "", clears) this
+  /// device's push token so a linked trusted contact's SOS can alarm it.
+  /// Best-effort from the caller's point of view: failures are swallowed
+  /// by PushService, since a missed token update just means this device
+  /// falls back to being alarmed on its next successful refresh.
+  Future<void> updateFcmToken(String token) async {
+    try {
+      await _client.dio.patch('/auth/fcm-token', data: {'token': token});
+    } on DioException catch (e) {
+      throw AuthFailure(_mapError(e));
+    }
+  }
+
   String _mapError(DioException e) {
     final responseData = e.response?.data;
 

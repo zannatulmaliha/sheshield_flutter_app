@@ -23,7 +23,10 @@ mixin _$SosAlert {
   String get id => throw _privateConstructorUsedError;
   @DateTimeConverter()
   DateTime get createdAt => throw _privateConstructorUsedError;
-  List<SosDelivery> get deliveries => throw _privateConstructorUsedError;
+  List<SosDelivery> get deliveries =>
+      throw _privateConstructorUsedError; // Public link to the live-tracking page (location + alarm) contacts
+// get in their SMS. Null if the server hasn't started sending it yet.
+  String? get shareUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -39,7 +42,8 @@ abstract class $SosAlertCopyWith<$Res> {
   $Res call(
       {String id,
       @DateTimeConverter() DateTime createdAt,
-      List<SosDelivery> deliveries});
+      List<SosDelivery> deliveries,
+      String? shareUrl});
 }
 
 /// @nodoc
@@ -58,6 +62,7 @@ class _$SosAlertCopyWithImpl<$Res, $Val extends SosAlert>
     Object? id = null,
     Object? createdAt = null,
     Object? deliveries = null,
+    Object? shareUrl = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -72,6 +77,10 @@ class _$SosAlertCopyWithImpl<$Res, $Val extends SosAlert>
           ? _value.deliveries
           : deliveries // ignore: cast_nullable_to_non_nullable
               as List<SosDelivery>,
+      shareUrl: freezed == shareUrl
+          ? _value.shareUrl
+          : shareUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -87,7 +96,8 @@ abstract class _$$SosAlertImplCopyWith<$Res>
   $Res call(
       {String id,
       @DateTimeConverter() DateTime createdAt,
-      List<SosDelivery> deliveries});
+      List<SosDelivery> deliveries,
+      String? shareUrl});
 }
 
 /// @nodoc
@@ -104,6 +114,7 @@ class __$$SosAlertImplCopyWithImpl<$Res>
     Object? id = null,
     Object? createdAt = null,
     Object? deliveries = null,
+    Object? shareUrl = freezed,
   }) {
     return _then(_$SosAlertImpl(
       id: null == id
@@ -118,6 +129,10 @@ class __$$SosAlertImplCopyWithImpl<$Res>
           ? _value._deliveries
           : deliveries // ignore: cast_nullable_to_non_nullable
               as List<SosDelivery>,
+      shareUrl: freezed == shareUrl
+          ? _value.shareUrl
+          : shareUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -128,7 +143,8 @@ class _$SosAlertImpl extends _SosAlert {
   const _$SosAlertImpl(
       {required this.id,
       @DateTimeConverter() required this.createdAt,
-      required final List<SosDelivery> deliveries})
+      required final List<SosDelivery> deliveries,
+      this.shareUrl})
       : _deliveries = deliveries,
         super._();
 
@@ -148,9 +164,14 @@ class _$SosAlertImpl extends _SosAlert {
     return EqualUnmodifiableListView(_deliveries);
   }
 
+// Public link to the live-tracking page (location + alarm) contacts
+// get in their SMS. Null if the server hasn't started sending it yet.
+  @override
+  final String? shareUrl;
+
   @override
   String toString() {
-    return 'SosAlert(id: $id, createdAt: $createdAt, deliveries: $deliveries)';
+    return 'SosAlert(id: $id, createdAt: $createdAt, deliveries: $deliveries, shareUrl: $shareUrl)';
   }
 
   @override
@@ -162,13 +183,15 @@ class _$SosAlertImpl extends _SosAlert {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             const DeepCollectionEquality()
-                .equals(other._deliveries, _deliveries));
+                .equals(other._deliveries, _deliveries) &&
+            (identical(other.shareUrl, shareUrl) ||
+                other.shareUrl == shareUrl));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt,
-      const DeepCollectionEquality().hash(_deliveries));
+      const DeepCollectionEquality().hash(_deliveries), shareUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -188,7 +211,8 @@ abstract class _SosAlert extends SosAlert {
   const factory _SosAlert(
       {required final String id,
       @DateTimeConverter() required final DateTime createdAt,
-      required final List<SosDelivery> deliveries}) = _$SosAlertImpl;
+      required final List<SosDelivery> deliveries,
+      final String? shareUrl}) = _$SosAlertImpl;
   const _SosAlert._() : super._();
 
   factory _SosAlert.fromJson(Map<String, dynamic> json) =
@@ -201,6 +225,9 @@ abstract class _SosAlert extends SosAlert {
   DateTime get createdAt;
   @override
   List<SosDelivery> get deliveries;
+  @override // Public link to the live-tracking page (location + alarm) contacts
+// get in their SMS. Null if the server hasn't started sending it yet.
+  String? get shareUrl;
   @override
   @JsonKey(ignore: true)
   _$$SosAlertImplCopyWith<_$SosAlertImpl> get copyWith =>

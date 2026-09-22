@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:sheshield/core/network/dio_client.dart';
+import '../../domain/entities/contact_invite.dart';
 import '../../domain/entities/trusted_contact.dart';
 import '../../domain/repositories/i_contacts_repository.dart';
 
@@ -51,6 +52,26 @@ class ContactsApiDataSource {
   Future<void> remove(String contactId) async {
     try {
       await _client.dio.delete('$_basePath/$contactId');
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// POST /api/v1/contacts/{id}/invite -> { "data": {code, expiresAt} }
+  Future<ContactInvite> invite(String contactId) async {
+    try {
+      final res = await _client.dio.post('$_basePath/$contactId/invite');
+      return ContactInvite.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// POST /api/v1/contacts/accept-invite
+  /// body: { code }
+  Future<void> acceptInvite(String code) async {
+    try {
+      await _client.dio.post('$_basePath/accept-invite', data: {'code': code});
     } on DioException catch (e) {
       throw _fail(e);
     }

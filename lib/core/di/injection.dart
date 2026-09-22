@@ -4,7 +4,10 @@ import 'package:get_it/get_it.dart';
 import 'package:sheshield/core/cache/cache_box_interface.dart';
 import 'package:sheshield/core/constants/api_constants.dart';
 import 'package:sheshield/core/network/dio_client.dart';
+import 'package:sheshield/core/services/device_alarm_service.dart';
 import 'package:sheshield/core/services/device_location_service.dart';
+import 'package:sheshield/core/services/device_sms_service.dart';
+import 'package:sheshield/core/services/push_service.dart';
 
 // ==================== AUTH ====================
 import 'package:sheshield/features/auth/data/datasources/auth_api_datasource.dart';
@@ -16,6 +19,7 @@ import 'package:sheshield/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/watch_auth_state_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/refresh_session_usecase.dart';
+import 'package:sheshield/features/auth/domain/usecases/update_fcm_token_usecase.dart';
 
 // ==================== HELPER ====================
 import 'package:sheshield/features/helper/data/datasources/helper_api_datasource.dart';
@@ -31,13 +35,17 @@ import 'package:sheshield/features/sos/data/datasources/sos_api_datasource.dart'
 import 'package:sheshield/features/sos/data/repositories/sos_repository_impl.dart';
 import 'package:sheshield/features/sos/domain/repositories/i_sos_repository.dart';
 import 'package:sheshield/features/sos/domain/usecases/send_sos_usecase.dart';
+import 'package:sheshield/features/sos/domain/usecases/update_sos_location_usecase.dart';
+import 'package:sheshield/features/sos/domain/usecases/resolve_sos_alert_usecase.dart';
 
 // ==================== CONTACTS ====================
 import 'package:sheshield/features/contacts/data/datasources/contacts_api_datasource.dart';
 import 'package:sheshield/features/contacts/data/repositories/contacts_repository_impl.dart';
 import 'package:sheshield/features/contacts/domain/repositories/i_contacts_repository.dart';
+import 'package:sheshield/features/contacts/domain/usecases/accept_contact_invite_usecase.dart';
 import 'package:sheshield/features/contacts/domain/usecases/add_contact_usecase.dart';
 import 'package:sheshield/features/contacts/domain/usecases/get_contacts_usecase.dart';
+import 'package:sheshield/features/contacts/domain/usecases/invite_contact_usecase.dart';
 import 'package:sheshield/features/contacts/domain/usecases/remove_contact_usecase.dart';
 
 // ==================== VERIFICATION ====================
@@ -68,6 +76,18 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => DeviceLocationService(),
+  );
+
+  getIt.registerLazySingleton(
+    () => DeviceSmsService(),
+  );
+
+  getIt.registerLazySingleton(
+    () => DeviceAlarmService(),
+  );
+
+  getIt.registerLazySingleton(
+    () => PushService(),
   );
 
   final cacheBox = await createCacheBox();
@@ -106,6 +126,10 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => RefreshSessionUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => UpdateFcmTokenUseCase(getIt()),
   );
 
   // ==================== HELPER FEATURE ====================
@@ -151,6 +175,14 @@ Future<void> configureDependencies() async {
     () => SendSosUseCase(getIt()),
   );
 
+  getIt.registerLazySingleton(
+    () => UpdateSosLocationUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => ResolveSosAlertUseCase(getIt()),
+  );
+
   // ==================== CONTACTS FEATURE ====================
 
   getIt.registerLazySingleton(
@@ -174,6 +206,14 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => RemoveContactUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => InviteContactUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => AcceptContactInviteUseCase(getIt()),
   );
 
   // ==================== VERIFICATION FEATURE ====================

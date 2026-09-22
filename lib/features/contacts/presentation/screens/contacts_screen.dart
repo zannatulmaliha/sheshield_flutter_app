@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/user/presentation/screens/add_contact_sheet.dart';
+import '../../domain/entities/trusted_contact.dart';
 import '../providers/contacts_provider.dart';
+import '../widgets/accept_invite_dialog.dart';
 import '../widgets/contact_tile.dart';
+import '../widgets/invite_contact_dialog.dart';
 
 /// Real trusted-contacts screen, backed by [contactsControllerProvider]
 /// (GET/POST/DELETE /api/v1/contacts). Replaces the old static
@@ -16,6 +19,10 @@ class ContactsScreen extends ConsumerWidget {
     if (error != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     }
+  }
+
+  void _invite(BuildContext context, TrustedContact contact) {
+    showInviteContactDialog(context, contact);
   }
 
   @override
@@ -31,7 +38,16 @@ class ContactsScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
               children: [
-                Text('Trusted Contacts', style: Theme.of(context).textTheme.headlineSmall),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Trusted Contacts', style: Theme.of(context).textTheme.headlineSmall),
+                    TextButton(
+                      onPressed: () => showAcceptInviteDialog(context),
+                      child: const Text('Have a code?'),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 4),
                 const Text(
                   'These people will be notified when you send an SOS alert.',
@@ -89,6 +105,7 @@ class ContactsScreen extends ConsumerWidget {
                               .map((c) => ContactTile(
                                     contact: c,
                                     onDelete: () => _remove(context, ref, c.id),
+                                    onInvite: () => _invite(context, c),
                                   ))
                               .toList(),
                         ),

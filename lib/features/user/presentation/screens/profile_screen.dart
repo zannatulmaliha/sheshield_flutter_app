@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sheshield/features/sos/presentation/screens/sos_alarm_screen.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
 import 'profile_edit_sheets.dart';
@@ -208,6 +210,21 @@ class _SettingsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<(IconData, String, VoidCallback)> items = <(IconData, String, VoidCallback)>[
+      // Debug-only: lets the alarm sound/screen be checked on this device
+      // without needing the FCM push pipeline (which needs a Firebase
+      // project) to actually be wired up yet. Remove once that's live and
+      // testing an incoming push end-to-end is possible instead.
+      if (kDebugMode)
+        (Icons.alarm_rounded, 'Test SOS Alarm (debug)', () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const SosAlarmScreen(
+                  senderName: 'Test contact',
+                  latitude: 23.8103,
+                  longitude: 90.4125,
+                ),
+                fullscreenDialog: true,
+              ),
+            )),
       (Icons.lock_outline_rounded, 'Privacy & Permissions', () {}),
       (Icons.notifications_none_rounded, 'Notification Settings', () {}),
       (Icons.dark_mode_outlined, 'App Theme', () {}),

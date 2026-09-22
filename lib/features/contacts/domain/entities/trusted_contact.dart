@@ -19,12 +19,19 @@ class TrustedContact with _$TrustedContact {
     required String phone,
     required String countryCode,
     @DateTimeConverter() required DateTime createdAt,
+    // Set once this contact accepts an invite from their own SheShield
+    // account (see ContactsRepository.acceptInvite). Null means they can
+    // only be reached by SMS -- there's no linked account to push an alarm
+    // to yet.
+    String? linkedUserUid,
   }) = _TrustedContact;
 
   factory TrustedContact.fromJson(Map<String, dynamic> json) =>
       _$TrustedContactFromJson(json);
 
   String get fullPhone => '$countryCode $phone';
+
+  bool get hasAppLinked => linkedUserUid != null;
 
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+'));

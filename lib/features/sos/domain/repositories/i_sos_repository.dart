@@ -18,6 +18,21 @@ abstract class ISosRepository {
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
   });
+
+  /// Refreshes the alert's live location while it's active, so the
+  /// tracking page contacts opened from their SMS keeps moving with the
+  /// sender rather than freezing at the moment SOS was pressed.
+  Future<void> updateLocation({
+    required String alertId,
+    required double latitude,
+    required double longitude,
+    double? accuracyMeters,
+  });
+
+  /// Marks the alert resolved ("I'm Safe") -- stops the tracking page
+  /// from showing further updates. Does not un-notify contacts; there's
+  /// no way to un-send an SMS that already went out.
+  Future<void> resolve(String alertId);
 }
 
 class SosFailure implements Exception {

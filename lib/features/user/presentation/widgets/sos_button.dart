@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
@@ -264,14 +265,7 @@ class _SosConfirmSheet extends ConsumerWidget {
                               return;
                             }
 
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                opaque: false,
-                                barrierColor: Colors.black87,
-                                pageBuilder: (_, __, ___) =>
-                                    const _SosActivatedOverlay(),
-                              ),
-                            );
+                            const SosSentRoute().push(context);
                           },
                     child: sosState.isLoading
                         ? const SizedBox(
@@ -293,82 +287,6 @@ class _SosConfirmSheet extends ConsumerWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SosActivatedOverlay extends ConsumerWidget {
-  const _SosActivatedOverlay();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final alert = ref.watch(sosControllerProvider).valueOrNull;
-    final sentCount = alert?.sentCount ?? 0;
-    final total = alert?.deliveries.length ?? 0;
-    final failedCount = alert?.failedCount ?? 0;
-
-    return Material(
-      color: Colors.transparent,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 700),
-                curve: Curves.elasticOut,
-                builder: (context, value, child) => Transform.scale(scale: value, child: child),
-                child: Container(
-                  width: 96,
-                  height: 96,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(colors: AppColors.sosGradient),
-                  ),
-                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 52),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'SOS Alert Sent',
-                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                total == 0
-                    ? 'Your trusted contacts have been notified with your live location.'
-                    : failedCount == 0
-                        ? 'Notified all $total trusted contact${total == 1 ? "" : "s"} with your live location.'
-                        : 'Notified $sentCount of $total contacts. $failedCount could not be reached -- try calling them directly.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppColors.sosEnd,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  onPressed: () {
-                    // No cancel endpoint on the backend -- contacts are
-                    // already texted by the time this alert exists.
-                    // This only clears the local "sent" state.
-                    ref.read(sosControllerProvider.notifier).dismiss();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("I'm Safe", style: TextStyle(fontWeight: FontWeight.w800)),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

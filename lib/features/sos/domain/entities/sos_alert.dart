@@ -20,6 +20,9 @@ class SosAlert with _$SosAlert {
     required String id,
     @DateTimeConverter() required DateTime createdAt,
     required List<SosDelivery> deliveries,
+    // Public link to the live-tracking page (location + alarm) contacts
+    // get in their SMS. Null if the server hasn't started sending it yet.
+    String? shareUrl,
   }) = _SosAlert;
 
   factory SosAlert.fromJson(Map<String, dynamic> json) =>

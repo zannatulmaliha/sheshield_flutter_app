@@ -14,6 +14,7 @@ _$TrustedContactImpl _$$TrustedContactImplFromJson(Map<String, dynamic> json) =>
       phone: json['phone'] as String,
       countryCode: json['countryCode'] as String,
       createdAt: const DateTimeConverter().fromJson(json['createdAt']),
+      linkedUserUid: json['linkedUserUid'] as String?,
     );
 
 Map<String, dynamic> _$$TrustedContactImplToJson(
@@ -25,4 +26,5 @@ Map<String, dynamic> _$$TrustedContactImplToJson(
       'phone': instance.phone,
       'countryCode': instance.countryCode,
       'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'linkedUserUid': instance.linkedUserUid,
     };

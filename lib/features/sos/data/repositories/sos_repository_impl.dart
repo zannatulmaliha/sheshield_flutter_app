@@ -24,4 +24,21 @@ class SosRepositoryImpl implements ISosRepository {
         accuracyMeters: accuracyMeters,
         notifiedByDevice: notifiedByDevice,
       );
+
+  @override
+  Future<void> updateLocation({
+    required String alertId,
+    required double latitude,
+    required double longitude,
+    double? accuracyMeters,
+  }) =>
+      _dataSource.updateLocation(
+        alertId: alertId,
+        latitude: latitude,
+        longitude: longitude,
+        accuracyMeters: accuracyMeters,
+      );
+
+  @override
+  Future<void> resolve(String alertId) => _dataSource.resolve(alertId);
 }

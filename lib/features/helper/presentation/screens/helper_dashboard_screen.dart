@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
+import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/features/helper/domain/entities/nearby_alert.dart';
 import '../providers/helper_status_provider.dart';
 import '../providers/nearby_alerts_provider.dart';
@@ -9,7 +10,6 @@ import '../widgets/active_helper_card.dart';
 import '../widgets/helper_not_verified_view.dart';
 import '../widgets/inactive_helper_hint.dart';
 import '../widgets/nearby_alert_card.dart';
-import 'helper_alert_detail_screen.dart';
 
 /// GO ACTIVE toggle, response radius, and the nearby-alerts list.
 /// [isVerified]/[onVerify] gate the whole screen -- an unverified
@@ -76,9 +76,7 @@ class _HelperDashboardScreenState extends ConsumerState<HelperDashboardScreen> {
     if (!mounted) return;
 
     if (accepted != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => HelperAlertDetailScreen(alert: accepted)),
-      );
+      HelperAlertDetailRoute($extra: accepted).push(context);
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(

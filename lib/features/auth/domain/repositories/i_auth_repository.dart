@@ -37,6 +37,10 @@ abstract class IAuthRepository {
     String? countryCode,
     String? address,
   });
+
+  /// Registers this device's push token so an SOS from whoever has linked
+  /// it as a trusted contact can alarm this phone.
+  Future<void> updateFcmToken(String token);
 }
 
 class AuthFailure implements Exception {

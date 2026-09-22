@@ -80,4 +80,7 @@ class AuthRepositoryImpl implements IAuthRepository {
     _controller.add(user);
     return user;
   }
+
+  @override
+  Future<void> updateFcmToken(String token) => _dataSource.updateFcmToken(token);
 }

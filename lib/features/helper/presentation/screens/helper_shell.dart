@@ -1,50 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
-import 'package:sheshield/features/user/presentation/screens/profile_screen.dart';
-import 'package:sheshield/features/verification/presentation/screens/verification_screen.dart';
-import 'helper_dashboard_screen.dart';
+import 'package:go_router/go_router.dart';
 
-enum _HelperTab { dashboard, history, profile }
+/// Bottom-tab shell for a signed-in helper: Dashboard / History /
+/// Profile. Each tab is its own branch of a StatefulShellRoute (see
+/// app_router.dart); the verification gate and dashboard's own
+/// isVerified/onVerify wiring live in that route's screen wrapper, not
+/// here -- this shell is just the tab scaffold.
+class HelperShell extends StatelessWidget {
+  const HelperShell({super.key, required this.navigationShell});
 
-/// The bottom-nav shell for a signed-in helper.
-/// History remains a placeholder -- out of scope until a "past alerts"
-/// endpoint exists on the backend.
-class HelperShell extends ConsumerStatefulWidget {
-  const HelperShell({super.key});
-
-  @override
-  ConsumerState<HelperShell> createState() => _HelperShellState();
-}
-
-class _HelperShellState extends ConsumerState<HelperShell> {
-  _HelperTab _tab = _HelperTab.dashboard;
-
-  void _openVerification() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const VerificationScreen()),
-    );
-  }
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authStateProvider).valueOrNull;
-    if (user == null) return const SizedBox.shrink(); // router redirects to /login
-
-    final body = switch (_tab) {
-      _HelperTab.dashboard => HelperDashboardScreen(
-          isVerified: user.isHelperVerified,
-          onVerify: _openVerification,
-        ),
-      _HelperTab.history => const _Placeholder('Response history — coming soon'),
-      _HelperTab.profile => const ProfileScreen(),
-    };
-
     return Scaffold(
-      body: body,
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab.index,
-        onDestinationSelected: (i) => setState(() => _tab = _HelperTab.values[i]),
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (index) => navigationShell.goBranch(
+          index,
+          initialLocation: index == navigationShell.currentIndex,
+        ),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
@@ -65,12 +41,4 @@ class _HelperShellState extends ConsumerState<HelperShell> {
       ),
     );
   }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Center(child: Text(text));
 }

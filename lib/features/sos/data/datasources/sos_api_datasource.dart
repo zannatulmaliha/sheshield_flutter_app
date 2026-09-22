@@ -37,6 +37,36 @@ class SosApiDataSource {
     }
   }
 
+  /// PATCH /api/v1/alerts/{id}/location
+  /// Best-effort "keep the live tracking page moving" call while an
+  /// alert is active; callers swallow failures here rather than
+  /// interrupt the person the alert is about.
+  Future<void> updateLocation({
+    required String alertId,
+    required double latitude,
+    required double longitude,
+    double? accuracyMeters,
+  }) async {
+    try {
+      await _client.dio.patch('$_basePath/$alertId/location', data: {
+        'latitude': latitude,
+        'longitude': longitude,
+        'accuracyMeters': accuracyMeters,
+      });
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// PATCH /api/v1/alerts/{id}/resolve -- "I'm Safe".
+  Future<void> resolve(String alertId) async {
+    try {
+      await _client.dio.patch('$_basePath/$alertId/resolve');
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
   SosFailure _fail(DioException e) {
     final data = e.response?.data;
     final message = (data is Map && data['error'] is String)
