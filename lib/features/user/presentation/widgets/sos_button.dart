@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/features/gamification/presentation/providers/gamification_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/level_up_overlay.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
 /// Large pulsing SOS button. Tapping opens a confirmation sheet before
@@ -268,6 +270,19 @@ class _SosConfirmSheet extends ConsumerWidget {
                             }
 
                             const SosSentRoute().push(context);
+
+                            final gamification =
+                                ref.read(gamificationControllerProvider.notifier);
+                            final leveledUp = gamification.addXp(30);
+                            gamification.unlockBadge('ninja_reflexes');
+                            if (leveledUp && context.mounted) {
+                              final game = ref.read(gamificationControllerProvider);
+                              showLevelUpCelebration(
+                                context,
+                                level: game.level,
+                                tierTitle: game.tierTitle,
+                              );
+                            }
                           },
                     child: sosState.isLoading
                         ? const SizedBox(

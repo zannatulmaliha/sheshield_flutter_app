@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/badge_grid.dart';
 import 'package:sheshield/features/settings/presentation/widgets/language_picker_sheet.dart';
 import 'package:sheshield/features/sos/presentation/screens/sos_alarm_screen.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
@@ -39,6 +40,13 @@ class ProfileScreen extends ConsumerWidget {
             user: user,
             onEditAddress: () => showEditAddressSheet(context, ref, user),
           ),
+          const SizedBox(height: 26),
+          const Text(
+            'Badges',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+          ),
+          const SizedBox(height: 12),
+          const BadgeGrid(),
           const SizedBox(height: 26),
           Text(
             l10n.settingsTitle,

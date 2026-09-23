@@ -4,6 +4,9 @@ import 'package:sheshield/core/constants/country_dial_codes.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/widgets/country_code_picker.dart';
 import 'package:sheshield/features/contacts/presentation/providers/contacts_provider.dart';
+import 'package:sheshield/features/gamification/presentation/providers/gamification_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/level_up_overlay.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/xp_toast.dart';
 
 Future<void> showAddContactSheet(BuildContext context, WidgetRef ref) {
   return showModalBottomSheet(
@@ -55,7 +58,26 @@ class _AddContactSheetState extends ConsumerState<_AddContactSheet> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
       return;
     }
+    _awardXp();
     Navigator.of(context).pop();
+  }
+
+  void _awardXp() {
+    final contactCount = ref.read(contactsControllerProvider).valueOrNull?.length ?? 0;
+    final gamification = ref.read(gamificationControllerProvider.notifier);
+    final leveledUp = gamification.addXp(15);
+    final newBadge = contactCount == 1
+        ? gamification.unlockBadge('circle_starter')
+        : contactCount >= 5 && gamification.unlockBadge('circle_guardian');
+
+    if (leveledUp) {
+      final game = ref.read(gamificationControllerProvider);
+      showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+    } else if (newBadge) {
+      showXpToast(context, 15, label: contactCount == 1 ? 'Circle Starter unlocked' : 'Circle Guardian unlocked');
+    } else {
+      showXpToast(context, 15, label: 'Contact added');
+    }
   }
 
   @override

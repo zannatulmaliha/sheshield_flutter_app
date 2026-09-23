@@ -5,6 +5,7 @@ import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 import 'package:sheshield/features/contacts/presentation/providers/contacts_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/level_card.dart';
 import 'package:sheshield/features/user/presentation/widgets/section_title.dart';
 import 'package:sheshield/features/user/presentation/widgets/sos_button.dart';
 
@@ -49,6 +50,10 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 28),
 
           const _StatusCard(),
+
+          const SizedBox(height: 20),
+
+          const LevelCard(),
 
           const SizedBox(height: 28),
 

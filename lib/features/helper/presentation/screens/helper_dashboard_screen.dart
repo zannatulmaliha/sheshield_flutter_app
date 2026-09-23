@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/router/app_router.dart';
+import 'package:sheshield/features/gamification/presentation/providers/gamification_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/level_up_overlay.dart';
 import 'package:sheshield/features/helper/domain/entities/nearby_alert.dart';
 import '../providers/helper_status_provider.dart';
 import '../providers/nearby_alerts_provider.dart';
@@ -76,6 +78,14 @@ class _HelperDashboardScreenState extends ConsumerState<HelperDashboardScreen> {
     if (!mounted) return;
 
     if (accepted != null) {
+      final gamification = ref.read(gamificationControllerProvider.notifier);
+      final leveledUp = gamification.addXp(20);
+      gamification.unlockBadge('guardian_helper');
+      if (leveledUp && mounted) {
+        final game = ref.read(gamificationControllerProvider);
+        await showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+        if (!mounted) return;
+      }
       HelperAlertDetailRoute($extra: accepted).push(context);
       return;
     }

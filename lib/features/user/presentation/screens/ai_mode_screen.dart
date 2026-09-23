@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/features/gamification/presentation/providers/gamification_provider.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/level_up_overlay.dart';
+import 'package:sheshield/features/gamification/presentation/widgets/xp_toast.dart';
 
-class AiModeScreen extends StatefulWidget {
+class AiModeScreen extends ConsumerStatefulWidget {
   const AiModeScreen({super.key});
 
   @override
-  State<AiModeScreen> createState() => _AiModeScreenState();
+  ConsumerState<AiModeScreen> createState() => _AiModeScreenState();
 }
 
 class _AiFeature {
@@ -16,7 +20,7 @@ class _AiFeature {
   bool enabled;
 }
 
-class _AiModeScreenState extends State<AiModeScreen> {
+class _AiModeScreenState extends ConsumerState<AiModeScreen> {
   final List<_AiFeature> _features = [
     _AiFeature(
       Icons.record_voice_over_rounded,
@@ -65,7 +69,7 @@ class _AiModeScreenState extends State<AiModeScreen> {
           ..._features.map(
             (f) => _FeatureCard(
               feature: f,
-              onChanged: (v) => setState(() => f.enabled = v),
+              onChanged: (v) => _onFeatureChanged(f, v),
             ),
           ),
           const SizedBox(height: 8),
@@ -73,6 +77,25 @@ class _AiModeScreenState extends State<AiModeScreen> {
         ],
       ),
     );
+  }
+
+  void _onFeatureChanged(_AiFeature feature, bool enabled) {
+    setState(() => feature.enabled = enabled);
+    if (!enabled) return;
+
+    final gamification = ref.read(gamificationControllerProvider.notifier);
+    final leveledUp = gamification.addXp(5);
+    final allOn = _features.every((f) => f.enabled);
+    final newBadge = allOn && gamification.unlockBadge('ai_sentinel');
+
+    if (leveledUp) {
+      final game = ref.read(gamificationControllerProvider);
+      showLevelUpCelebration(context, level: game.level, tierTitle: game.tierTitle);
+    } else if (newBadge) {
+      showXpToast(context, 5, label: 'AI Sentinel unlocked');
+    } else {
+      showXpToast(context, 5);
+    }
   }
 }
 
