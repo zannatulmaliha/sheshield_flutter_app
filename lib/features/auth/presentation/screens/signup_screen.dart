@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/constants/country_dial_codes.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/shared/entities/gender.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
 import '../providers/auth_provider.dart';
@@ -71,6 +71,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authControllerProvider);
 
@@ -83,8 +84,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     });
 
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: Text(l10n.createAccount),
+        backgroundColor: colors.background,
+        foregroundColor: colors.textPrimary,
+        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -110,9 +115,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 const SizedBox(height: 16),
                 Text(
                   l10n.iWantTo,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -125,8 +131,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 ElevatedButton(
                   onPressed: authState.isLoading ? null : _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentEmerald,
+                    backgroundColor: colors.primary,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: authState.isLoading
                       ? const SizedBox(
@@ -137,11 +146,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : Text(l10n.createAccount),
+                      : Text(l10n.createAccount, style: const TextStyle(fontWeight: FontWeight.w800)),
                 ),
                 TextButton(
                   onPressed: () => context.pop(),
-                  child: Text(l10n.alreadyHaveAccount),
+                  child: Text(
+                    l10n.alreadyHaveAccount,
+                    style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

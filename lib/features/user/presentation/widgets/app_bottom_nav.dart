@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
@@ -13,12 +15,14 @@ class NavItemData {
 const List<NavItemData> navItems = [
   NavItemData(Icons.home_outlined, Icons.home_rounded, 'Home'),
   NavItemData(Icons.people_alt_outlined, Icons.people_alt_rounded, 'Contacts'),
-  NavItemData(Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, 'AI Mode'),
+  NavItemData(
+      Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, 'AI Mode'),
   NavItemData(Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
 ];
 
 class AppBottomNav extends ConsumerWidget {
-  const AppBottomNav({super.key, required this.currentIndex, required this.onTap});
+  const AppBottomNav(
+      {super.key, required this.currentIndex, required this.onTap});
 
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -28,64 +32,77 @@ class AppBottomNav extends ConsumerWidget {
     final colors = resolvePalette(context, ref);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: Container(
-        height: 72,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: softShadow(opacity: 0.14),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(navItems.length, (index) {
-            final item = navItems[index];
-            final isActive = index == currentIndex;
-            return Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24),
-                onTap: () => onTap(index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutCubic,
-                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-                  padding: EdgeInsets.symmetric(horizontal: isActive ? 14 : 0),
-                  decoration: BoxDecoration(
-                    color: isActive ? colors.chipBackground : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isActive ? item.activeIcon : item.icon,
-                        color: isActive ? colors.primary : colors.textSecondary,
-                        size: 24,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            height: 72,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: colors.surface.withValues(alpha: 0.82),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: colors.surface.withValues(alpha: 0.6)),
+              boxShadow: softShadow(opacity: 0.14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(navItems.length, (index) {
+                final item = navItems[index];
+                final isActive = index == currentIndex;
+                return Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: () => onTap(index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 4),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: isActive ? 14 : 0),
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? colors.chipBackground
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeOutCubic,
-                        child: isActive
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: Text(
-                                  item.label,
-                                  style: TextStyle(
-                                    color: colors.primary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(width: 0, height: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isActive ? item.activeIcon : item.icon,
+                            color: isActive
+                                ? colors.primary
+                                : colors.textSecondary,
+                            size: 24,
+                          ),
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            child: isActive
+                                ? Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Text(
+                                      item.label,
+                                      style: TextStyle(
+                                        color: colors.primary,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(width: 0, height: 0),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }),
+                );
+              }),
+            ),
+          ),
         ),
       ),
     );

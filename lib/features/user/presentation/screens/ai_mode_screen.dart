@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/shared/widgets/staggered_fade_in.dart';
 
 class AiModeScreen extends ConsumerStatefulWidget {
   const AiModeScreen({super.key});
@@ -54,26 +55,30 @@ class _AiModeScreenState extends ConsumerState<AiModeScreen> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
-          Text('AI Guardian', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 4),
-          Text(
-            'Smart protection that watches out for you, quietly.',
-            style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+          StaggeredFadeIn(
+            children: [
+              Text('AI Guardian', style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 4),
+              Text(
+                'Smart protection that watches out for you, quietly.',
+                style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 20),
+              _SafetyScoreCard(colors: colors),
+              const SizedBox(height: 26),
+              Text('Active Features', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 14),
+              ..._features.map(
+                (f) => _FeatureCard(
+                  colors: colors,
+                  feature: f,
+                  onChanged: (v) => setState(() => f.enabled = v),
+                ),
+              ),
+              const SizedBox(height: 8),
+              _AskAiBar(colors: colors),
+            ],
           ),
-          const SizedBox(height: 20),
-          _SafetyScoreCard(colors: colors),
-          const SizedBox(height: 26),
-          Text('Active Features', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 14),
-          ..._features.map(
-            (f) => _FeatureCard(
-              colors: colors,
-              feature: f,
-              onChanged: (v) => setState(() => f.enabled = v),
-            ),
-          ),
-          const SizedBox(height: 8),
-          _AskAiBar(colors: colors),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/features/user/presentation/screens/add_contact_sheet.dart';
+import 'package:sheshield/shared/widgets/staggered_fade_in.dart';
 import '../../domain/entities/trusted_contact.dart';
 import '../providers/contacts_provider.dart';
 import '../widgets/accept_invite_dialog.dart';
@@ -15,9 +16,11 @@ class ContactsScreen extends ConsumerWidget {
   const ContactsScreen({super.key});
 
   Future<void> _remove(BuildContext context, WidgetRef ref, String id) async {
-    final error = await ref.read(contactsControllerProvider.notifier).remove(id);
+    final error =
+        await ref.read(contactsControllerProvider.notifier).remove(id);
     if (error != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
     }
   }
 
@@ -39,78 +42,93 @@ class ContactsScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Trusted Contacts', style: Theme.of(context).textTheme.headlineSmall),
-                    TextButton(
-                      onPressed: () => showAcceptInviteDialog(context),
-                      child: const Text('Have a code?'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'These people will be notified when you send an SOS alert.',
-                  style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colors.chipBackground,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
+                StaggeredFadeIn(children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.info_outline_rounded, color: colors.primary, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Add at least 3 contacts for reliable emergency coverage.',
-                          style: TextStyle(color: colors.primaryDark, fontWeight: FontWeight.w600, fontSize: 12.5),
-                        ),
+                      Text('Trusted Contacts',
+                          style: Theme.of(context).textTheme.headlineSmall),
+                      TextButton(
+                        onPressed: () => showAcceptInviteDialog(context),
+                        child: const Text('Have a code?'),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 20),
-                contactsAsync.when(
-                  loading: () => const Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Center(child: CircularProgressIndicator()),
+                  const SizedBox(height: 4),
+                  Text(
+                    'These people will be notified when you send an SOS alert.',
+                    style: TextStyle(
+                        color: colors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600),
                   ),
-                  error: (err, _) => Padding(
-                    padding: const EdgeInsets.only(top: 40),
-                    child: Center(
-                      child: Text(
-                        err is Exception ? err.toString() : 'Could not load contacts.',
-                        style: TextStyle(color: colors.textSecondary),
-                        textAlign: TextAlign.center,
-                      ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colors.chipBackground,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline_rounded,
+                            color: colors.primary, size: 20),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Add at least 3 contacts for reliable emergency coverage.',
+                            style: TextStyle(
+                                color: colors.primaryDark,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12.5),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  data: (contacts) => contacts.isEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: Center(
-                            child: Text(
-                              'No trusted contacts yet.\nTap "Add Contact" to add your first one.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        )
-                      : Column(
-                          children: contacts
-                              .map((c) => ContactTile(
-                                    contact: c,
-                                    onDelete: () => _remove(context, ref, c.id),
-                                    onInvite: () => _invite(context, c),
-                                  ))
-                              .toList(),
+                  const SizedBox(height: 20),
+                  contactsAsync.when(
+                    loading: () => const Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (err, _) => Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Center(
+                        child: Text(
+                          err is Exception
+                              ? err.toString()
+                              : 'Could not load contacts.',
+                          style: TextStyle(color: colors.textSecondary),
+                          textAlign: TextAlign.center,
                         ),
-                ),
+                      ),
+                    ),
+                    data: (contacts) => contacts.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 40),
+                            child: Center(
+                              child: Text(
+                                'No trusted contacts yet.\nTap "Add Contact" to add your first one.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: colors.textSecondary,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: contacts
+                                .map((c) => ContactTile(
+                                      contact: c,
+                                      onDelete: () =>
+                                          _remove(context, ref, c.id),
+                                      onInvite: () => _invite(context, c),
+                                    ))
+                                .toList(),
+                          ),
+                  ),
+                ]),
               ],
             ),
           ),
@@ -121,7 +139,8 @@ class ContactsScreen extends ConsumerWidget {
               onPressed: () => showAddContactSheet(context, ref),
               backgroundColor: colors.primary,
               icon: const Icon(Icons.person_add_alt_1_rounded),
-              label: const Text('Add Contact', style: TextStyle(fontWeight: FontWeight.w700)),
+              label: const Text('Add Contact',
+                  style: TextStyle(fontWeight: FontWeight.w700)),
             ),
           ),
         ],

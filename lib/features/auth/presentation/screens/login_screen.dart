@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/router/app_router.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_text_field.dart';
@@ -35,6 +36,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authControllerProvider);
 
@@ -47,22 +49,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     return Scaffold(
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            padding: const EdgeInsets.fromLTRB(28, 40, 28, 24),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'SheShield',
+                  Center(
+                    child: Container(
+                      width: 84,
+                      height: 84,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: colors.heroGradient),
+                        boxShadow: softShadow(color: colors.primary, opacity: 0.3),
+                      ),
+                      child: const Icon(Icons.shield_rounded, color: Colors.white, size: 40),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.appName,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
+                      color: colors.textPrimary,
+                      fontSize: 28,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -70,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Text(
                     l10n.welcomeBack,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+                    style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 32),
                   AuthTextField(
@@ -87,12 +103,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     validator: (v) =>
                         (v == null || v.length < 6) ? l10n.errorShortPassword : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: authState.isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.accentEmerald,
+                      backgroundColor: colors.primary,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     child: authState.isLoading
                         ? const SizedBox(
@@ -103,12 +122,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: Colors.white,
                             ),
                           )
-                        : Text(l10n.logIn),
+                        : Text(l10n.logIn, style: const TextStyle(fontWeight: FontWeight.w800)),
                   ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () => const SignupRoute().push(context),
-                    child: Text(l10n.dontHaveAccount),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => const SignupRoute().push(context),
+                      child: Text(
+                        l10n.dontHaveAccount,
+                        style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -13,6 +13,7 @@ import 'package:sheshield/features/settings/presentation/widgets/theme_mode_pick
 import 'package:sheshield/features/sos/presentation/screens/sos_alarm_screen.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
+import 'package:sheshield/shared/widgets/staggered_fade_in.dart';
 import 'profile_edit_sheets.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -34,29 +35,33 @@ class ProfileScreen extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
-          Text(l10n.profileTitle, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 20),
-          _ProfileHeader(
-            colors: colors,
-            user: user,
-            onEditName: () => showEditNameSheet(context, ref, user),
-          ),
-          const SizedBox(height: 22),
-          _EmergencyInfoCard(
-            colors: colors,
-            user: user,
-            onEditAddress: () => showEditAddressSheet(context, ref, user),
-          ),
-          const SizedBox(height: 26),
-          Text(
-            l10n.settingsTitle,
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: colors.textPrimary),
-          ),
-          const SizedBox(height: 12),
-          _SettingsList(
-            colors: colors,
-            onOpenLanguage: () => showLanguagePickerSheet(context),
-            onLogOut: () => ref.read(authControllerProvider.notifier).signOut(),
+          StaggeredFadeIn(
+            children: [
+              Text(l10n.profileTitle, style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 20),
+              _ProfileHeader(
+                colors: colors,
+                user: user,
+                onEditName: () => showEditNameSheet(context, ref, user),
+              ),
+              const SizedBox(height: 22),
+              _EmergencyInfoCard(
+                colors: colors,
+                user: user,
+                onEditAddress: () => showEditAddressSheet(context, ref, user),
+              ),
+              const SizedBox(height: 26),
+              Text(
+                l10n.settingsTitle,
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: colors.textPrimary),
+              ),
+              const SizedBox(height: 12),
+              _SettingsList(
+                colors: colors,
+                onOpenLanguage: () => showLanguagePickerSheet(context),
+                onLogOut: () => ref.read(authControllerProvider.notifier).signOut(),
+              ),
+            ],
           ),
         ],
       ),
