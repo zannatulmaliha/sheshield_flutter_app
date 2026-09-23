@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/shared/entities/gender.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
 
 /// Lets a new account choose its role at signup.
 /// Female accounts can choose User, Helper, or Both.
 /// All other genders can only be a Helper.
-class UserTypeSelector extends StatelessWidget {
+class UserTypeSelector extends ConsumerWidget {
   const UserTypeSelector({
     super.key,
     required this.gender,
@@ -46,7 +47,8 @@ class UserTypeSelector extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
     final options = _options(l10n);
 
@@ -59,7 +61,7 @@ class UserTypeSelector extends StatelessWidget {
           vertical: 12,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.accentEmerald.withValues(alpha: 0.1),
+          color: colors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -67,15 +69,15 @@ class UserTypeSelector extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: AppTheme.accentEmerald,
+              color: colors.primary,
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 l10n.onlyRoleAvailable(label),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.accentEmerald,
+                  color: colors.primary,
                   fontSize: 12.5,
                 ),
               ),
@@ -98,11 +100,10 @@ class UserTypeSelector extends StatelessWidget {
               size: 16,
             ),
             label: Text(label),
-            selectedColor: AppTheme.accentEmerald,
+            backgroundColor: colors.surface,
+            selectedColor: colors.primary,
             labelStyle: TextStyle(
-              color: value == type
-                  ? Colors.white
-                  : Colors.black87,
+              color: value == type ? Colors.white : colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),

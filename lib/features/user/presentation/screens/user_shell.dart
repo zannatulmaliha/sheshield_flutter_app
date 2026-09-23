@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/user/presentation/widgets/app_bottom_nav.dart';
+import 'package:sheshield/shared/widgets/aurora_background.dart';
 
 /// Bottom-tab shell for a signed-in user: Home / Contacts / AI Mode /
 /// Profile. Each tab is its own branch of a StatefulShellRoute (see
@@ -24,7 +25,13 @@ class UserShell extends ConsumerWidget {
       data: AppTheme.themeFor(resolvePalette(context, ref)),
       child: Scaffold(
         extendBody: true,
-        body: navigationShell,
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            const AuroraBackground(),
+            navigationShell,
+          ],
+        ),
         bottomNavigationBar: AppBottomNav(
           currentIndex: navigationShell.currentIndex,
           onTap: (index) => navigationShell.goBranch(

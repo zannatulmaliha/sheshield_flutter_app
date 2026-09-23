@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 
 /// One styled input, reused by login and signup so the two forms never
 /// drift apart visually. Keep form-specific validation in the screen,
 /// not here — this widget stays dumb on purpose.
-class AuthTextField extends StatelessWidget {
+class AuthTextField extends ConsumerWidget {
   const AuthTextField({
     super.key,
     required this.controller,
@@ -21,27 +22,33 @@ class AuthTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+          labelStyle: TextStyle(color: colors.textSecondary),
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.06),
+          fillColor: colors.surface,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: AppTheme.accentEmerald),
+            borderSide: BorderSide(color: colors.primary),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: colors.sosEnd),
           ),
         ),
       ),

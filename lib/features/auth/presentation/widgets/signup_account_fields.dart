@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/constants/country_dial_codes.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'auth_text_field.dart';
 import 'country_code_picker.dart';
 
 /// The name/email/phone/password block of the signup form, split out
 /// so signup_screen.dart stays under the project's 150-line limit.
-class SignupAccountFields extends StatelessWidget {
+class SignupAccountFields extends ConsumerWidget {
   const SignupAccountFields({
     super.key,
     required this.name,
@@ -25,7 +27,8 @@ class SignupAccountFields extends StatelessWidget {
   final TextEditingController password;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,7 +55,7 @@ class SignupAccountFields extends StatelessWidget {
                 child: TextFormField(
                   controller: phone,
                   keyboardType: TextInputType.phone,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
                   // The dial code is picked separately, so this field
                   // only ever holds the national number -- its length
                   // is validated against the *selected* country, not
@@ -63,9 +66,10 @@ class SignupAccountFields extends StatelessWidget {
                   },
                   decoration: InputDecoration(
                     labelText: l10n.phoneNumber,
-                    labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+                    labelStyle: TextStyle(color: colors.textSecondary),
                     filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.06),
+                    fillColor: colors.surface,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,

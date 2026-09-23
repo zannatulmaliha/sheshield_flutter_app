@@ -46,16 +46,19 @@ class AppPalette {
   final List<Color> sosGradient;
   final List<Color> aiGradient;
 
-  static const _primary = Color(0xFF6C3CE9);
-  static const _primaryDark = Color(0xFF4A22B8);
-  static const _secondary = Color(0xFFFF5C8A);
+  // Brand palette ported from the UI_Screens design (hot pink/rose) --
+  // replaces the earlier violet brand. Identical in light and dark on
+  // purpose (see class doc).
+  static const _primary = Color(0xFFFF2E7E); // hot pink
+  static const _primaryDark = Color(0xFFC2185B); // deep rose
+  static const _secondary = Color(0xFFFF8FB3); // soft pink
   static const _sosStart = Color(0xFFFF4B6E);
   static const _sosEnd = Color(0xFFC2185B);
   static const _success = Color(0xFF2FC28E);
   static const _warning = Color(0xFFFFA94D);
-  static const _heroGradient = [Color(0xFF7B2FF7), Color(0xFFB53FE0)];
+  static const _heroGradient = [Color(0xFFFF6FA5), _primary];
   static const _sosGradient = [_sosStart, _sosEnd];
-  static const _aiGradient = [Color(0xFF3F5EFB), Color(0xFF9C42F5)];
+  static const _aiGradient = [Color(0xFFFF6FB3), Color(0xFFB83280)];
 
   static const light = AppPalette(
     primary: _primary,
@@ -63,13 +66,13 @@ class AppPalette {
     secondary: _secondary,
     sosStart: _sosStart,
     sosEnd: _sosEnd,
-    background: Color(0xFFF7F5FC),
+    background: Color(0xFFFFF8FB), // pale blush white
     surface: Colors.white,
-    textPrimary: Color(0xFF231B3B),
-    textSecondary: Color(0xFF867F9B),
+    textPrimary: Color(0xFF3B1330),
+    textSecondary: Color(0xFF9E7A8C),
     success: _success,
     warning: _warning,
-    chipBackground: Color(0xFFF0EBFB),
+    chipBackground: Color(0xFFFFE1EC),
     heroGradient: _heroGradient,
     sosGradient: _sosGradient,
     aiGradient: _aiGradient,
@@ -81,13 +84,13 @@ class AppPalette {
     secondary: _secondary,
     sosStart: _sosStart,
     sosEnd: _sosEnd,
-    background: Color(0xFF15121F),
-    surface: Color(0xFF211D33),
-    textPrimary: Color(0xFFF5F3FA),
-    textSecondary: Color(0xFFA79FC2),
+    background: Color(0xFF1F131A), // deep maroon-black
+    surface: Color(0xFF2B1B24),
+    textPrimary: Color(0xFFFBEEF3),
+    textSecondary: Color(0xFFC79AAE),
     success: _success,
     warning: _warning,
-    chipBackground: Color(0xFF2A2440),
+    chipBackground: Color(0xFF3A2530),
     heroGradient: _heroGradient,
     sosGradient: _sosGradient,
     aiGradient: _aiGradient,

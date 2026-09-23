@@ -1,28 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/shared/entities/gender.dart';
 
 /// Extracted from the signup form so that screen stays under the
 /// project's 150-line-per-file limit, and so this becomes reusable if
 /// gender ever needs editing elsewhere (e.g. a future profile screen).
-class GenderDropdown extends StatelessWidget {
+class GenderDropdown extends ConsumerWidget {
   const GenderDropdown({super.key, required this.value, required this.onChanged});
 
   final Gender value;
   final ValueChanged<Gender?> onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
     return DropdownButtonFormField<Gender>(
       initialValue: value,
-      dropdownColor: const Color(0xFF1E1B4B),
-      style: const TextStyle(color: Colors.white),
+      dropdownColor: colors.surface,
+      style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
       decoration: InputDecoration(
         labelText: l10n.gender,
-        labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+        labelStyle: TextStyle(color: colors.textSecondary),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.06),
+        fillColor: colors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,

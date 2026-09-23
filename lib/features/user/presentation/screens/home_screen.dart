@@ -15,6 +15,8 @@ import 'package:sheshield/features/user/presentation/widgets/record_evidence_she
 import 'package:sheshield/features/user/presentation/widgets/safe_route_sheet.dart';
 import 'package:sheshield/features/user/presentation/widgets/section_title.dart';
 import 'package:sheshield/features/user/presentation/widgets/sos_button.dart';
+import 'package:sheshield/shared/widgets/glass_card.dart';
+import 'package:sheshield/shared/widgets/staggered_fade_in.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({
@@ -34,55 +36,47 @@ class HomeScreen extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 140),
         children: [
-          const _TopBar(),
-
-          const SizedBox(height: 24),
-
-          Center(
-            child: Column(
-              children: [
-                const SosButton(),
-                const SizedBox(height: 14),
-                Text(
-                  l10n.tapForEmergencyAlert,
-                  style: TextStyle(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+          StaggeredFadeIn(
+            children: [
+              const _TopBar(),
+              const SizedBox(height: 24),
+              GlassCard(
+                padding: const EdgeInsets.symmetric(vertical: 26),
+                child: Column(
+                  children: [
+                    const SosButton(),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.tapForEmergencyAlert,
+                      style: TextStyle(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          const CheckInBanner(),
-
-          const _StatusCard(),
-
-          const SizedBox(height: 28),
-
-          SectionTitle(
-            title: l10n.quickActions,
-          ),
-
-          const SizedBox(height: 14),
-
-          const _QuickActionsGrid(),
-
-          const SizedBox(height: 28),
-
-          SectionTitle(
-            title: l10n.trustedContacts,
-            actionLabel: l10n.seeAll,
-            onAction: onOpenContacts,
-          ),
-
-          const SizedBox(height: 14),
-
-          _ContactsPreview(
-            onTap: onOpenContacts,
+              ),
+              const SizedBox(height: 28),
+              const CheckInBanner(),
+              const _StatusCard(),
+              const SizedBox(height: 28),
+              SectionTitle(
+                title: l10n.quickActions,
+              ),
+              const SizedBox(height: 14),
+              const _QuickActionsGrid(),
+              const SizedBox(height: 28),
+              SectionTitle(
+                title: l10n.trustedContacts,
+                actionLabel: l10n.seeAll,
+                onAction: onOpenContacts,
+              ),
+              const SizedBox(height: 14),
+              _ContactsPreview(
+                onTap: onOpenContacts,
+              ),
+            ],
           ),
         ],
       ),
@@ -121,9 +115,7 @@ class _TopBar extends ConsumerWidget {
             size: 24,
           ),
         ),
-
         const SizedBox(width: 12),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +140,6 @@ class _TopBar extends ConsumerWidget {
             ],
           ),
         ),
-
         _IconBadge(
           colors: colors,
           icon: Icons.notifications_none_rounded,
@@ -193,7 +184,6 @@ class _IconBadge extends StatelessWidget {
                 size: 22,
               ),
             ),
-
             Positioned(
               top: 11,
               right: 11,
@@ -261,9 +251,7 @@ class _StatusCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
                   l10n.liveLocationSharingCount(contactCount),
                   style: TextStyle(
@@ -275,9 +263,7 @@ class _StatusCard extends ConsumerWidget {
               ],
             ),
           ),
-
           const SizedBox(width: 12),
-
           Container(
             width: 46,
             height: 46,
@@ -355,9 +341,11 @@ class _QuickActionsGrid extends ConsumerWidget {
     if (confirmed != true || !context.mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
-    final error = await ref.read(shareLocationControllerProvider.notifier).share();
+    final error =
+        await ref.read(shareLocationControllerProvider.notifier).share();
     messenger.showSnackBar(
-      SnackBar(content: Text(error ?? 'Location sent to your trusted contacts.')),
+      SnackBar(
+          content: Text(error ?? 'Location sent to your trusted contacts.')),
     );
   }
 
@@ -418,9 +406,7 @@ class _QuickActionsGrid extends ConsumerWidget {
                     size: 19,
                   ),
                 ),
-
                 const SizedBox(width: 10),
-
                 Expanded(
                   child: Text(
                     label,
@@ -492,8 +478,7 @@ class _ContactsPreview extends ConsumerWidget {
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 18,
-                          backgroundColor:
-                              palette[i % palette.length],
+                          backgroundColor: palette[i % palette.length],
                           child: Text(
                             c.initials,
                             style: const TextStyle(
@@ -509,7 +494,6 @@ class _ContactsPreview extends ConsumerWidget {
                 ),
               ),
             ),
-
             Expanded(
               child: Text(
                 contacts.isEmpty
@@ -522,7 +506,6 @@ class _ContactsPreview extends ConsumerWidget {
                 ),
               ),
             ),
-
             Icon(
               Icons.chevron_right_rounded,
               color: colors.textSecondary,
