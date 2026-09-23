@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
@@ -137,6 +138,7 @@ class _SosConfirmSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sosState = ref.watch(sosControllerProvider);
+    final l10n = AppLocalizations.of(context);
 
     return SafeArea(
       child: Container(
@@ -184,7 +186,7 @@ class _SosConfirmSheet extends ConsumerWidget {
             const SizedBox(height: 18),
 
             Text(
-              'Send emergency alert?',
+              l10n.sendEmergencyAlert,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
@@ -192,7 +194,7 @@ class _SosConfirmSheet extends ConsumerWidget {
             const SizedBox(height: 8),
 
             Text(
-              'Your live location and an SOS message will be sent to all your trusted contacts immediately.',
+              l10n.sendEmergencyAlertBody,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -218,7 +220,7 @@ class _SosConfirmSheet extends ConsumerWidget {
                         ? null
                         : () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      l10n.cancel,
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
@@ -276,9 +278,9 @@ class _SosConfirmSheet extends ConsumerWidget {
                               color: Colors.white,
                             ),
                           )
-                        : const Text(
-                            'Send SOS',
-                            style: TextStyle(
+                        : Text(
+                            l10n.sendSos,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w800,
                             ),
                           ),

@@ -39,5 +39,81 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+
+  "chooseLanguage": "Choose language",
+  "language": "Language",
+
+  "sendEmergencyAlert": "Send Emergency Alert?",
+  "sendEmergencyAlertBody": "Your trusted contacts will get your live location and a call for help immediately.",
+  "cancel": "Cancel",
+  "sendSos": "Send SOS",
+  "sosAlertSentTitle": "Alert Sent",
+  "sosNotifiedFallback": "Your emergency contacts have been notified.",
+  "sosNotifiedAll": "{count, plural, =1{1 contact was notified} other{All {count} contacts were notified}}",
+  "@sosNotifiedAll": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "sosNotifiedPartial": "Notified {sent} of {total} contacts — {failed} failed to reach.",
+  "@sosNotifiedPartial": {
+    "placeholders": {
+      "sent": {"type": "int"},
+      "total": {"type": "int"},
+      "failed": {"type": "int"}
+    }
+  },
+  "imSafe": "I'm Safe",
+
+  "greetingHi": "Hi, {name} 👋",
+  "@greetingHi": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "homeTagline": "{gender, select, female{Stay safe, stay confident} male{Watching out for the people you love} other{Stay strong, stay ready}}",
+  "@homeTagline": {
+    "placeholders": {
+      "gender": {"type": "String"}
+    }
+  },
+  "tapForEmergencyAlert": "Tap for Emergency Alert",
+  "youAreProtected": "You're Protected",
+  "liveLocationSharingCount": "{count, plural, =1{Live location sharing is ON for 1 trusted contact} other{Live location sharing is ON for {count} trusted contacts}}",
+  "@liveLocationSharingCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "quickActions": "Quick Actions",
+  "fakeCall": "Fake Call",
+  "shareLocation": "Share Location",
+  "recordEvidence": "Record Evidence",
+  "safeRoute": "Safe Route",
+  "trustedContacts": "Trusted Contacts",
+  "seeAll": "See all",
+  "addContactToEnableSos": "Add a contact to enable SOS",
+  "contactsWillBeAlerted": "{count, plural, =1{1 contact will be alerted} other{{count} contacts will be alerted}}",
+  "@contactsWillBeAlerted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "profileTitle": "Profile",
+  "settingsTitle": "Settings",
+  "emergencyInfo": "Emergency Info",
+  "phone": "Phone",
+  "role": "Role",
+  "userTypeUser": "User",
+  "userTypeHelper": "Helper",
+  "userTypeUserHelper": "User & Helper",
+  "homeAddress": "Home Address",
+  "tapToAdd": "Tap to add",
+  "privacyPermissions": "Privacy & Permissions",
+  "notificationSettings": "Notification Settings",
+  "appTheme": "App Theme",
+  "helpSupport": "Help & Support",
+  "logOut": "Log Out"
 }
