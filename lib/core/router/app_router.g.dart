@@ -11,6 +11,7 @@ List<RouteBase> get $appRoutes => [
       $signupRoute,
       $verificationRoute,
       $sosSentRoute,
+      $notificationsRoute,
       $helperAlertDetailRoute,
       $rootShellRouteData,
     ];
@@ -92,6 +93,29 @@ extension $SosSentRouteExtension on SosSentRoute {
 
   String get location => GoRouteData.$location(
         '/sos-sent',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $notificationsRoute => GoRouteData.$route(
+      path: '/notifications',
+      factory: $NotificationsRouteExtension._fromState,
+    );
+
+extension $NotificationsRouteExtension on NotificationsRoute {
+  static NotificationsRoute _fromState(GoRouterState state) =>
+      const NotificationsRoute();
+
+  String get location => GoRouteData.$location(
+        '/notifications',
       );
 
   void go(BuildContext context) => context.go(location);

@@ -205,6 +205,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safeRoute => 'Safe Route';
 
   @override
+  String get checkInTimer => 'Check-In Timer';
+
+  @override
+  String get checkInSheetTitle => 'Set a check-in timer';
+
+  @override
+  String get checkInSheetBody =>
+      'If you don\'t check in before time\'s up, we\'ll automatically send an SOS with your live location to your trusted contacts.';
+
+  @override
+  String checkInStartButton(int minutes) {
+    return 'Start $minutes-minute timer';
+  }
+
+  @override
+  String get checkInAlreadyRunningTitle => 'Check-in already running';
+
+  @override
+  String checkInAlreadyRunningBody(String time) {
+    return '$time left before an automatic SOS goes out to your trusted contacts.';
+  }
+
+  @override
+  String get checkInImSafeCancel => 'I\'m Safe — Cancel';
+
+  @override
+  String checkInBannerCountdown(String time) {
+    return '$time until auto-SOS';
+  }
+
+  @override
+  String get checkInImSafe => 'I\'m Safe';
+
+  @override
+  String get checkInSosSentMessage =>
+      'You didn\'t check in in time — an SOS was sent automatically.';
+
+  @override
   String get trustedContacts => 'Trusted Contacts';
 
   @override
@@ -255,6 +293,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToAdd => 'Tap to add';
 
   @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get noNotificationsYetTitle => 'No alerts yet';
+
+  @override
+  String get noNotificationsYetBody =>
+      'Your past SOS alerts will show up here.';
+
+  @override
+  String get alertStatusActive => 'Active';
+
+  @override
+  String get alertStatusResolved => 'Resolved';
+
+  @override
+  String get alertStatusAccepted => 'Accepted';
+
+  @override
   String get privacyPermissions => 'Privacy & Permissions';
 
   @override
@@ -262,6 +319,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appTheme => 'App Theme';
+
+  @override
+  String get chooseTheme => 'Choose appearance';
+
+  @override
+  String get themeSystem => 'Follow system';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 
   @override
   String get helpSupport => 'Help & Support';

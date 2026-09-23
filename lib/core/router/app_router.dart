@@ -9,6 +9,7 @@ import 'package:sheshield/features/helper/domain/entities/accepted_alert.dart';
 import 'package:sheshield/features/helper/presentation/screens/helper_alert_detail_screen.dart';
 import 'package:sheshield/features/helper/presentation/screens/helper_dashboard_screen.dart';
 import 'package:sheshield/features/helper/presentation/screens/helper_shell.dart';
+import 'package:sheshield/features/sos/presentation/screens/notifications_screen.dart';
 import 'package:sheshield/features/user/presentation/screens/ai_mode_screen.dart';
 import 'package:sheshield/features/user/presentation/screens/home_screen.dart';
 import 'package:sheshield/features/user/presentation/screens/profile_screen.dart';
@@ -118,6 +119,15 @@ class SosSentRoute extends GoRouteData {
         transitionsBuilder: (context, animation, secondaryAnimation, child) => child,
         child: const SosActivatedView(),
       );
+}
+
+/// The signed-in user's own SOS history, reached from the home bell icon.
+@TypedGoRoute<NotificationsRoute>(path: '/notifications')
+class NotificationsRoute extends GoRouteData {
+  const NotificationsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const NotificationsScreen();
 }
 
 /// The one screen that shows a helper's exact match -- location + phone --

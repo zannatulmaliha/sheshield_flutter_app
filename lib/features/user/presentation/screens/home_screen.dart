@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sheshield/core/l10n/app_localizations.dart';
+import 'package:sheshield/core/router/app_router.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 import 'package:sheshield/features/contacts/presentation/providers/contacts_provider.dart';
+import 'package:sheshield/features/user/presentation/providers/share_location_provider.dart';
+import 'package:sheshield/features/user/presentation/widgets/checkin_banner.dart';
+import 'package:sheshield/features/user/presentation/widgets/checkin_sheet.dart';
+import 'package:sheshield/features/user/presentation/widgets/fake_call_sheet.dart';
+import 'package:sheshield/features/user/presentation/widgets/record_evidence_sheet.dart';
+import 'package:sheshield/features/user/presentation/widgets/safe_route_sheet.dart';
 import 'package:sheshield/features/user/presentation/widgets/section_title.dart';
 import 'package:sheshield/features/user/presentation/widgets/sos_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({
     super.key,
     required this.onOpenContacts,
@@ -17,7 +25,8 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onOpenContacts;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -36,8 +45,8 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 14),
                 Text(
                   l10n.tapForEmergencyAlert,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  style: TextStyle(
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -47,6 +56,8 @@ class HomeScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 28),
+
+          const CheckInBanner(),
 
           const _StatusCard(),
 
@@ -84,6 +95,7 @@ class _TopBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(authStateProvider).valueOrNull;
     final firstName = (user?.name ?? '').trim().split(RegExp(r'\s+')).first;
@@ -95,11 +107,11 @@ class _TopBar extends ConsumerWidget {
           height: 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: AppColors.heroGradient,
+            gradient: LinearGradient(
+              colors: colors.heroGradient,
             ),
             boxShadow: softShadow(
-              color: AppColors.primary,
+              color: colors.primary,
               opacity: 0.25,
             ),
           ),
@@ -127,8 +139,8 @@ class _TopBar extends ConsumerWidget {
                 // helper who isn't a woman doesn't get a message
                 // written for the person he's protecting.
                 l10n.homeTagline(user?.gender.name ?? 'other'),
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
+                style: TextStyle(
+                  color: colors.textSecondary,
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                 ),
@@ -138,8 +150,9 @@ class _TopBar extends ConsumerWidget {
         ),
 
         _IconBadge(
+          colors: colors,
           icon: Icons.notifications_none_rounded,
-          onTap: () {},
+          onTap: () => const NotificationsRoute().push(context),
         ),
       ],
     );
@@ -148,10 +161,12 @@ class _TopBar extends ConsumerWidget {
 
 class _IconBadge extends StatelessWidget {
   const _IconBadge({
+    required this.colors,
     required this.icon,
     required this.onTap,
   });
 
+  final AppPalette colors;
   final IconData icon;
   final VoidCallback onTap;
 
@@ -163,7 +178,7 @@ class _IconBadge extends StatelessWidget {
         width: 46,
         height: 46,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           shape: BoxShape.circle,
           boxShadow: softShadow(
             opacity: 0.10,
@@ -174,7 +189,7 @@ class _IconBadge extends StatelessWidget {
             Center(
               child: Icon(
                 icon,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
                 size: 22,
               ),
             ),
@@ -185,8 +200,8 @@ class _IconBadge extends StatelessWidget {
               child: Container(
                 width: 8,
                 height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.secondary,
+                decoration: BoxDecoration(
+                  color: colors.secondary,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -203,6 +218,7 @@ class _StatusCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
     final contactCount =
         ref.watch(contactsControllerProvider).valueOrNull?.length ?? 0;
@@ -210,14 +226,14 @@ class _StatusCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: AppColors.heroGradient,
+        gradient: LinearGradient(
+          colors: colors.heroGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(26),
         boxShadow: softShadow(
-          color: AppColors.primary,
+          color: colors.primary,
           opacity: 0.28,
         ),
       ),
@@ -281,7 +297,7 @@ class _StatusCard extends ConsumerWidget {
   }
 }
 
-class _QuickActionsGrid extends StatelessWidget {
+class _QuickActionsGrid extends ConsumerWidget {
   const _QuickActionsGrid();
 
   static const _colors = [
@@ -289,6 +305,7 @@ class _QuickActionsGrid extends StatelessWidget {
     Color(0xFF3F5EFB),
     Color(0xFFFFA94D),
     Color(0xFF2FC28E),
+    AppTheme.accentPurple,
   ];
 
   static const _icons = [
@@ -296,10 +313,57 @@ class _QuickActionsGrid extends StatelessWidget {
     Icons.share_location_rounded,
     Icons.videocam_rounded,
     Icons.alt_route_rounded,
+    Icons.timer_outlined,
   ];
 
+  Future<void> _onTap(BuildContext context, WidgetRef ref, int index) async {
+    switch (index) {
+      case 0:
+        await showFakeCallSheet(context);
+      case 1:
+        await _shareLocation(context, ref);
+      case 2:
+        await showRecordEvidenceSheet(context);
+      case 3:
+        await showSafeRouteSheet(context);
+      case 4:
+        await showCheckInSheet(context);
+    }
+  }
+
+  Future<void> _shareLocation(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.shareLocation),
+        content: const Text(
+          'Send your current location to all trusted contacts by SMS?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Send'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final error = await ref.read(shareLocationControllerProvider.notifier).share();
+    messenger.showSnackBar(
+      SnackBar(content: Text(error ?? 'Location sent to your trusted contacts.')),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
     // Labels can't live in the static const tuple list above --
     // l10n getters aren't compile-time constants -- so they're
@@ -309,6 +373,7 @@ class _QuickActionsGrid extends StatelessWidget {
       l10n.shareLocation,
       l10n.recordEvidence,
       l10n.safeRoute,
+      l10n.checkInTimer,
     ];
     final actions = List.generate(
       _icons.length,
@@ -322,52 +387,55 @@ class _QuickActionsGrid extends StatelessWidget {
       mainAxisSpacing: 14,
       crossAxisSpacing: 14,
       childAspectRatio: 2.5,
-      children: actions.map((a) {
-        final (icon, label, color) = a;
+      children: List.generate(actions.length, (index) {
+        final (icon, label, color) = actions[index];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: softShadow(
-              opacity: 0.08,
+        return GestureDetector(
+          onTap: () => _onTap(context, ref, index),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 19,
-                ),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: softShadow(
+                opacity: 0.08,
               ),
-
-              const SizedBox(width: 10),
-
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12.5,
-                    color: AppColors.textPrimary,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.14),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 19,
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(width: 10),
+
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12.5,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
-      }).toList(),
+      }),
     );
   }
 }
@@ -384,6 +452,7 @@ class _ContactsPreview extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
     final contacts =
         ref.watch(contactsControllerProvider).valueOrNull ?? const [];
@@ -393,7 +462,7 @@ class _ContactsPreview extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(22),
           boxShadow: softShadow(
             opacity: 0.08,
@@ -446,17 +515,17 @@ class _ContactsPreview extends ConsumerWidget {
                 contacts.isEmpty
                     ? l10n.addContactToEnableSos
                     : l10n.contactsWillBeAlerted(contacts.length),
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 12.5,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             ),
 
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/router/app_router.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
@@ -47,6 +48,7 @@ class _SosButtonState extends ConsumerState<SosButton>
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     final size = widget.size;
 
     return GestureDetector(
@@ -71,9 +73,9 @@ class _SosButtonState extends ConsumerState<SosButton>
                       child: Container(
                         width: size + (size * 0.7 * progress),
                         height: size + (size * 0.7 * progress),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.sosStart,
+                          color: colors.sosStart,
                         ),
                       ),
                     );
@@ -87,14 +89,14 @@ class _SosButtonState extends ConsumerState<SosButton>
               height: size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: AppColors.sosGradient,
+                gradient: LinearGradient(
+                  colors: colors.sosGradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.sosEnd.withValues(alpha: 0.45),
+                    color: colors.sosEnd.withValues(alpha: 0.45),
                     blurRadius: 28,
                     offset: const Offset(0, 12),
                   ),
@@ -137,6 +139,7 @@ class _SosConfirmSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final sosState = ref.watch(sosControllerProvider);
     final l10n = AppLocalizations.of(context);
 
@@ -145,7 +148,7 @@ class _SosConfirmSheet extends ConsumerWidget {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(28),
           boxShadow: softShadow(opacity: 0.18),
         ),
@@ -170,10 +173,10 @@ class _SosConfirmSheet extends ConsumerWidget {
               alignment: Alignment.center,
               width: 64,
               height: 64,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: AppColors.sosGradient,
+                  colors: colors.sosGradient,
                 ),
               ),
               child: const Icon(
@@ -222,7 +225,7 @@ class _SosConfirmSheet extends ConsumerWidget {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -234,10 +237,10 @@ class _SosConfirmSheet extends ConsumerWidget {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.sosEnd,
+                      backgroundColor: colors.sosEnd,
                       foregroundColor: Colors.white,
                       disabledBackgroundColor:
-                          AppColors.sosEnd.withValues(alpha: 0.6),
+                          colors.sosEnd.withValues(alpha: 0.6),
                       disabledForegroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         vertical: 16,

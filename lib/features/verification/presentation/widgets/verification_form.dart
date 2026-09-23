@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import '../../domain/entities/verification_status.dart';
 import 'photo_picker_tile.dart';
 
 /// The upload form, shown when status is none or rejected. Owns its own
 /// in-progress photo state; only calls [onSubmit] once all three are picked.
-class VerificationForm extends StatefulWidget {
+class VerificationForm extends ConsumerStatefulWidget {
   const VerificationForm({super.key, required this.status, required this.onSubmit});
 
   final VerificationStatus status;
@@ -18,10 +19,10 @@ class VerificationForm extends StatefulWidget {
   }) onSubmit;
 
   @override
-  State<VerificationForm> createState() => _VerificationFormState();
+  ConsumerState<VerificationForm> createState() => _VerificationFormState();
 }
 
-class _VerificationFormState extends State<VerificationForm> {
+class _VerificationFormState extends ConsumerState<VerificationForm> {
   static const _maxBytes = 5 * 1024 * 1024; // matches the server's 5 MB limit
   final _picker = ImagePicker();
 
@@ -66,6 +67,7 @@ class _VerificationFormState extends State<VerificationForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     final ready = _front != null && _back != null && _selfie != null;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
@@ -75,21 +77,22 @@ class _VerificationFormState extends State<VerificationForm> {
             padding: const EdgeInsets.all(14),
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: AppColors.sosEnd.withValues(alpha: 0.08),
+              color: colors.sosEnd.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Text('Not approved: ${widget.status.note}\nYou can send new photos below.',
-                style: const TextStyle(color: AppColors.textPrimary, fontSize: 13)),
+                style: TextStyle(color: colors.textPrimary, fontSize: 13)),
           ),
-        const Text('Verify your identity',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.textPrimary)),
+        Text('Verify your identity',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: colors.textPrimary)),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Add a photo of the front and back of your national ID, and a selfie so we can compare your face to it.',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 13.5, height: 1.45),
+          style: TextStyle(color: colors.textSecondary, fontSize: 13.5, height: 1.45),
         ),
         const SizedBox(height: 20),
         PhotoPickerTile(
+          colors: colors,
           label: 'ID card: front',
           hint: 'All corners visible, text readable',
           icon: Icons.badge_outlined,
@@ -97,6 +100,7 @@ class _VerificationFormState extends State<VerificationForm> {
           onTap: _submitting ? null : () => _pick(false, (b) => setState(() => _front = b)),
         ),
         PhotoPickerTile(
+          colors: colors,
           label: 'ID card: back',
           hint: 'Flat, in good light, no glare',
           icon: Icons.credit_card_rounded,
@@ -104,6 +108,7 @@ class _VerificationFormState extends State<VerificationForm> {
           onTap: _submitting ? null : () => _pick(false, (b) => setState(() => _back = b)),
         ),
         PhotoPickerTile(
+          colors: colors,
           label: 'Selfie',
           hint: 'Your face, clearly visible, taken now',
           icon: Icons.face_rounded,
@@ -113,12 +118,12 @@ class _VerificationFormState extends State<VerificationForm> {
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 10),
-            child: Text(_error!, style: const TextStyle(color: AppColors.sosEnd, fontWeight: FontWeight.w700, fontSize: 12.5)),
+            child: Text(_error!, style: TextStyle(color: colors.sosEnd, fontWeight: FontWeight.w700, fontSize: 12.5)),
           ),
         const SizedBox(height: 8),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

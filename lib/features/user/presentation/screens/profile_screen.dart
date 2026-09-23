@@ -2,9 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sheshield/features/settings/presentation/screens/help_support_screen.dart';
+import 'package:sheshield/features/settings/presentation/screens/notification_settings_screen.dart';
+import 'package:sheshield/features/settings/presentation/screens/privacy_permissions_screen.dart';
 import 'package:sheshield/features/settings/presentation/widgets/language_picker_sheet.dart';
+import 'package:sheshield/features/settings/presentation/widgets/theme_mode_picker_sheet.dart';
 import 'package:sheshield/features/sos/presentation/screens/sos_alarm_screen.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
@@ -15,6 +20,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context);
     final AsyncValue<AppUser?> authState = ref.watch(authStateProvider);
     final AppUser? user = authState.valueOrNull;
@@ -31,21 +37,24 @@ class ProfileScreen extends ConsumerWidget {
           Text(l10n.profileTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 20),
           _ProfileHeader(
+            colors: colors,
             user: user,
             onEditName: () => showEditNameSheet(context, ref, user),
           ),
           const SizedBox(height: 22),
           _EmergencyInfoCard(
+            colors: colors,
             user: user,
             onEditAddress: () => showEditAddressSheet(context, ref, user),
           ),
           const SizedBox(height: 26),
           Text(
             l10n.settingsTitle,
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: colors.textPrimary),
           ),
           const SizedBox(height: 12),
           _SettingsList(
+            colors: colors,
             onOpenLanguage: () => showLanguagePickerSheet(context),
             onLogOut: () => ref.read(authControllerProvider.notifier).signOut(),
           ),
@@ -56,8 +65,9 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.user, required this.onEditName});
+  const _ProfileHeader({required this.colors, required this.user, required this.onEditName});
 
+  final AppPalette colors;
   final AppUser user;
   final VoidCallback onEditName;
 
@@ -73,13 +83,13 @@ class _ProfileHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: AppColors.heroGradient,
+        gradient: LinearGradient(
+          colors: colors.heroGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(26),
-        boxShadow: softShadow(color: AppColors.primary, opacity: 0.28),
+        boxShadow: softShadow(color: colors.primary, opacity: 0.28),
       ),
       child: Row(
         children: [
@@ -133,8 +143,9 @@ class _ProfileHeader extends StatelessWidget {
 }
 
 class _EmergencyInfoCard extends StatelessWidget {
-  const _EmergencyInfoCard({required this.user, required this.onEditAddress});
+  const _EmergencyInfoCard({required this.colors, required this.user, required this.onEditAddress});
 
+  final AppPalette colors;
   final AppUser user;
   final VoidCallback onEditAddress;
 
@@ -153,7 +164,7 @@ class _EmergencyInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: softShadow(opacity: 0.07),
       ),
@@ -162,25 +173,25 @@ class _EmergencyInfoCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.medical_information_rounded, color: AppColors.secondary, size: 20),
+              Icon(Icons.medical_information_rounded, color: colors.secondary, size: 20),
               const SizedBox(width: 8),
               Text(
                 l10n.emergencyInfo,
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: AppColors.textPrimary),
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: colors.textPrimary),
               ),
             ],
           ),
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: _InfoTile(label: l10n.phone, value: '${user.countryCode} ${user.phone}')),
-              Expanded(child: _InfoTile(label: l10n.role, value: roleLabel)),
+              Expanded(child: _InfoTile(colors: colors, label: l10n.phone, value: '${user.countryCode} ${user.phone}')),
+              Expanded(child: _InfoTile(colors: colors, label: l10n.role, value: roleLabel)),
             ],
           ),
           const SizedBox(height: 12),
           GestureDetector(
             onTap: onEditAddress,
-            child: _InfoTile(label: l10n.homeAddress, value: addressLabel),
+            child: _InfoTile(colors: colors, label: l10n.homeAddress, value: addressLabel),
           ),
         ],
       ),
@@ -189,8 +200,9 @@ class _EmergencyInfoCard extends StatelessWidget {
 }
 
 class _InfoTile extends StatelessWidget {
-  const _InfoTile({required this.label, required this.value});
+  const _InfoTile({required this.colors, required this.label, required this.value});
 
+  final AppPalette colors;
   final String label;
   final String value;
 
@@ -199,17 +211,18 @@ class _InfoTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(label, style: TextStyle(color: colors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
         const SizedBox(height: 3),
-        Text(value, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13.5, fontWeight: FontWeight.w700)),
+        Text(value, style: TextStyle(color: colors.textPrimary, fontSize: 13.5, fontWeight: FontWeight.w700)),
       ],
     );
   }
 }
 
 class _SettingsList extends StatelessWidget {
-  const _SettingsList({required this.onOpenLanguage, required this.onLogOut});
+  const _SettingsList({required this.colors, required this.onOpenLanguage, required this.onLogOut});
 
+  final AppPalette colors;
   final VoidCallback onOpenLanguage;
   final VoidCallback onLogOut;
 
@@ -236,16 +249,31 @@ class _SettingsList extends StatelessWidget {
               ),
             ), false),
       (Icons.language_rounded, l10n.language, onOpenLanguage, false),
-      (Icons.lock_outline_rounded, l10n.privacyPermissions, () {}, false),
-      (Icons.notifications_none_rounded, l10n.notificationSettings, () {}, false),
-      (Icons.dark_mode_outlined, l10n.appTheme, () {}, false),
-      (Icons.help_outline_rounded, l10n.helpSupport, () {}, false),
+      (
+        Icons.lock_outline_rounded,
+        l10n.privacyPermissions,
+        () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPermissionsScreen())),
+        false,
+      ),
+      (
+        Icons.notifications_none_rounded,
+        l10n.notificationSettings,
+        () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationSettingsScreen())),
+        false,
+      ),
+      (Icons.dark_mode_outlined, l10n.appTheme, () => showThemeModePickerSheet(context), false),
+      (
+        Icons.help_outline_rounded,
+        l10n.helpSupport,
+        () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportScreen())),
+        false,
+      ),
       (Icons.logout_rounded, l10n.logOut, onLogOut, true),
     ];
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: softShadow(opacity: 0.07),
       ),
@@ -265,22 +293,22 @@ class _SettingsList extends StatelessWidget {
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: (isDestructive ? AppColors.sosEnd : AppColors.primary).withValues(alpha: 0.1),
+                      color: (isDestructive ? colors.sosEnd : colors.primary).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(icon, size: 18, color: isDestructive ? AppColors.sosEnd : AppColors.primary),
+                    child: Icon(icon, size: 18, color: isDestructive ? colors.sosEnd : colors.primary),
                   ),
                   title: Text(
                     label,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 13.5,
-                      color: isDestructive ? AppColors.sosEnd : AppColors.textPrimary,
+                      color: isDestructive ? colors.sosEnd : colors.textPrimary,
                     ),
                   ),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                  trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                 ),
-                if (!isLast) const Divider(height: 1, indent: 68, endIndent: 16, color: Color(0xFFF0EEF7)),
+                if (!isLast) Divider(height: 1, indent: 68, endIndent: 16, color: colors.chipBackground),
               ],
             );
           }),

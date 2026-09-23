@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'app_palette.dart';
 
 /// Single source of truth for app styling. Screens should never
 /// hardcode colors — pull from here so a rebrand is a one-file change.
@@ -38,22 +39,26 @@ class AppTheme {
 
   static List<Color>? get heroGradient => null;
 
-  /// Light theme for the User-mode feature (home/contacts/AI mode/profile),
-  /// ported from the original `auth` branch. Scoped locally via a `Theme`
+  /// Theme for the User-mode feature (home/contacts/AI mode/profile/SOS/
+  /// notifications/verification/check-in), parameterized by [palette] so a
+  /// light/dark choice (see [resolvePalette]) actually changes what's on
+  /// screen -- scaffold background, default text colors, card color, all
+  /// derive from the same palette a screen's own explicit
+  /// `colors.textPrimary`-style styling uses. Scoped locally via a `Theme`
   /// widget in `UserShell` rather than applied app-wide, since Helper/Auth
-  /// keep the dark theme above.
-  static ThemeData get light {
+  /// keep the fixed dark theme above regardless of this choice.
+  static ThemeData themeFor(AppPalette palette) {
     final base = ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: palette == AppPalette.dark ? Brightness.dark : Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.light,
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        surface: AppColors.surface,
+        seedColor: palette.primary,
+        brightness: palette == AppPalette.dark ? Brightness.dark : Brightness.light,
+        primary: palette.primary,
+        secondary: palette.secondary,
+        surface: palette.surface,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: palette.background,
       fontFamily: GoogleFonts.manrope().fontFamily,
     );
 
@@ -62,28 +67,28 @@ class AppTheme {
         headlineSmall: GoogleFonts.manrope(
           fontSize: 22,
           fontWeight: FontWeight.w800,
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
         ),
         titleLarge: GoogleFonts.manrope(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
         ),
         titleMedium: GoogleFonts.manrope(
           fontSize: 15,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
         ),
         bodyMedium: GoogleFonts.manrope(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: AppColors.textSecondary,
+          color: palette.textSecondary,
           height: 1.4,
         ),
         bodySmall: GoogleFonts.manrope(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: AppColors.textSecondary,
+          color: palette.textSecondary,
         ),
       ),
       appBarTheme: const AppBarTheme(
@@ -93,7 +98,7 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: AppColors.surface,
+        color: palette.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       splashFactory: InkRipple.splashFactory,
@@ -101,31 +106,11 @@ class AppTheme {
   }
 }
 
-/// Design tokens for the User-mode (light) UI, ported from the original
-/// `auth` branch's `lib/theme/app_theme.dart` unchanged.
-class AppColors {
-  AppColors._();
-
-  static const Color primary = Color(0xFF6C3CE9); // deep violet
-  static const Color primaryDark = Color(0xFF4A22B8);
-  static const Color secondary = Color(0xFFFF5C8A); // warm rose
-  static const Color sosStart = Color(0xFFFF4B6E);
-  static const Color sosEnd = Color(0xFFC2185B);
-  static const Color background = Color(0xFFF7F5FC);
-  static const Color surface = Colors.white;
-  static const Color textPrimary = Color(0xFF231B3B);
-  static const Color textSecondary = Color(0xFF867F9B);
-  static const Color success = Color(0xFF2FC28E);
-  static const Color warning = Color(0xFFFFA94D);
-  static const Color chipBackground = Color(0xFFF0EBFB);
-
-  static const List<Color> heroGradient = [Color(0xFF7B2FF7), Color(0xFFB53FE0)];
-  static const List<Color> sosGradient = [sosStart, sosEnd];
-  static const List<Color> aiGradient = [Color(0xFF3F5EFB), Color(0xFF9C42F5)];
-}
-
 /// Reusable soft shadow used for floating cards / nav bars in User mode.
-List<BoxShadow> softShadow({Color color = AppColors.primary, double opacity = 0.12}) {
+/// The default color is [AppPalette.primary], identical in light and dark
+/// (see [AppPalette]), so callers that only ever pass [opacity] don't need
+/// to thread a palette through just for this.
+List<BoxShadow> softShadow({Color color = const Color(0xFF6C3CE9), double opacity = 0.12}) {
   return [
     BoxShadow(
       color: color.withValues(alpha: opacity),

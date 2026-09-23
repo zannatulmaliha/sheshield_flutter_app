@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 
-class SectionTitle extends StatelessWidget {
+class SectionTitle extends ConsumerWidget {
   const SectionTitle({super.key, required this.title, this.actionLabel, this.onAction});
 
   final String title;
@@ -9,7 +10,8 @@ class SectionTitle extends StatelessWidget {
   final VoidCallback? onAction;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -19,8 +21,8 @@ class SectionTitle extends StatelessWidget {
             onTap: onAction,
             child: Text(
               actionLabel!,
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: colors.primary,
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
               ),

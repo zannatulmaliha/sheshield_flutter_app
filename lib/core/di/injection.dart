@@ -7,6 +7,7 @@ import 'package:sheshield/core/network/dio_client.dart';
 import 'package:sheshield/core/services/device_alarm_service.dart';
 import 'package:sheshield/core/services/device_location_service.dart';
 import 'package:sheshield/core/services/device_sms_service.dart';
+import 'package:sheshield/core/services/evidence_service.dart';
 import 'package:sheshield/core/services/push_service.dart';
 
 // ==================== AUTH ====================
@@ -37,6 +38,7 @@ import 'package:sheshield/features/sos/domain/repositories/i_sos_repository.dart
 import 'package:sheshield/features/sos/domain/usecases/send_sos_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/update_sos_location_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/resolve_sos_alert_usecase.dart';
+import 'package:sheshield/features/sos/domain/usecases/get_alert_history_usecase.dart';
 
 // ==================== CONTACTS ====================
 import 'package:sheshield/features/contacts/data/datasources/contacts_api_datasource.dart';
@@ -51,6 +53,8 @@ import 'package:sheshield/features/contacts/domain/usecases/remove_contact_useca
 // ==================== SETTINGS ====================
 import 'package:sheshield/features/settings/data/repositories/locale_repository_impl.dart';
 import 'package:sheshield/features/settings/domain/repositories/i_locale_repository.dart';
+import 'package:sheshield/features/settings/data/repositories/theme_mode_repository_impl.dart';
+import 'package:sheshield/features/settings/domain/repositories/i_theme_mode_repository.dart';
 
 // ==================== VERIFICATION ====================
 import 'package:sheshield/features/verification/data/datasources/verification_api_datasource.dart';
@@ -91,6 +95,10 @@ Future<void> configureDependencies() async {
   );
 
   getIt.registerLazySingleton(
+    () => EvidenceService(),
+  );
+
+  getIt.registerLazySingleton(
     () => PushService(),
   );
 
@@ -102,6 +110,10 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton<ILocaleRepository>(
     () => LocaleRepositoryImpl(getIt()),
+  );
+
+  getIt.registerLazySingleton<IThemeModeRepository>(
+    () => ThemeModeRepositoryImpl(getIt()),
   );
 
   // ==================== AUTH FEATURE ====================
@@ -191,6 +203,10 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => ResolveSosAlertUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => GetAlertHistoryUseCase(getIt()),
   );
 
   // ==================== CONTACTS FEATURE ====================

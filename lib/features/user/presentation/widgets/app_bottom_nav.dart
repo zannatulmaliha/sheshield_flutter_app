@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 
 class NavItemData {
@@ -15,21 +17,22 @@ const List<NavItemData> navItems = [
   NavItemData(Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
 ];
 
-class AppBottomNav extends StatelessWidget {
+class AppBottomNav extends ConsumerWidget {
   const AppBottomNav({super.key, required this.currentIndex, required this.onTap});
 
   final int currentIndex;
   final ValueChanged<int> onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: Container(
         height: 72,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(28),
           boxShadow: softShadow(opacity: 0.14),
         ),
@@ -48,7 +51,7 @@ class AppBottomNav extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                   padding: EdgeInsets.symmetric(horizontal: isActive ? 14 : 0),
                   decoration: BoxDecoration(
-                    color: isActive ? AppColors.chipBackground : Colors.transparent,
+                    color: isActive ? colors.chipBackground : Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -57,7 +60,7 @@ class AppBottomNav extends StatelessWidget {
                     children: [
                       Icon(
                         isActive ? item.activeIcon : item.icon,
-                        color: isActive ? AppColors.primary : AppColors.textSecondary,
+                        color: isActive ? colors.primary : colors.textSecondary,
                         size: 24,
                       ),
                       AnimatedSize(
@@ -68,8 +71,8 @@ class AppBottomNav extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 8),
                                 child: Text(
                                   item.label,
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
+                                  style: TextStyle(
+                                    color: colors.primary,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                   ),

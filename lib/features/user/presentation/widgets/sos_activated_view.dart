@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
 /// Full-screen "SOS Alert Sent" confirmation. Pushed as a transparent
@@ -12,6 +12,7 @@ class SosActivatedView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final alert = ref.watch(sosControllerProvider).valueOrNull;
     final sentCount = alert?.sentCount ?? 0;
     final total = alert?.deliveries.length ?? 0;
@@ -33,9 +34,9 @@ class SosActivatedView extends ConsumerWidget {
                 child: Container(
                   width: 96,
                   height: 96,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(colors: AppColors.sosGradient),
+                    gradient: LinearGradient(colors: colors.sosGradient),
                   ),
                   child: const Icon(Icons.check_rounded, color: Colors.white, size: 52),
                 ),
@@ -83,7 +84,7 @@ class SosActivatedView extends ConsumerWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: AppColors.sosEnd,
+                    foregroundColor: colors.sosEnd,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),

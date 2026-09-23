@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/constants/country_dial_codes.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/auth/presentation/widgets/country_code_picker.dart';
 import 'package:sheshield/features/contacts/presentation/providers/contacts_provider.dart';
@@ -60,6 +61,7 @@ class _AddContactSheetState extends ConsumerState<_AddContactSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -112,7 +114,7 @@ class _AddContactSheetState extends ConsumerState<_AddContactSheet> {
                 ElevatedButton(
                   onPressed: _submitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: colors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

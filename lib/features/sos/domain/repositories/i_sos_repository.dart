@@ -1,3 +1,4 @@
+import '../entities/alert_summary.dart';
 import '../entities/sos_alert.dart';
 
 /// Contract the presentation layer depends on for emergency alerts.
@@ -33,6 +34,10 @@ abstract class ISosRepository {
   /// from showing further updates. Does not un-notify contacts; there's
   /// no way to un-send an SMS that already went out.
   Future<void> resolve(String alertId);
+
+  /// The caller's own past SOS alerts, most recent first -- what the
+  /// notification-history screen shows.
+  Future<List<AlertSummary>> fetchHistory();
 }
 
 class SosFailure implements Exception {

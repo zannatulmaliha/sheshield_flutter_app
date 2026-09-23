@@ -91,6 +91,31 @@
   "shareLocation": "অবস্থান শেয়ার করুন",
   "recordEvidence": "প্রমাণ রেকর্ড করুন",
   "safeRoute": "নিরাপদ রুট",
+  "checkInTimer": "চেক-ইন টাইমার",
+  "checkInSheetTitle": "চেক-ইন টাইমার সেট করুন",
+  "checkInSheetBody": "সময় শেষ হওয়ার আগে চেক-ইন না করলে, আমরা স্বয়ংক্রিয়ভাবে আপনার লাইভ অবস্থানসহ একটি এসওএস আপনার বিশ্বস্ত পরিচিতিদের কাছে পাঠাব।",
+  "checkInStartButton": "{minutes} মিনিটের টাইমার শুরু করুন",
+  "@checkInStartButton": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "checkInAlreadyRunningTitle": "চেক-ইন ইতিমধ্যে চলছে",
+  "checkInAlreadyRunningBody": "স্বয়ংক্রিয় এসওএস আপনার বিশ্বস্ত পরিচিতিদের কাছে যাওয়ার আগে {time} বাকি আছে।",
+  "@checkInAlreadyRunningBody": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "checkInImSafeCancel": "আমি নিরাপদ — বাতিল করুন",
+  "checkInBannerCountdown": "স্বয়ংক্রিয় এসওএসের আগে {time} বাকি",
+  "@checkInBannerCountdown": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "checkInImSafe": "আমি নিরাপদ",
+  "checkInSosSentMessage": "আপনি সময়মতো চেক-ইন করেননি — স্বয়ংক্রিয়ভাবে একটি এসওএস পাঠানো হয়েছে।",
   "trustedContacts": "বিশ্বস্ত পরিচিতি",
   "seeAll": "সব দেখুন",
   "addContactToEnableSos": "এসওএস চালু করতে একজন পরিচিতি যোগ করুন",
@@ -111,9 +136,19 @@
   "userTypeUserHelper": "ব্যবহারকারী ও হেল্পার",
   "homeAddress": "বাড়ির ঠিকানা",
   "tapToAdd": "যোগ করতে ট্যাপ করুন",
+  "notifications": "নোটিফিকেশন",
+  "noNotificationsYetTitle": "এখনো কোনো সতর্কতা নেই",
+  "noNotificationsYetBody": "আপনার পূর্ববর্তী এসওএস সতর্কতাগুলো এখানে দেখা যাবে।",
+  "alertStatusActive": "সক্রিয়",
+  "alertStatusResolved": "সমাধান হয়েছে",
+  "alertStatusAccepted": "গৃহীত হয়েছে",
   "privacyPermissions": "গোপনীয়তা ও অনুমতি",
   "notificationSettings": "নোটিফিকেশন সেটিংস",
   "appTheme": "অ্যাপ থিম",
+  "chooseTheme": "চেহারা নির্বাচন করুন",
+  "themeSystem": "সিস্টেম অনুসরণ করুন",
+  "themeLight": "লাইট",
+  "themeDark": "ডার্ক",
   "helpSupport": "সাহায্য ও সহায়তা",
   "logOut": "লগ আউট"
 }

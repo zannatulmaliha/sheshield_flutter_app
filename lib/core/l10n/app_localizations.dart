@@ -404,6 +404,66 @@ abstract class AppLocalizations {
   /// **'Safe Route'**
   String get safeRoute;
 
+  /// No description provided for @checkInTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-In Timer'**
+  String get checkInTimer;
+
+  /// No description provided for @checkInSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a check-in timer'**
+  String get checkInSheetTitle;
+
+  /// No description provided for @checkInSheetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you don\'t check in before time\'s up, we\'ll automatically send an SOS with your live location to your trusted contacts.'**
+  String get checkInSheetBody;
+
+  /// No description provided for @checkInStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start {minutes}-minute timer'**
+  String checkInStartButton(int minutes);
+
+  /// No description provided for @checkInAlreadyRunningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in already running'**
+  String get checkInAlreadyRunningTitle;
+
+  /// No description provided for @checkInAlreadyRunningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} left before an automatic SOS goes out to your trusted contacts.'**
+  String checkInAlreadyRunningBody(String time);
+
+  /// No description provided for @checkInImSafeCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m Safe — Cancel'**
+  String get checkInImSafeCancel;
+
+  /// No description provided for @checkInBannerCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} until auto-SOS'**
+  String checkInBannerCountdown(String time);
+
+  /// No description provided for @checkInImSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m Safe'**
+  String get checkInImSafe;
+
+  /// No description provided for @checkInSosSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You didn\'t check in in time — an SOS was sent automatically.'**
+  String get checkInSosSentMessage;
+
   /// No description provided for @trustedContacts.
   ///
   /// In en, this message translates to:
@@ -488,6 +548,42 @@ abstract class AppLocalizations {
   /// **'Tap to add'**
   String get tapToAdd;
 
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @noNotificationsYetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts yet'**
+  String get noNotificationsYetTitle;
+
+  /// No description provided for @noNotificationsYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your past SOS alerts will show up here.'**
+  String get noNotificationsYetBody;
+
+  /// No description provided for @alertStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get alertStatusActive;
+
+  /// No description provided for @alertStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get alertStatusResolved;
+
+  /// No description provided for @alertStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get alertStatusAccepted;
+
   /// No description provided for @privacyPermissions.
   ///
   /// In en, this message translates to:
@@ -505,6 +601,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App Theme'**
   String get appTheme;
+
+  /// No description provided for @chooseTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose appearance'**
+  String get chooseTheme;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
 
   /// No description provided for @helpSupport.
   ///

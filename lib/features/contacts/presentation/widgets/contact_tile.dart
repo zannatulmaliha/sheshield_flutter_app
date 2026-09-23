@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import '../../domain/entities/trusted_contact.dart';
 
 /// One row in the trusted-contacts list. The backend has no "color"
 /// or "primary" field for a contact, so [_avatarColor] derives a
 /// stable color from the contact's id instead of storing one.
-class ContactTile extends StatelessWidget {
+class ContactTile extends ConsumerWidget {
   const ContactTile({super.key, required this.contact, required this.onDelete, required this.onInvite});
 
   final TrustedContact contact;
@@ -17,13 +19,13 @@ class ContactTile extends StatelessWidget {
   /// lets them receive an alarm push, not just SMS, on the next SOS.
   final VoidCallback onInvite;
 
-  Color get _avatarColor {
-    const palette = [
-      AppColors.primary,
-      AppColors.secondary,
-      AppColors.success,
-      AppColors.warning,
-      AppColors.primaryDark,
+  Color _avatarColor(AppPalette colors) {
+    final palette = [
+      colors.primary,
+      colors.secondary,
+      colors.success,
+      colors.warning,
+      colors.primaryDark,
     ];
     return palette[contact.id.hashCode.abs() % palette.length];
   }
@@ -33,7 +35,9 @@ class ContactTile extends StatelessWidget {
   Future<void> _message() => launchUrl(Uri.parse('sms:${contact.countryCode}${contact.phone}'));
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
+
     return Dismissible(
       key: ValueKey(contact.id),
       direction: DismissDirection.endToStart,
@@ -42,10 +46,10 @@ class ContactTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 22),
         alignment: Alignment.centerRight,
         decoration: BoxDecoration(
-          color: AppColors.sosEnd.withValues(alpha: 0.12),
+          color: colors.sosEnd.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(22),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.sosEnd),
+        child: Icon(Icons.delete_outline_rounded, color: colors.sosEnd),
       ),
       confirmDismiss: (_) => showDialog<bool>(
         context: context,
@@ -56,7 +60,7 @@ class ContactTile extends StatelessWidget {
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Remove', style: TextStyle(color: AppColors.sosEnd)),
+              child: Text('Remove', style: TextStyle(color: colors.sosEnd)),
             ),
           ],
         ),
@@ -66,7 +70,7 @@ class ContactTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(22),
           boxShadow: softShadow(opacity: 0.07),
         ),
@@ -74,7 +78,7 @@ class ContactTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: _avatarColor,
+              backgroundColor: _avatarColor(colors),
               child: Text(
                 contact.initials,
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
@@ -87,24 +91,24 @@ class ContactTile extends StatelessWidget {
                 children: [
                   Text(
                     contact.name,
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: AppColors.textPrimary),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: colors.textPrimary),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${contact.relation.isEmpty ? "Contact" : contact.relation} · ${contact.fullPhone}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: colors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (contact.hasAppLinked) ...[
                     const SizedBox(height: 4),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.notifications_active_rounded, color: AppColors.success, size: 13),
-                        SizedBox(width: 4),
+                        Icon(Icons.notifications_active_rounded, color: colors.success, size: 13),
+                        const SizedBox(width: 4),
                         Text(
                           'Gets an instant alarm on SOS',
-                          style: TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700),
+                          style: TextStyle(color: colors.success, fontSize: 11, fontWeight: FontWeight.w700),
                         ),
                       ],
                     ),
@@ -113,12 +117,12 @@ class ContactTile extends StatelessWidget {
               ),
             ),
             if (!contact.hasAppLinked) ...[
-              _CircleIconButton(icon: Icons.person_add_alt_1_rounded, color: AppColors.warning, onTap: onInvite),
+              _CircleIconButton(icon: Icons.person_add_alt_1_rounded, color: colors.warning, onTap: onInvite),
               const SizedBox(width: 8),
             ],
-            _CircleIconButton(icon: Icons.call_rounded, color: AppColors.success, onTap: _call),
+            _CircleIconButton(icon: Icons.call_rounded, color: colors.success, onTap: _call),
             const SizedBox(width: 8),
-            _CircleIconButton(icon: Icons.message_rounded, color: AppColors.primary, onTap: _message),
+            _CircleIconButton(icon: Icons.message_rounded, color: colors.primary, onTap: _message),
           ],
         ),
       ),

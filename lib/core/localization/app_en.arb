@@ -91,6 +91,31 @@
   "shareLocation": "Share Location",
   "recordEvidence": "Record Evidence",
   "safeRoute": "Safe Route",
+  "checkInTimer": "Check-In Timer",
+  "checkInSheetTitle": "Set a check-in timer",
+  "checkInSheetBody": "If you don't check in before time's up, we'll automatically send an SOS with your live location to your trusted contacts.",
+  "checkInStartButton": "Start {minutes}-minute timer",
+  "@checkInStartButton": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "checkInAlreadyRunningTitle": "Check-in already running",
+  "checkInAlreadyRunningBody": "{time} left before an automatic SOS goes out to your trusted contacts.",
+  "@checkInAlreadyRunningBody": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "checkInImSafeCancel": "I'm Safe — Cancel",
+  "checkInBannerCountdown": "{time} until auto-SOS",
+  "@checkInBannerCountdown": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "checkInImSafe": "I'm Safe",
+  "checkInSosSentMessage": "You didn't check in in time — an SOS was sent automatically.",
   "trustedContacts": "Trusted Contacts",
   "seeAll": "See all",
   "addContactToEnableSos": "Add a contact to enable SOS",
@@ -111,9 +136,19 @@
   "userTypeUserHelper": "User & Helper",
   "homeAddress": "Home Address",
   "tapToAdd": "Tap to add",
+  "notifications": "Notifications",
+  "noNotificationsYetTitle": "No alerts yet",
+  "noNotificationsYetBody": "Your past SOS alerts will show up here.",
+  "alertStatusActive": "Active",
+  "alertStatusResolved": "Resolved",
+  "alertStatusAccepted": "Accepted",
   "privacyPermissions": "Privacy & Permissions",
   "notificationSettings": "Notification Settings",
   "appTheme": "App Theme",
+  "chooseTheme": "Choose appearance",
+  "themeSystem": "Follow system",
+  "themeLight": "Light",
+  "themeDark": "Dark",
   "helpSupport": "Help & Support",
   "logOut": "Log Out"
 }

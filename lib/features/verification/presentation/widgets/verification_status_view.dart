@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 
 /// Full-screen message for the pending/approved states (the form itself
 /// only appears for none/rejected -- see VerificationScreen).
 class VerificationStatusView extends StatelessWidget {
   const VerificationStatusView({
     super.key,
+    required this.colors,
     required this.icon,
     required this.color,
     required this.title,
@@ -14,6 +15,7 @@ class VerificationStatusView extends StatelessWidget {
     required this.onButton,
   });
 
+  final AppPalette colors;
   final IconData icon;
   final Color color;
   final String title;
@@ -36,11 +38,11 @@ class VerificationStatusView extends StatelessWidget {
           const SizedBox(height: 20),
           Text(title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 21, color: AppColors.textPrimary)),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 21, color: colors.textPrimary)),
           const SizedBox(height: 10),
           Text(message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13.5, height: 1.5)),
+              style: TextStyle(color: colors.textSecondary, fontSize: 13.5, height: 1.5)),
           const SizedBox(height: 24),
           OutlinedButton(onPressed: onButton, child: Text(buttonLabel)),
         ],

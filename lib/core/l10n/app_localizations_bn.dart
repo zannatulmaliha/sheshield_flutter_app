@@ -204,6 +204,44 @@ class AppLocalizationsBn extends AppLocalizations {
   String get safeRoute => 'নিরাপদ রুট';
 
   @override
+  String get checkInTimer => 'চেক-ইন টাইমার';
+
+  @override
+  String get checkInSheetTitle => 'চেক-ইন টাইমার সেট করুন';
+
+  @override
+  String get checkInSheetBody =>
+      'সময় শেষ হওয়ার আগে চেক-ইন না করলে, আমরা স্বয়ংক্রিয়ভাবে আপনার লাইভ অবস্থানসহ একটি এসওএস আপনার বিশ্বস্ত পরিচিতিদের কাছে পাঠাব।';
+
+  @override
+  String checkInStartButton(int minutes) {
+    return '$minutes মিনিটের টাইমার শুরু করুন';
+  }
+
+  @override
+  String get checkInAlreadyRunningTitle => 'চেক-ইন ইতিমধ্যে চলছে';
+
+  @override
+  String checkInAlreadyRunningBody(String time) {
+    return 'স্বয়ংক্রিয় এসওএস আপনার বিশ্বস্ত পরিচিতিদের কাছে যাওয়ার আগে $time বাকি আছে।';
+  }
+
+  @override
+  String get checkInImSafeCancel => 'আমি নিরাপদ — বাতিল করুন';
+
+  @override
+  String checkInBannerCountdown(String time) {
+    return 'স্বয়ংক্রিয় এসওএসের আগে $time বাকি';
+  }
+
+  @override
+  String get checkInImSafe => 'আমি নিরাপদ';
+
+  @override
+  String get checkInSosSentMessage =>
+      'আপনি সময়মতো চেক-ইন করেননি — স্বয়ংক্রিয়ভাবে একটি এসওএস পাঠানো হয়েছে।';
+
+  @override
   String get trustedContacts => 'বিশ্বস্ত পরিচিতি';
 
   @override
@@ -254,6 +292,25 @@ class AppLocalizationsBn extends AppLocalizations {
   String get tapToAdd => 'যোগ করতে ট্যাপ করুন';
 
   @override
+  String get notifications => 'নোটিফিকেশন';
+
+  @override
+  String get noNotificationsYetTitle => 'এখনো কোনো সতর্কতা নেই';
+
+  @override
+  String get noNotificationsYetBody =>
+      'আপনার পূর্ববর্তী এসওএস সতর্কতাগুলো এখানে দেখা যাবে।';
+
+  @override
+  String get alertStatusActive => 'সক্রিয়';
+
+  @override
+  String get alertStatusResolved => 'সমাধান হয়েছে';
+
+  @override
+  String get alertStatusAccepted => 'গৃহীত হয়েছে';
+
+  @override
   String get privacyPermissions => 'গোপনীয়তা ও অনুমতি';
 
   @override
@@ -261,6 +318,18 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get appTheme => 'অ্যাপ থিম';
+
+  @override
+  String get chooseTheme => 'চেহারা নির্বাচন করুন';
+
+  @override
+  String get themeSystem => 'সিস্টেম অনুসরণ করুন';
+
+  @override
+  String get themeLight => 'লাইট';
+
+  @override
+  String get themeDark => 'ডার্ক';
 
   @override
   String get helpSupport => 'সাহায্য ও সহায়তা';

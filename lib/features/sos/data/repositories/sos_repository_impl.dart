@@ -1,3 +1,4 @@
+import '../../domain/entities/alert_summary.dart';
 import '../../domain/entities/sos_alert.dart';
 import '../../domain/repositories/i_sos_repository.dart';
 import '../datasources/sos_api_datasource.dart';
@@ -41,4 +42,7 @@ class SosRepositoryImpl implements ISosRepository {
 
   @override
   Future<void> resolve(String alertId) => _dataSource.resolve(alertId);
+
+  @override
+  Future<List<AlertSummary>> fetchHistory() => _dataSource.fetchHistory();
 }

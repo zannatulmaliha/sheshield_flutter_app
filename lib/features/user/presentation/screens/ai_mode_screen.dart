@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 
-class AiModeScreen extends StatefulWidget {
+class AiModeScreen extends ConsumerStatefulWidget {
   const AiModeScreen({super.key});
 
   @override
-  State<AiModeScreen> createState() => _AiModeScreenState();
+  ConsumerState<AiModeScreen> createState() => _AiModeScreenState();
 }
 
 class _AiFeature {
@@ -16,7 +18,7 @@ class _AiFeature {
   bool enabled;
 }
 
-class _AiModeScreenState extends State<AiModeScreen> {
+class _AiModeScreenState extends ConsumerState<AiModeScreen> {
   final List<_AiFeature> _features = [
     _AiFeature(
       Icons.record_voice_over_rounded,
@@ -46,6 +48,7 @@ class _AiModeScreenState extends State<AiModeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     return SafeArea(
       bottom: false,
       child: ListView(
@@ -53,23 +56,24 @@ class _AiModeScreenState extends State<AiModeScreen> {
         children: [
           Text('AI Guardian', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Smart protection that watches out for you, quietly.',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          const _SafetyScoreCard(),
+          _SafetyScoreCard(colors: colors),
           const SizedBox(height: 26),
           Text('Active Features', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 14),
           ..._features.map(
             (f) => _FeatureCard(
+              colors: colors,
               feature: f,
               onChanged: (v) => setState(() => f.enabled = v),
             ),
           ),
           const SizedBox(height: 8),
-          const _AskAiBar(),
+          _AskAiBar(colors: colors),
         ],
       ),
     );
@@ -77,15 +81,16 @@ class _AiModeScreenState extends State<AiModeScreen> {
 }
 
 class _SafetyScoreCard extends StatelessWidget {
-  const _SafetyScoreCard();
+  const _SafetyScoreCard({required this.colors});
+  final AppPalette colors;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: AppColors.aiGradient,
+        gradient: LinearGradient(
+          colors: colors.aiGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -141,7 +146,8 @@ class _SafetyScoreCard extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  const _FeatureCard({required this.feature, required this.onChanged});
+  const _FeatureCard({required this.colors, required this.feature, required this.onChanged});
+  final AppPalette colors;
   final _AiFeature feature;
   final ValueChanged<bool> onChanged;
 
@@ -151,7 +157,7 @@ class _FeatureCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: softShadow(opacity: 0.07),
       ),
@@ -161,12 +167,12 @@ class _FeatureCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: (feature.enabled ? AppColors.primary : AppColors.textSecondary).withValues(alpha: 0.12),
+              color: (feature.enabled ? colors.primary : colors.textSecondary).withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(
               feature.icon,
-              color: feature.enabled ? AppColors.primary : AppColors.textSecondary,
+              color: feature.enabled ? colors.primary : colors.textSecondary,
               size: 21,
             ),
           ),
@@ -177,12 +183,12 @@ class _FeatureCard extends StatelessWidget {
               children: [
                 Text(
                   feature.title,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.textPrimary),
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: colors.textPrimary),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   feature.description,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11.5, height: 1.35, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: colors.textSecondary, fontSize: 11.5, height: 1.35, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -191,7 +197,7 @@ class _FeatureCard extends StatelessWidget {
           Switch(
             value: feature.enabled,
             activeThumbColor: Colors.white,
-            activeTrackColor: AppColors.primary,
+            activeTrackColor: colors.primary,
             onChanged: onChanged,
           ),
         ],
@@ -201,25 +207,26 @@ class _FeatureCard extends StatelessWidget {
 }
 
 class _AskAiBar extends StatelessWidget {
-  const _AskAiBar();
+  const _AskAiBar({required this.colors});
+  final AppPalette colors;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: softShadow(opacity: 0.07),
       ),
       child: Row(
         children: [
-          const Icon(Icons.auto_awesome_rounded, color: AppColors.primary, size: 20),
+          Icon(Icons.auto_awesome_rounded, color: colors.primary, size: 20),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Text(
               'Ask AI Guardian anything...',
-              style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600, fontSize: 13),
+              style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
           IconButton(
@@ -228,7 +235,7 @@ class _AskAiBar extends StatelessWidget {
                 const SnackBar(content: Text('Listening...')),
               );
             },
-            icon: const Icon(Icons.mic_rounded, color: AppColors.primary),
+            icon: Icon(Icons.mic_rounded, color: colors.primary),
           ),
         ],
       ),

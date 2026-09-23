@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sheshield/core/di/injection.dart';
 import 'package:sheshield/core/services/device_alarm_service.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Shown full-screen the instant a push from a linked trusted contact's
@@ -47,7 +46,7 @@ class _SosAlarmScreenState extends State<SosAlarmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.sosEnd,
+      backgroundColor: const Color(0xFFC2185B),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -77,7 +76,7 @@ class _SosAlarmScreenState extends State<SosAlarmScreen> {
                   onPressed: _openLocation,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: AppColors.sosEnd,
+                    foregroundColor: const Color(0xFFC2185B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   icon: const Icon(Icons.map_rounded),

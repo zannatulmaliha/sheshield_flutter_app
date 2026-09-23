@@ -15,3 +15,16 @@ class DateTimeConverter implements JsonConverter<DateTime, Object?> {
   @override
   Object toJson(DateTime date) => date.toIso8601String();
 }
+
+/// [DateTimeConverter]'s counterpart for an optional timestamp, e.g. an
+/// alert's `resolvedAt`, which the backend omits entirely while the alert
+/// is still active rather than sending it as `null`.
+class NullableDateTimeConverter implements JsonConverter<DateTime?, Object?> {
+  const NullableDateTimeConverter();
+
+  @override
+  DateTime? fromJson(Object? json) => json is String ? DateTime.parse(json) : null;
+
+  @override
+  Object? toJson(DateTime? date) => date?.toIso8601String();
+}

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/di/injection.dart';
 import 'package:sheshield/core/services/device_sms_service.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/features/contacts/domain/entities/contact_invite.dart';
 import 'package:sheshield/features/contacts/domain/entities/trusted_contact.dart';
 import 'package:sheshield/features/contacts/domain/repositories/i_contacts_repository.dart';
@@ -20,15 +21,15 @@ Future<void> showInviteContactDialog(BuildContext context, TrustedContact contac
   );
 }
 
-class _InviteContactDialog extends StatefulWidget {
+class _InviteContactDialog extends ConsumerStatefulWidget {
   const _InviteContactDialog({required this.contact});
   final TrustedContact contact;
 
   @override
-  State<_InviteContactDialog> createState() => _InviteContactDialogState();
+  ConsumerState<_InviteContactDialog> createState() => _InviteContactDialogState();
 }
 
-class _InviteContactDialogState extends State<_InviteContactDialog> {
+class _InviteContactDialogState extends ConsumerState<_InviteContactDialog> {
   ContactInvite? _invite;
   String? _error;
   bool _sent = false;
@@ -61,9 +62,10 @@ class _InviteContactDialogState extends State<_InviteContactDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = resolvePalette(context, ref);
     return AlertDialog(
       title: Text('Invite ${widget.contact.name}'),
-      content: _buildContent(),
+      content: _buildContent(colors),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
         if (_invite != null)
@@ -77,9 +79,9 @@ class _InviteContactDialogState extends State<_InviteContactDialog> {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(AppPalette colors) {
     if (_error != null) {
-      return Text(_error!, style: const TextStyle(color: AppColors.sosEnd));
+      return Text(_error!, style: TextStyle(color: colors.sosEnd));
     }
     final invite = _invite;
     if (invite == null) {
@@ -102,11 +104,11 @@ class _InviteContactDialogState extends State<_InviteContactDialog> {
         const SizedBox(height: 12),
         Text(
           'Expires ${invite.expiresAt.toLocal().toString().split('.').first}',
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+          style: TextStyle(color: colors.textSecondary, fontSize: 12),
         ),
         if (_sent) ...[
           const SizedBox(height: 12),
-          const Text('Sent via SMS.', style: TextStyle(color: AppColors.success, fontWeight: FontWeight.w700)),
+          Text('Sent via SMS.', style: TextStyle(color: colors.success, fontWeight: FontWeight.w700)),
         ],
       ],
     );

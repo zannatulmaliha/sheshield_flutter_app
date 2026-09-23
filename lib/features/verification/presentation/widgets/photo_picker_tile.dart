@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 
 /// One of the three photo slots on the verification screen. Shows the
 /// picked image, or an empty state with an icon and hint.
 class PhotoPickerTile extends StatelessWidget {
   const PhotoPickerTile({
     super.key,
+    required this.colors,
     required this.label,
     required this.hint,
     required this.icon,
@@ -14,6 +15,7 @@ class PhotoPickerTile extends StatelessWidget {
     required this.onTap,
   });
 
+  final AppPalette colors;
   final String label;
   final String hint;
   final IconData icon;
@@ -29,10 +31,10 @@ class PhotoPickerTile extends StatelessWidget {
         height: 140,
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: picked ? AppColors.success : const Color(0xFFE3DEF5),
+            color: picked ? colors.success : const Color(0xFFE3DEF5),
             width: picked ? 2 : 1.5,
           ),
         ),
@@ -70,11 +72,11 @@ class PhotoPickerTile extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 32, color: AppColors.primary),
+        Icon(icon, size: 32, color: colors.primary),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppColors.textPrimary)),
+        Text(label, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: colors.textPrimary)),
         const SizedBox(height: 3),
-        Text(hint, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary)),
+        Text(hint, style: TextStyle(fontSize: 11.5, color: colors.textSecondary)),
       ],
     );
   }

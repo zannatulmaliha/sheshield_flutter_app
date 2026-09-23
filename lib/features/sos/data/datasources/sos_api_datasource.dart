@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:sheshield/core/network/dio_client.dart';
+import '../../domain/entities/alert_summary.dart';
 import '../../domain/entities/sos_alert.dart';
 import '../../domain/repositories/i_sos_repository.dart';
 
 /// The only file that talks to the Go backend's /api/v1/alerts
-/// endpoint (internal/alert/handler.go). There is exactly one route:
-/// creating an alert -- no list, no cancel.
+/// endpoint (internal/alert/handler.go).
 class SosApiDataSource {
   SosApiDataSource(this._client);
   final DioClient _client;
@@ -62,6 +62,20 @@ class SosApiDataSource {
   Future<void> resolve(String alertId) async {
     try {
       await _client.dio.patch('$_basePath/$alertId/resolve');
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// GET /api/v1/alerts -> { "data": [ { id, status, createdAt, ... }, ... ] }
+  /// The caller's own SOS history, most recent first.
+  Future<List<AlertSummary>> fetchHistory() async {
+    try {
+      final res = await _client.dio.get(_basePath);
+      final list = res.data['data'] as List<dynamic>;
+      return list
+          .map((j) => AlertSummary.fromJson(j as Map<String, dynamic>))
+          .toList();
     } on DioException catch (e) {
       throw _fail(e);
     }

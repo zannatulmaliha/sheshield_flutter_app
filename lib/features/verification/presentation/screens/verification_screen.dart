@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import '../../domain/entities/verification_status.dart';
 import '../providers/verification_provider.dart';
 import '../widgets/verification_form.dart';
@@ -16,15 +16,16 @@ class VerificationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = resolvePalette(context, ref);
     final async = ref.watch(verificationControllerProvider);
     final controller = ref.read(verificationControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: const Text('Helper verification'),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: colors.background,
+        foregroundColor: colors.textPrimary,
         elevation: 0,
       ),
       body: RefreshIndicator(
@@ -36,26 +37,28 @@ class VerificationScreen extends ConsumerWidget {
           ),
           error: (e, _) => ListView(children: [
             VerificationStatusView(
+              colors: colors,
               icon: Icons.cloud_off_rounded,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               title: "Couldn't load your status",
               message: 'Check your connection and try again.',
               buttonLabel: 'Try again',
               onButton: () => ref.invalidate(verificationControllerProvider),
             ),
           ]),
-          data: (status) => _body(context, status, controller),
+          data: (status) => _body(context, status, controller, colors),
         ),
       ),
     );
   }
 
-  Widget _body(BuildContext context, VerificationStatus status, VerificationController controller) {
+  Widget _body(BuildContext context, VerificationStatus status, VerificationController controller, AppPalette colors) {
     return switch (status.status) {
       VerificationState.approved => ListView(children: [
           VerificationStatusView(
+            colors: colors,
             icon: Icons.verified_rounded,
-            color: AppColors.success,
+            color: colors.success,
             title: "You're verified",
             message: 'You can now respond to alerts near you.',
             buttonLabel: 'Done',
@@ -64,8 +67,9 @@ class VerificationScreen extends ConsumerWidget {
         ]),
       VerificationState.pending => ListView(children: [
           VerificationStatusView(
+            colors: colors,
             icon: Icons.hourglass_top_rounded,
-            color: AppColors.warning,
+            color: colors.warning,
             title: 'Under review',
             message: 'A reviewer is checking your documents. Pull down to check for an update.',
             buttonLabel: 'Check now',
