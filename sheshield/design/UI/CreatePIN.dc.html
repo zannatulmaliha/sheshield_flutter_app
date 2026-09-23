@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Create PIN</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-pin{width:52px;height:58px;border-radius:12px;background:#3D2740;border:1px solid rgba(255,255,255,0.1);color:#FBF4F5;text-align:center;font-size:22px;font-weight:700;font-family:inherit;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 22px 26px 20px;">
+
+    <a href="OTPVerify.dc.html" aria-label="Back" style="width: 40px; height: 40px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none; flex-shrink: 0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+
+    <div style="margin-top: 30px; display: inline-flex; align-self: flex-start; background: rgba(201,123,132,0.15); color: #C97B84; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 5px 11px; border-radius: 999px;">STEP 2 OF 2</div>
+
+    <div style="margin-top: 14px;">
+      <div style="font-size: 25px; font-weight: 800;">Create your PIN</div>
+      <div style="font-size: 13.5px; color: #B7969E; margin-top: 8px; line-height: 1.5;">This adds a second layer of security and lets you log in quickly next time — with your phone number and this PIN, no code needed.</div>
+    </div>
+
+    <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
+      <fieldset style="border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+        <legend style="font-size: 13px; font-weight: 700; padding: 0; margin-bottom: 2px;">Enter a 4-digit PIN</legend>
+        <div style="display: flex; gap: 10px;">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="PIN digit 1">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="PIN digit 2">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="PIN digit 3">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="PIN digit 4">
+        </div>
+      </fieldset>
+    </div>
+
+    <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 10px;">
+      <fieldset style="border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+        <legend style="font-size: 13px; font-weight: 700; padding: 0; margin-bottom: 2px;">Confirm PIN</legend>
+        <div style="display: flex; gap: 10px;">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="Confirm PIN digit 1">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="Confirm PIN digit 2">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="Confirm PIN digit 3">
+          <input class="ss-pin" type="password" inputmode="numeric" maxlength="1" aria-label="Confirm PIN digit 4">
+        </div>
+      </fieldset>
+    </div>
+
+    <a href="ContactSetup.dc.html" style="margin-top: 30px; width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Continue</a>
+
+    <a href="ContactSetup.dc.html" style="margin-top: 14px; text-align: center; font-size: 13px; color: #B7969E; text-decoration: none; display: block;">Skip for now</a>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

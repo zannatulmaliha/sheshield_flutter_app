@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Timed Check-In</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;padding-top:8px;}
+.ss-pill{padding:10px 18px;border-radius:999px;font-size:13.5px;font-weight:700;font-family:inherit;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="padding: 22px 20px 8px; display: flex; align-items: center; justify-content: space-between;">
+    <a href="Main.dc.html" aria-label="Back" style="width: 40px; height: 40px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none; flex-shrink: 0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+    <div style="font-size: 17px; font-weight: 700;">Timed Check-In</div>
+    <div style="width: 40px; height: 40px; flex-shrink: 0;"></div>
+  </div>
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 10px 22px 20px; display: flex; flex-direction: column; gap: 22px;">
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 6px 8px 0;">
+      <div style="width: 68px; height: 68px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #C97B84;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div style="font-size: 13px; color: #B7969E; text-align: center; line-height: 1.5;">Set a timer before you head out. If you don't confirm you're safe by the deadline, we'll alert your emergency contacts with your live location.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 13px; font-weight: 700;">How long?</div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <sc-for list="{{pills}}" as="p" hint-placeholder-count="3">
+          <button type="button" onClick="{{p.onClick}}" class="ss-pill" style="background: {{p.bg}}; color: {{p.color}}; border: 1.5px solid {{p.border}};">{{p.label}}</button>
+        </sc-for>
+        <button type="button" onClick="{{customPill.onClick}}" class="ss-pill" style="background: {{customPill.bg}}; color: {{customPill.color}}; border: 1.5px solid {{customPill.border}};">{{customPill.label}}</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <label for="ss-dest" style="font-size: 13px; font-weight: 700;">Where are you going? <span style="font-weight: 400; color: #B7969E;">(optional)</span></label>
+      <input id="ss-dest" type="text" placeholder="e.g. Walking home from campus" style="width: 100%; box-sizing: border-box; height: 48px; border-radius: 12px; background: #3D2740; border: 1px solid rgba(255,255,255,0.1); color: #FBF4F5; padding: 0 14px; font-size: 14px; font-family: inherit;">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-size: 13px; font-weight: 700;">We'll notify</div>
+        <a href="Contacts.dc.html" style="font-size: 12.5px; font-weight: 600; color: #C97B84; text-decoration: none;">Edit</a>
+      </div>
+      <div style="display: flex; gap: -8px;">
+        <span style="width: 36px; height: 36px; border-radius: 50%; background: #3D2740; color: #C97B84; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #2A1B2D; margin-right: -8px;">M</span>
+        <span style="width: 36px; height: 36px; border-radius: 50%; background: #3D2740; color: #C97B84; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #2A1B2D; margin-right: -8px;">D</span>
+        <span style="width: 36px; height: 36px; border-radius: 50%; background: #3D2740; color: #C97B84; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #2A1B2D;">R</span>
+      </div>
+    </div>
+
+    <div style="background: rgba(255,90,95,0.08); border: 1px solid rgba(255,90,95,0.25); border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF5A5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div style="font-size: 12px; color: #F5C6C8; line-height: 1.45;">If you miss your check-in, we automatically alert these contacts and share your live location — no need to do anything else.</div>
+    </div>
+
+    <a href="CheckIn-Active.dc.html" style="margin-top: 4px; width: 100%; box-sizing: border-box; height: 52px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">{{startLabel}}</a>
+
+  </div>
+
+  <div style="flex-shrink: 0; height: 78px; background: #241720; border-top: 1px solid rgba(255,255,255,0.08); display: flex;">
+    <a href="Main.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Home</span>
+    </a>
+    <a href="SafetyMap.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Map</span>
+    </a>
+    <a href="AIHelp.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">AI Help</span>
+    </a>
+    <a href="Contacts.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Contacts</span>
+    </a>
+    <a href="Profile.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Profile</span>
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { duration: 30 };
+  }
+  pick(v) {
+    this.setState({ duration: v });
+  }
+  renderVals() {
+    const options = [15, 30, 60];
+    const pills = options.map((d) => {
+      const selected = this.state.duration === d;
+      return {
+        label: d === 60 ? '1 hr' : d + ' min',
+        onClick: () => this.pick(d),
+        bg: selected ? '#C97B84' : 'transparent',
+        color: selected ? '#2A1B2D' : '#FBF4F5',
+        border: selected ? '#C97B84' : 'rgba(255,255,255,0.2)'
+      };
+    });
+    const customSelected = this.state.duration === 'custom';
+    const customPill = {
+      label: 'Custom',
+      onClick: () => this.pick('custom'),
+      bg: customSelected ? '#C97B84' : 'transparent',
+      color: customSelected ? '#2A1B2D' : '#FBF4F5',
+      border: customSelected ? '#C97B84' : 'rgba(255,255,255,0.2)'
+    };
+    const durationLabel = this.state.duration === 'custom'
+      ? 'Custom'
+      : (this.state.duration === 60 ? '1-Hr' : this.state.duration + '-Min');
+    return {
+      pills,
+      customPill,
+      startLabel: 'Start ' + durationLabel + ' Check-In'
+    };
+  }
+}
+</script>
+</body>
+</html>

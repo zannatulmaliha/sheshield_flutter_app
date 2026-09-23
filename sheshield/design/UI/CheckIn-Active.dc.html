@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Check-In Active</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #241A26; color: #FBF4F5; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px 24px 32px; overflow: hidden;">
+
+  <div style="width: 100%; display: flex; justify-content: flex-end;">
+    <div style="width: 38px; height: 38px;"></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px; background: #C97B84; color: #2A1B2D; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; padding: 8px 16px; border-radius: 999px;">
+      <span style="width: 7px; height: 7px; border-radius: 50%; background: #2A1B2D;"></span>
+      CHECK-IN ACTIVE
+    </div>
+    <div style="font-size: 44px; font-weight: 800; margin-top: 10px; letter-spacing: -0.01em;">18:42</div>
+    <div style="font-size: 13px; color: #C7A8B0;">remaining until check-in</div>
+  </div>
+
+  <div style="width: 220px; height: 220px; border-radius: 50%; background: rgba(201,123,132,0.12); display: flex; align-items: center; justify-content: center;">
+    <div style="width: 168px; height: 168px; border-radius: 50%; background: rgba(201,123,132,0.22); display: flex; align-items: center; justify-content: center;">
+      <div style="width: 112px; height: 112px; border-radius: 50%; background: #C97B84; display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px rgba(0,0,0,0.35);">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#2A1B2D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="width: 100%; background: #3D2740; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box;">
+    <div>
+      <div style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #B7969E; margin-bottom: 4px;">Destination</div>
+      <div style="font-size: 13px;">Walking home from campus</div>
+    </div>
+    <div style="height: 1px; background: rgba(255,255,255,0.08);"></div>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #B7969E;">We'll notify</div>
+      <div style="display: flex; gap: -8px;">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #2A1B2D; color: #C97B84; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #3D2740; margin-right: -8px;">M</span>
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #2A1B2D; color: #C97B84; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #3D2740; margin-right: -8px;">D</span>
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #2A1B2D; color: #C97B84; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #3D2740;">R</span>
+      </div>
+    </div>
+    <div style="height: 1px; background: rgba(255,255,255,0.08);"></div>
+    <div style="font-size: 12px; color: #C7A8B0; line-height: 1.4;">If the timer runs out, your live location is sent automatically — no need to do anything else.</div>
+    <a href="LiveLocation.dc.html" style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.08); color: #C97B84; text-decoration: none; font-size: 12.5px; font-weight: 700;">
+      View live map
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+
+  <div style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+    <a href="Main.dc.html" style="width: 100%; box-sizing: border-box; height: 52px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+      I'm Safe — Check In Now
+    </a>
+    <button type="button" style="width: 100%; height: 52px; border-radius: 14px; background: transparent; border: 1.5px solid rgba(255,255,255,0.24); color: #FBF4F5; font-size: 14.5px; font-weight: 600; font-family: inherit;">
+      + Add 15 More Minutes
+    </button>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
