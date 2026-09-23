@@ -6,15 +6,19 @@ Live, clickable version: https://claude.ai/artifact/N1X3eoh9GZR8KTBjSkXcqC
 
 ## What's here
 
-16 screens (`.dc.html`) covering the full app flow, plus `canvas.json` (the canvas layout index — positions/order, not needed for implementation).
+18 screens (`.dc.html`) covering the full app flow, plus `canvas.json` (the canvas layout index — positions/order, not needed for implementation).
 
 **Onboarding / auth**
 - `Welcome.dc.html`
 - `Onboarding.dc.html` — 3-slide feature tour
-- `Login.dc.html` — OTP or PIN/password tabs
-- `OTPVerify.dc.html` — step 1 of 2
-- `CreatePIN.dc.html` — step 2 of 2
+- `SignUp.dc.html` — gender (Female/Male) + account type. Female can toggle User and/or Helper on the same account; Male is Helper-only.
+- `Login.dc.html` — for returning users only, OTP or PIN/password tabs
+- `OTPVerify.dc.html` — step 1 of 3
+- `CreatePIN.dc.html` — step 2 of 3
+- `NIDVerify.dc.html` — step 3 of 3, enter NID number or scan front/back; unlocks the public "NID Verified" badge
 - `ContactSetup.dc.html` — add first emergency contact
+
+Flow: Welcome → Onboarding → Sign Up → Verify Code → Create PIN → Verify NID → Add Contact → Home. Every step past Sign Up is skippable.
 
 **Main app**
 - `Main.dc.html` — Home (SOS button + quick actions)

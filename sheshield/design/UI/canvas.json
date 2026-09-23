@@ -31,6 +31,14 @@
       "is_interactive": true,
       "title": "Add Emergency Contact",
       "w": 390,
+      "x": 2820,
+      "y": 1928
+    },
+    "NIDVerify.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Verify NID (Step 3 of 3)",
+      "w": 390,
       "x": 2350,
       "y": 1928
     },
@@ -45,7 +53,7 @@
     "CreatePIN.dc.html": {
       "h": 844,
       "is_interactive": true,
-      "title": "Create PIN (Step 2 of 2)",
+      "title": "Create PIN (Step 2 of 3)",
       "w": 390,
       "x": 1880,
       "y": 1928
@@ -69,7 +77,15 @@
     "Login.dc.html": {
       "h": 844,
       "is_interactive": true,
-      "title": "Log In",
+      "title": "Log In (returning users)",
+      "w": 390,
+      "x": 3290,
+      "y": 1928
+    },
+    "SignUp.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Sign Up (role + gender)",
       "w": 390,
       "x": 940,
       "y": 1928
@@ -85,7 +101,7 @@
     "OTPVerify.dc.html": {
       "h": 844,
       "is_interactive": true,
-      "title": "Verify Code (Step 1 of 2)",
+      "title": "Verify Code (Step 1 of 3)",
       "w": 390,
       "x": 1410,
       "y": 1928
@@ -162,9 +178,11 @@
     "SafetyMap.dc.html",
     "Welcome.dc.html",
     "Onboarding.dc.html",
+    "SignUp.dc.html",
     "Login.dc.html",
     "OTPVerify.dc.html",
     "CreatePIN.dc.html",
+    "NIDVerify.dc.html",
     "ContactSetup.dc.html"
   ],
   "pages": [],

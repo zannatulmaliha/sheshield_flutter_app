@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Verify NID</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-field{width:100%;box-sizing:border-box;height:50px;border-radius:12px;background:#3D2740;border:1px solid rgba(255,255,255,0.1);color:#FBF4F5;padding:0 14px;font-size:14.5px;font-family:inherit;}
+.ss-tab{flex:1;height:42px;border-radius:10px;border:none;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;}
+.ss-capture{width:100%;box-sizing:border-box;border-radius:14px;border:1.5px dashed rgba(255,255,255,0.22);background:#3D2740;padding:18px;display:flex;align-items:center;gap:14px;font-family:inherit;color:#FBF4F5;cursor:pointer;text-align:left;}
+.ss-capture-icon{width:44px;height:44px;border-radius:12px;background:#2A1B2D;color:#C97B84;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 22px 26px 20px;">
+
+    <a href="CreatePIN.dc.html" aria-label="Back" style="width: 40px; height: 40px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none; flex-shrink: 0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+
+    <div style="margin-top: 30px; display: inline-flex; align-self: flex-start; background: rgba(201,123,132,0.15); color: #C97B84; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 5px 11px; border-radius: 999px;">STEP 3 OF 3</div>
+
+    <div style="margin-top: 14px;">
+      <div style="font-size: 25px; font-weight: 800;">Verify your identity</div>
+      <div style="font-size: 13.5px; color: #B7969E; margin-top: 8px; line-height: 1.5;">Verified accounts get a badge that's visible to other Users and Helpers — it builds trust across SheShield.</div>
+    </div>
+
+    <div style="margin-top: 24px; background: #241720; border-radius: 12px; padding: 4px; display: flex; gap: 4px;">
+      <button type="button" onClick="{{switchToNumber}}" class="ss-tab" style="background: {{numberTabBg}}; color: {{numberTabColor}};">Enter Number</button>
+      <button type="button" onClick="{{switchToScan}}" class="ss-tab" style="background: {{scanTabBg}}; color: {{scanTabColor}};">Scan Card</button>
+    </div>
+
+    <sc-if value="{{isNumber}}" hint-placeholder-val="{{true}}">
+      <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 8px;">
+        <label for="ss-nid-number" style="font-size: 13px; font-weight: 700;">National ID (NID) number</label>
+        <input id="ss-nid-number" type="text" inputmode="numeric" placeholder="e.g. 1234567890123" class="ss-field">
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isScan}}" hint-placeholder-val="{{false}}">
+      <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <button type="button" class="ss-capture">
+          <span class="ss-capture-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+          <span>
+            <span style="display: block; font-size: 14px; font-weight: 700;">Front of NID</span>
+            <span style="display: block; font-size: 12px; color: #B7969E; margin-top: 2px;">Tap to capture or upload</span>
+          </span>
+        </button>
+        <button type="button" class="ss-capture">
+          <span class="ss-capture-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+          <span>
+            <span style="display: block; font-size: 14px; font-weight: 700;">Back of NID</span>
+            <span style="display: block; font-size: 12px; color: #B7969E; margin-top: 2px;">Tap to capture or upload</span>
+          </span>
+        </button>
+      </div>
+    </sc-if>
+
+    <div style="margin-top: 18px; background: rgba(201,123,132,0.1); border: 1px solid rgba(201,123,132,0.28); border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C97B84" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div style="font-size: 12px; color: #E4D6DB; line-height: 1.45;">Your NID is encrypted and used only to confirm your identity. It's never shown to other users — only your verified badge is public.</div>
+    </div>
+
+  </div>
+
+  <div style="flex-shrink: 0; padding: 12px 26px 26px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 12px;">
+    <a href="ContactSetup.dc.html" style="width: 100%; box-sizing: border-box; height: 54px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Submit for Verification</a>
+    <a href="ContactSetup.dc.html" style="text-align: center; font-size: 13px; color: #B7969E; text-decoration: none;">Skip for now</a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { method: 'number' };
+  }
+  pick(m) {
+    this.setState({ method: m });
+  }
+  renderVals() {
+    const isNumber = this.state.method === 'number';
+    const isScan = !isNumber;
+    return {
+      isNumber, isScan,
+      numberTabBg: isNumber ? '#C97B84' : 'transparent',
+      numberTabColor: isNumber ? '#2A1B2D' : '#B7969E',
+      scanTabBg: isScan ? '#C97B84' : 'transparent',
+      scanTabColor: isScan ? '#2A1B2D' : '#B7969E',
+      switchToNumber: () => this.pick('number'),
+      switchToScan: () => this.pick('scan')
+    };
+  }
+}
+</script>
+</body>
+</html>
