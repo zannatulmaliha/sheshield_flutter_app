@@ -21,6 +21,7 @@ import 'package:sheshield/features/auth/domain/usecases/watch_auth_state_usecase
 import 'package:sheshield/features/auth/domain/usecases/update_profile_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/refresh_session_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/update_fcm_token_usecase.dart';
+import 'package:sheshield/features/auth/domain/usecases/set_discoverable_usecase.dart';
 
 // ==================== HELPER ====================
 import 'package:sheshield/features/helper/data/datasources/helper_api_datasource.dart';
@@ -30,6 +31,8 @@ import 'package:sheshield/features/helper/domain/usecases/accept_alert_usecase.d
 import 'package:sheshield/features/helper/domain/usecases/get_helper_status_usecase.dart';
 import 'package:sheshield/features/helper/domain/usecases/get_nearby_alerts_usecase.dart';
 import 'package:sheshield/features/helper/domain/usecases/set_helper_status_usecase.dart';
+import 'package:sheshield/features/helper/domain/usecases/release_alert_usecase.dart';
+import 'package:sheshield/features/helper/domain/usecases/get_safety_status_usecase.dart';
 
 // ==================== SOS ====================
 import 'package:sheshield/features/sos/data/datasources/sos_api_datasource.dart';
@@ -39,6 +42,16 @@ import 'package:sheshield/features/sos/domain/usecases/send_sos_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/update_sos_location_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/resolve_sos_alert_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/get_alert_history_usecase.dart';
+import 'package:sheshield/features/sos/domain/usecases/trigger_duress_usecase.dart';
+
+// ==================== REPORT ====================
+import 'package:sheshield/features/report/data/datasources/report_api_datasource.dart';
+import 'package:sheshield/features/report/data/repositories/report_repository_impl.dart';
+import 'package:sheshield/features/report/domain/repositories/i_report_repository.dart';
+import 'package:sheshield/features/report/domain/usecases/file_report_usecase.dart';
+import 'package:sheshield/features/report/domain/usecases/block_user_usecase.dart';
+import 'package:sheshield/features/report/domain/usecases/unblock_user_usecase.dart';
+import 'package:sheshield/features/report/domain/usecases/list_blocks_usecase.dart';
 
 // ==================== CONTACTS ====================
 import 'package:sheshield/features/contacts/data/datasources/contacts_api_datasource.dart';
@@ -154,6 +167,10 @@ Future<void> configureDependencies() async {
     () => UpdateFcmTokenUseCase(getIt()),
   );
 
+  getIt.registerLazySingleton(
+    () => SetDiscoverableUseCase(getIt()),
+  );
+
   // ==================== HELPER FEATURE ====================
 
   getIt.registerLazySingleton(
@@ -183,6 +200,14 @@ Future<void> configureDependencies() async {
     () => AcceptAlertUseCase(getIt()),
   );
 
+  getIt.registerLazySingleton(
+    () => ReleaseAlertUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => GetSafetyStatusUseCase(getIt()),
+  );
+
   // ==================== SOS FEATURE ====================
 
   getIt.registerLazySingleton(
@@ -207,6 +232,36 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => GetAlertHistoryUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => TriggerDuressUseCase(getIt()),
+  );
+
+  // ==================== REPORT FEATURE ====================
+
+  getIt.registerLazySingleton(
+    () => ReportApiDataSource(getIt()),
+  );
+
+  getIt.registerLazySingleton<IReportRepository>(
+    () => ReportRepositoryImpl(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => FileReportUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => BlockUserUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => UnblockUserUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => ListBlocksUseCase(getIt()),
   );
 
   // ==================== CONTACTS FEATURE ====================

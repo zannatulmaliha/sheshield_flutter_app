@@ -2,6 +2,7 @@ import 'package:sheshield/core/cache/cache_box_interface.dart';
 import '../../domain/entities/accepted_alert.dart';
 import '../../domain/entities/helper_status.dart';
 import '../../domain/entities/nearby_alert.dart';
+import '../../domain/entities/safety_status.dart';
 import '../../domain/repositories/i_helper_repository.dart';
 import '../datasources/helper_api_datasource.dart';
 
@@ -39,12 +40,14 @@ class HelperRepositoryImpl implements IHelperRepository {
     required double radiusKm,
     double? latitude,
     double? longitude,
+    bool mutualConnectionOptIn = false,
   }) async {
     final status = await _dataSource.setStatus(
       isActive: isActive,
       radiusKm: radiusKm,
       latitude: latitude,
       longitude: longitude,
+      mutualConnectionOptIn: mutualConnectionOptIn,
     );
     // The server is now the source of truth for a different value than
     // whatever was cached -- refresh it immediately rather than waiting
@@ -59,4 +62,10 @@ class HelperRepositoryImpl implements IHelperRepository {
 
   @override
   Future<AcceptedAlert?> accept(String alertId) => _dataSource.accept(alertId);
+
+  @override
+  Future<void> release(String alertId) => _dataSource.release(alertId);
+
+  @override
+  Future<SafetyStatus> fetchSafetyStatus(String alertId) => _dataSource.fetchSafetyStatus(alertId);
 }

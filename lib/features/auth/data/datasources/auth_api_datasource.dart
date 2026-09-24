@@ -119,6 +119,18 @@ class AuthApiDataSource {
     }
   }
 
+  /// PATCH /auth/discoverable -- the requester-side half of the mutual-
+  /// connection double opt-in (spec §10). The caller is expected to
+  /// re-fetch /auth/me afterwards to get the updated user back on the
+  /// auth stream, same as the rest of this datasource's write methods.
+  Future<void> setDiscoverable(bool discoverable) async {
+    try {
+      await _client.dio.patch('/auth/discoverable', data: {'discoverable': discoverable});
+    } on DioException catch (e) {
+      throw AuthFailure(_mapError(e));
+    }
+  }
+
   String _mapError(DioException e) {
     final responseData = e.response?.data;
 

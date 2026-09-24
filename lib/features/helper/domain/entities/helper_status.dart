@@ -10,6 +10,7 @@ class HelperStatus with _$HelperStatus {
   const factory HelperStatus({
     @Default(false) bool isActive,
     @Default(3.0) double radiusKm,
+    @Default(false) bool mutualConnectionOptIn,
   }) = _HelperStatus;
 
   factory HelperStatus.fromJson(Map<String, dynamic> json) =>

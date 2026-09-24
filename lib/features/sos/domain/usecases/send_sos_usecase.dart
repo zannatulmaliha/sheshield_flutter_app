@@ -10,11 +10,13 @@ class SendSosUseCase {
     required double longitude,
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
+    bool avConsent = false,
   }) =>
       _repository.send(
         latitude: latitude,
         longitude: longitude,
         accuracyMeters: accuracyMeters,
         notifiedByDevice: notifiedByDevice,
+        avConsent: avConsent,
       );
 }

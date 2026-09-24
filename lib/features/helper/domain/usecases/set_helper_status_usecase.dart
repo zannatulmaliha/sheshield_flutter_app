@@ -10,12 +10,14 @@ class SetHelperStatusUseCase {
     required double radiusKm,
     double? latitude,
     double? longitude,
+    bool mutualConnectionOptIn = false,
   }) {
     return _repository.setStatus(
       isActive: isActive,
       radiusKm: radiusKm,
       latitude: latitude,
       longitude: longitude,
+      mutualConnectionOptIn: mutualConnectionOptIn,
     );
   }
 }

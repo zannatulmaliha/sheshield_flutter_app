@@ -25,7 +25,7 @@ final authStateProvider = AutoDisposeStreamProvider<AppUser?>.internal(
 );
 
 typedef AuthStateRef = AutoDisposeStreamProviderRef<AppUser?>;
-String _$authControllerHash() => r'befdfbf67282a91103dcadb1355569541226df20';
+String _$authControllerHash() => r'7150ee74e053edbc949d207498e0ca530f5e7c75';
 
 /// Drives the login/signup/profile forms: loading + error state for
 /// whichever *action* is in flight, kept separate from [authState] so

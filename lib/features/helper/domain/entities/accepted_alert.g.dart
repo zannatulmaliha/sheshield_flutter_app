@@ -15,6 +15,7 @@ _$AcceptedAlertImpl _$$AcceptedAlertImplFromJson(Map<String, dynamic> json) =>
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       acceptedAt: const DateTimeConverter().fromJson(json['acceptedAt']),
+      requesterUid: json['requesterUid'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$AcceptedAlertImplToJson(_$AcceptedAlertImpl instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$AcceptedAlertImplToJson(_$AcceptedAlertImpl instance) =>
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'acceptedAt': const DateTimeConverter().toJson(instance.acceptedAt),
+      'requesterUid': instance.requesterUid,
     };

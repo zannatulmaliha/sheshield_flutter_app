@@ -12,17 +12,21 @@ class SosApiDataSource {
   static const _basePath = '/alerts';
 
   /// POST /api/v1/alerts
-  /// body: { latitude, longitude, accuracyMeters, notifiedByDevice }
+  /// body: { latitude, longitude, accuracyMeters, notifiedByDevice, avConsent }
   /// -> { "data": { id, createdAt, deliveries: [...] } }
   /// The server texts every contact not already in [notifiedByDevice]
   /// (via its SMS provider, or logs the message in dev when no
   /// provider is configured) and reports the outcome per contact --
   /// this call only has to persist the alert and return that report.
+  /// [avConsent] is the real-time answer to the "start audio/video
+  /// recording?" prompt -- persisted, but no actual recording capture
+  /// exists yet (see internal/alert's model.go comment on the backend).
   Future<SosAlert> send({
     required double latitude,
     required double longitude,
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
+    bool avConsent = false,
   }) async {
     try {
       final res = await _client.dio.post(_basePath, data: {
@@ -30,8 +34,22 @@ class SosApiDataSource {
         'longitude': longitude,
         'accuracyMeters': accuracyMeters,
         'notifiedByDevice': notifiedByDevice,
+        'avConsent': avConsent,
       });
       return SosAlert.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// POST /api/v1/alerts/{id}/duress
+  /// body: { type } -- one of 'manual_panic' | 'hardware_pattern' |
+  /// 'missed_checkin' | 'safeword_voice' (the last accepted but not
+  /// really detectable on-device yet).
+  /// -> { "data": { id, sosId, type, triggeredAt } }
+  Future<void> triggerDuress(String alertId, String type) async {
+    try {
+      await _client.dio.post('$_basePath/$alertId/duress', data: {'type': type});
     } on DioException catch (e) {
       throw _fail(e);
     }

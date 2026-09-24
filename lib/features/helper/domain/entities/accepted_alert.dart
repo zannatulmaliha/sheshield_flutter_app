@@ -19,6 +19,7 @@ class AcceptedAlert with _$AcceptedAlert {
     required double latitude,
     required double longitude,
     @DateTimeConverter() required DateTime acceptedAt,
+    @Default('') String requesterUid,
   }) = _AcceptedAlert;
 
   factory AcceptedAlert.fromJson(Map<String, dynamic> json) =>

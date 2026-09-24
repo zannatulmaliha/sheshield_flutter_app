@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 
 /// The runtime permissions SheShield actually asks for, and why -- so a
 /// denial can be understood (and fixed, via the OS settings deep link)
@@ -45,6 +46,7 @@ class PrivacyPermissionsScreen extends ConsumerStatefulWidget {
 
 class _PrivacyPermissionsScreenState extends ConsumerState<PrivacyPermissionsScreen> with WidgetsBindingObserver {
   Map<Permission, PermissionStatus> _statuses = {};
+  bool _discoverableBusy = false;
 
   @override
   void initState() {
@@ -85,6 +87,16 @@ class _PrivacyPermissionsScreenState extends ConsumerState<PrivacyPermissionsScr
     await _refresh();
   }
 
+  Future<void> _onDiscoverableChanged(bool value) async {
+    setState(() => _discoverableBusy = true);
+    final error = await ref.read(authControllerProvider.notifier).setDiscoverable(value);
+    if (!mounted) return;
+    setState(() => _discoverableBusy = false);
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+    }
+  }
+
   String _statusLabel(PermissionStatus? status) => switch (status) {
         PermissionStatus.granted || PermissionStatus.limited => 'Allowed',
         PermissionStatus.permanentlyDenied => 'Denied — tap to open settings',
@@ -95,6 +107,8 @@ class _PrivacyPermissionsScreenState extends ConsumerState<PrivacyPermissionsScr
   Widget build(BuildContext context) {
     final colors = resolvePalette(context, ref);
     final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(authStateProvider).valueOrNull;
+    final discoverable = user?.discoverableViaMutualConnections ?? false;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -157,6 +171,48 @@ class _PrivacyPermissionsScreenState extends ConsumerState<PrivacyPermissionsScr
                   ],
                 );
               }),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Mutual connections',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: colors.textPrimary),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "If someone you're already connected to sends an SOS, helpers who've also opted in can see that "
+            "you know each other. Off by default -- turning it on doesn't share your identity with anyone who "
+            "isn't already a mutual connection.",
+            style: TextStyle(fontSize: 11.5, color: colors.textSecondary, height: 1.3),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: softShadow(opacity: 0.07),
+            ),
+            child: ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: (discoverable ? colors.success : colors.textSecondary).withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.people_alt_rounded,
+                  size: 19,
+                  color: discoverable ? colors.success : colors.textSecondary,
+                ),
+              ),
+              title: Text(
+                'Discoverable via mutual connections',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5, color: colors.textPrimary),
+              ),
+              trailing: _discoverableBusy
+                  ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
+                  : Switch(value: discoverable, onChanged: _onDiscoverableChanged),
             ),
           ),
         ],

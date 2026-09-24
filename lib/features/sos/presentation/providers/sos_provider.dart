@@ -6,10 +6,12 @@ import 'package:sheshield/core/di/injection.dart';
 import 'package:sheshield/core/services/device_location_service.dart';
 import 'package:sheshield/core/services/device_sms_service.dart';
 import 'package:sheshield/features/contacts/domain/usecases/get_contacts_usecase.dart';
+import 'package:sheshield/features/sos/domain/entities/duress_type.dart';
 import 'package:sheshield/features/sos/domain/entities/sos_alert.dart';
 import 'package:sheshield/features/sos/domain/repositories/i_sos_repository.dart';
 import 'package:sheshield/features/sos/domain/usecases/resolve_sos_alert_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/send_sos_usecase.dart';
+import 'package:sheshield/features/sos/domain/usecases/trigger_duress_usecase.dart';
 import 'package:sheshield/features/sos/domain/usecases/update_sos_location_usecase.dart';
 
 part 'sos_provider.g.dart';
@@ -34,8 +36,10 @@ class SosController extends _$SosController {
   }
 
   /// Resolves the device's current position, then sends the alert.
-  /// Returns null on success, or a message to show the user.
-  Future<String?> send() async {
+  /// [avConsent] is the real-time answer to "start audio/video recording
+  /// for this emergency?" -- passed straight through, never defaulted to
+  /// true. Returns null on success, or a message to show the user.
+  Future<String?> send({bool avConsent = false}) async {
     state = const AsyncLoading<SosAlert?>().copyWithPrevious(state);
 
     final position = await getIt<DeviceLocationService>().getCurrentPosition();
@@ -52,6 +56,7 @@ class SosController extends _$SosController {
         longitude: position.longitude,
         accuracyMeters: position.accuracy,
         notifiedByDevice: notifiedByDevice,
+        avConsent: avConsent,
       );
       state = AsyncData(alert);
       _startLiveLocation(alert.id);
@@ -59,6 +64,21 @@ class SosController extends _$SosController {
     } on SosFailure catch (e) {
       state = const AsyncData(null);
       return e.message;
+    }
+  }
+
+  /// Fires a duress signal (manual panic / hardware pattern / missed
+  /// check-in) on the currently active alert -- escalates independent of
+  /// the currently matched helper. A no-op if there's no active alert.
+  /// Best-effort: a failed call here shouldn't block whatever local UI
+  /// (e.g. the panic button) triggered it.
+  Future<void> triggerDuress(DuressType type) async {
+    final alertId = state.valueOrNull?.id;
+    if (alertId == null) return;
+    try {
+      await getIt<TriggerDuressUseCase>().call(alertId, type);
+    } on SosFailure {
+      // Swallowed -- the person pressing panic again is the natural retry.
     }
   }
 

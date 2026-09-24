@@ -41,6 +41,11 @@ abstract class IAuthRepository {
   /// Registers this device's push token so an SOS from whoever has linked
   /// it as a trusted contact can alarm this phone.
   Future<void> updateFcmToken(String token);
+
+  /// The requester-side half of the mutual-connection double opt-in
+  /// (spec §10). Re-fetches and re-emits the user on [authStateChanges]
+  /// so the toggle's UI reflects the confirmed server state.
+  Future<void> setDiscoverable(bool discoverable);
 }
 
 class AuthFailure implements Exception {

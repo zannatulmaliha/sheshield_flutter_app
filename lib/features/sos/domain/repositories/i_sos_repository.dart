@@ -18,7 +18,13 @@ abstract class ISosRepository {
     required double longitude,
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
+    bool avConsent = false,
   });
+
+  /// Records a duress signal on an active/accepted SOS and escalates:
+  /// every trusted contact is notified immediately, independent of the
+  /// currently matched helper. [type] is one of the DuressType values.
+  Future<void> triggerDuress(String alertId, String type);
 
   /// Refreshes the alert's live location while it's active, so the
   /// tracking page contacts opened from their SMS keeps moving with the
