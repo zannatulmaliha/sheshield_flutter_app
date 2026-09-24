@@ -11,6 +11,7 @@ class AppTheme {
   static const Color accentEmerald = Color(0xFF10B981);
   static const Color accentPurple = Color(0xFF8B5CF6);
   static const Color accentOrange = Color(0xFFEA580C);
+  static const Color accentAmber = Color(0xFFF59E0B);
   static const Color accentRed = Color(0xFFDC2626);
 
   static ThemeData get dark {
@@ -50,10 +51,12 @@ class AppTheme {
   static ThemeData themeFor(AppPalette palette) {
     final base = ThemeData(
       useMaterial3: true,
-      brightness: palette == AppPalette.dark ? Brightness.dark : Brightness.light,
+      brightness:
+          palette == AppPalette.dark ? Brightness.dark : Brightness.light,
       colorScheme: ColorScheme.fromSeed(
         seedColor: palette.primary,
-        brightness: palette == AppPalette.dark ? Brightness.dark : Brightness.light,
+        brightness:
+            palette == AppPalette.dark ? Brightness.dark : Brightness.light,
         primary: palette.primary,
         secondary: palette.secondary,
         surface: palette.surface,
@@ -110,7 +113,8 @@ class AppTheme {
 /// The default color is [AppPalette.primary], identical in light and dark
 /// (see [AppPalette]), so callers that only ever pass [opacity] don't need
 /// to thread a palette through just for this.
-List<BoxShadow> softShadow({Color color = const Color(0xFF6C3CE9), double opacity = 0.12}) {
+List<BoxShadow> softShadow(
+    {Color color = const Color(0xFF6C3CE9), double opacity = 0.12}) {
   return [
     BoxShadow(
       color: color.withValues(alpha: opacity),
