@@ -28,6 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+
     ref.read(authControllerProvider.notifier).signIn(
           email: _email.text.trim(),
           password: _password.text,
@@ -61,15 +62,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Center(
-                    child: Container(
-                      width: 84,
-                      height: 84,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(colors: colors.heroGradient),
-                        boxShadow: softShadow(color: colors.primary, opacity: 0.3),
+                    child: GestureDetector(
+                      onLongPress: () => const AdminLoginRoute().push(context),
+                      child: Container(
+                        width: 84,
+                        height: 84,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: colors.heroGradient,
+                          ),
+                          boxShadow: softShadow(
+                            color: colors.primary,
+                            opacity: 0.3,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.shield_rounded,
+                          color: Colors.white,
+                          size: 40,
+                        ),
                       ),
-                      child: const Icon(Icons.shield_rounded, color: Colors.white, size: 40),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -86,22 +99,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Text(
                     l10n.welcomeBack,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   AuthTextField(
                     controller: _email,
                     label: l10n.email,
                     keyboardType: TextInputType.emailAddress,
-                    validator: (v) =>
-                        (v == null || !v.contains('@')) ? l10n.errorInvalidEmail : null,
+                    validator: (v) => (v == null || !v.contains('@'))
+                        ? l10n.errorInvalidEmail
+                        : null,
                   ),
                   AuthTextField(
                     controller: _password,
                     label: l10n.password,
                     obscureText: true,
-                    validator: (v) =>
-                        (v == null || v.length < 6) ? l10n.errorShortPassword : null,
+                    validator: (v) => (v == null || v.length < 6)
+                        ? l10n.errorShortPassword
+                        : null,
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
@@ -111,7 +129,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     child: authState.isLoading
                         ? const SizedBox(
@@ -122,7 +142,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               color: Colors.white,
                             ),
                           )
-                        : Text(l10n.logIn, style: const TextStyle(fontWeight: FontWeight.w800)),
+                        : Text(
+                            l10n.logIn,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 20),
                   Center(
@@ -130,7 +155,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: () => const SignupRoute().push(context),
                       child: Text(
                         l10n.dontHaveAccount,
-                        style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
