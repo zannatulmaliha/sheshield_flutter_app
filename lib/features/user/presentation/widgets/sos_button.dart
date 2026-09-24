@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
@@ -134,13 +136,75 @@ class _SosButtonState extends ConsumerState<SosButton>
   }
 }
 
-class _SosConfirmSheet extends ConsumerWidget {
+/// The three steps of the spec's §2 SOS lifecycle prelude:
+/// confirm -> a cancelable 10s countdown, no penalty for backing out ->
+/// a real-time AV-recording consent prompt -> only then does Trigger
+/// actually fire.
+enum _SosStep { confirm, countdown, consent }
+
+const _kCountdownSeconds = 10;
+
+class _SosConfirmSheet extends ConsumerStatefulWidget {
   const _SosConfirmSheet();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_SosConfirmSheet> createState() => _SosConfirmSheetState();
+}
+
+class _SosConfirmSheetState extends ConsumerState<_SosConfirmSheet> {
+  _SosStep _step = _SosStep.confirm;
+  int _secondsLeft = _kCountdownSeconds;
+  Timer? _timer;
+  bool _sending = false;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startCountdown() {
+    setState(() {
+      _step = _SosStep.countdown;
+      _secondsLeft = _kCountdownSeconds;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      if (_secondsLeft <= 1) {
+        _timer?.cancel();
+        setState(() => _step = _SosStep.consent);
+        return;
+      }
+      setState(() => _secondsLeft -= 1);
+    });
+  }
+
+  /// Cancelable, no penalty: just stops the timer and closes the sheet --
+  /// nothing was ever sent, so there's nothing to undo server-side.
+  void _cancelCountdown() {
+    _timer?.cancel();
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _confirmConsent(bool consent) async {
+    if (_sending) return;
+    setState(() => _sending = true);
+
+    final error = await ref.read(sosControllerProvider.notifier).send(avConsent: consent);
+    if (!mounted) return;
+
+    Navigator.of(context).pop();
+
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      return;
+    }
+    const SosSentRoute().push(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colors = resolvePalette(context, ref);
-    final sosState = ref.watch(sosControllerProvider);
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -166,134 +230,212 @@ class _SosConfirmSheet extends ConsumerWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            Container(
-              alignment: Alignment.center,
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: colors.sosGradient,
-                ),
-              ),
-              child: const Icon(
-                Icons.warning_rounded,
-                color: Colors.white,
-                size: 32,
-              ),
-            ),
-
-            const SizedBox(height: 18),
-
-            Text(
-              l10n.sendEmergencyAlert,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-
-            const SizedBox(height: 8),
-
-            Text(
-              l10n.sendEmergencyAlertBody,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                      ),
-                      side: const BorderSide(
-                        color: Color(0xFFE3DEF5),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: sosState.isLoading
-                        ? null
-                        : () => Navigator.of(context).pop(),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: colors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.sosEnd,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          colors.sosEnd.withValues(alpha: 0.6),
-                      disabledForegroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                      ),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    onPressed: sosState.isLoading
-                        ? null
-                        : () async {
-                            final error = await ref
-                                .read(sosControllerProvider.notifier)
-                                .send();
-
-                            if (!context.mounted) return;
-
-                            Navigator.of(context).pop();
-
-                            if (error != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(error),
-                                ),
-                              );
-                              return;
-                            }
-
-                            const SosSentRoute().push(context);
-                          },
-                    child: sosState.isLoading
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            l10n.sendSos,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                  ),
-                ),
-              ],
-            ),
+            switch (_step) {
+              _SosStep.confirm => _ConfirmStep(colors: colors, l10n: l10n, onConfirm: _startCountdown),
+              _SosStep.countdown => _CountdownStep(colors: colors, secondsLeft: _secondsLeft, onCancel: _cancelCountdown),
+              _SosStep.consent => _ConsentStep(colors: colors, sending: _sending, onAnswer: _confirmConsent),
+            },
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ConfirmStep extends StatelessWidget {
+  const _ConfirmStep({required this.colors, required this.l10n, required this.onConfirm});
+  final AppPalette colors;
+  final AppLocalizations l10n;
+  final VoidCallback onConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: colors.sosGradient)),
+          child: const Icon(Icons.warning_rounded, color: Colors.white, size: 32),
+        ),
+        const SizedBox(height: 18),
+        Text(l10n.sendEmergencyAlert, textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 8),
+        Text(l10n.sendEmergencyAlertBody, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: Color(0xFFE3DEF5)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.cancel, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.sosEnd,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: onConfirm,
+                child: Text(l10n.sendSos, style: const TextStyle(fontWeight: FontWeight.w800)),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// The spec's §2 "10s COUNTDOWN (cancelable, no penalty)". Nothing has been
+/// sent yet at this point -- canceling here simply closes the sheet.
+class _CountdownStep extends StatelessWidget {
+  const _CountdownStep({required this.colors, required this.secondsLeft, required this.onCancel});
+  final AppPalette colors;
+  final int secondsLeft;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 88,
+              height: 88,
+              child: TweenAnimationBuilder<double>(
+                key: ValueKey(secondsLeft),
+                tween: Tween(begin: 1, end: 0),
+                duration: const Duration(seconds: 1),
+                builder: (context, value, _) => CircularProgressIndicator(
+                  value: value,
+                  strokeWidth: 6,
+                  backgroundColor: colors.chipBackground,
+                  valueColor: AlwaysStoppedAnimation(colors.sosEnd),
+                ),
+              ),
+            ),
+            Text(
+              '$secondsLeft',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: colors.textPrimary),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        Text(
+          'Sending SOS in $secondsLeft...',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: colors.textPrimary),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Cancel now if this was a mistake -- nothing has been sent yet.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: colors.textSecondary, fontSize: 13),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              side: BorderSide(color: colors.sosEnd),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            onPressed: onCancel,
+            child: Text('Cancel', style: TextStyle(color: colors.sosEnd, fontWeight: FontWeight.w800)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The spec's §2 real-time AV consent prompt -- never pre-checked, always
+/// an explicit Yes/No right before dispatch.
+class _ConsentStep extends StatelessWidget {
+  const _ConsentStep({required this.colors, required this.sending, required this.onAnswer});
+  final AppPalette colors;
+  final bool sending;
+  final ValueChanged<bool> onAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: colors.primary.withValues(alpha: 0.12)),
+          child: Icon(Icons.videocam_rounded, color: colors.primary, size: 32),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          'Start audio/video recording?',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: colors.textPrimary),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Your trusted contacts are being alerted now. Recording is optional and can help document this emergency.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: colors.textSecondary, fontSize: 13),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: Color(0xFFE3DEF5)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: sending ? null : () => onAnswer(false),
+                child: Text('No', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: sending ? null : () => onAnswer(true),
+                child: sending
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Text('Yes', style: TextStyle(fontWeight: FontWeight.w800)),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

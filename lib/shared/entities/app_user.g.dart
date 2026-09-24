@@ -20,6 +20,8 @@ _$AppUserImpl _$$AppUserImplFromJson(Map<String, dynamic> json) =>
       isHelperVerified: json['isHelperVerified'] as bool? ?? false,
       fcmToken: json['fcmToken'] as String?,
       createdAt: const DateTimeConverter().fromJson(json['createdAt']),
+      discoverableViaMutualConnections:
+          json['discoverableViaMutualConnections'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$AppUserImplToJson(_$AppUserImpl instance) =>
@@ -35,6 +37,8 @@ Map<String, dynamic> _$$AppUserImplToJson(_$AppUserImpl instance) =>
       'isHelperVerified': instance.isHelperVerified,
       'fcmToken': instance.fcmToken,
       'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'discoverableViaMutualConnections':
+          instance.discoverableViaMutualConnections,
     };
 
 const _$GenderEnumMap = {

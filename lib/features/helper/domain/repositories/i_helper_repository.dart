@@ -1,6 +1,7 @@
 import '../entities/accepted_alert.dart';
 import '../entities/helper_status.dart';
 import '../entities/nearby_alert.dart';
+import '../entities/safety_status.dart';
 
 /// Contract the presentation layer depends on. No Dio or Firebase type
 /// appears here -- data/ translates transport-specific errors into
@@ -16,6 +17,7 @@ abstract class IHelperRepository {
     required double radiusKm,
     double? latitude,
     double? longitude,
+    bool mutualConnectionOptIn = false,
   });
 
   /// Only returns alerts within the helper's current radius, to
@@ -26,6 +28,15 @@ abstract class IHelperRepository {
   /// accept race first (server responded 409) -- an expected outcome,
   /// not an error, so it is not represented as a thrown failure.
   Future<AcceptedAlert?> accept(String alertId);
+
+  /// Backs out of an alert this helper currently holds -- "reviews the
+  /// live feed... can decline/back out if the situation seems unsafe or
+  /// suspicious" (spec §2). Reopens it for the standby helpers.
+  Future<void> release(String alertId);
+
+  /// Polls the live duress/connectivity signals for an alert this helper
+  /// currently holds -- see the spec's §8.
+  Future<SafetyStatus> fetchSafetyStatus(String alertId);
 }
 
 class HelperFailure implements Exception {

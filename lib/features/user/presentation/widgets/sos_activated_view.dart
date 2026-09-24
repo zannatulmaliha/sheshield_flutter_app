@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
+import 'package:sheshield/features/sos/domain/entities/duress_type.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
 /// Full-screen "SOS Alert Sent" confirmation. Pushed as a transparent
@@ -93,6 +94,29 @@ class SosActivatedView extends ConsumerWidget {
                     if (context.mounted) context.pop();
                   },
                   child: const Text("I'm Safe", style: TextStyle(fontWeight: FontWeight.w800)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Secondary panic trigger (spec §2a/§6): bypasses whichever
+              // helper is currently matched entirely -- notifies new
+              // responders + trusted contacts in parallel, without waiting
+              // on that helper. Always intentional, so no extra confirm
+              // step beyond the tap itself.
+              TextButton.icon(
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  await ref.read(sosControllerProvider.notifier).triggerDuress(DuressType.manualPanic);
+                  if (context.mounted) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Emergency escalated -- trusted contacts notified again.')),
+                    );
+                  }
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                icon: const Icon(Icons.emergency_share_rounded, size: 18),
+                label: const Text(
+                  'Still in danger? Escalate now',
+                  style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),
             ],

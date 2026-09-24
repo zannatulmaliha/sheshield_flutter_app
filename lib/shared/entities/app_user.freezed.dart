@@ -32,6 +32,8 @@ mixin _$AppUser {
   String? get fcmToken => throw _privateConstructorUsedError;
   @DateTimeConverter()
   DateTime get createdAt => throw _privateConstructorUsedError;
+  bool get discoverableViaMutualConnections =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -54,7 +56,8 @@ abstract class $AppUserCopyWith<$Res> {
       UserType userType,
       bool isHelperVerified,
       String? fcmToken,
-      @DateTimeConverter() DateTime createdAt});
+      @DateTimeConverter() DateTime createdAt,
+      bool discoverableViaMutualConnections});
 }
 
 /// @nodoc
@@ -81,6 +84,7 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
     Object? isHelperVerified = null,
     Object? fcmToken = freezed,
     Object? createdAt = null,
+    Object? discoverableViaMutualConnections = null,
   }) {
     return _then(_value.copyWith(
       uid: null == uid
@@ -127,6 +131,10 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      discoverableViaMutualConnections: null == discoverableViaMutualConnections
+          ? _value.discoverableViaMutualConnections
+          : discoverableViaMutualConnections // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -149,7 +157,8 @@ abstract class _$$AppUserImplCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       UserType userType,
       bool isHelperVerified,
       String? fcmToken,
-      @DateTimeConverter() DateTime createdAt});
+      @DateTimeConverter() DateTime createdAt,
+      bool discoverableViaMutualConnections});
 }
 
 /// @nodoc
@@ -174,6 +183,7 @@ class __$$AppUserImplCopyWithImpl<$Res>
     Object? isHelperVerified = null,
     Object? fcmToken = freezed,
     Object? createdAt = null,
+    Object? discoverableViaMutualConnections = null,
   }) {
     return _then(_$AppUserImpl(
       uid: null == uid
@@ -220,6 +230,10 @@ class __$$AppUserImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      discoverableViaMutualConnections: null == discoverableViaMutualConnections
+          ? _value.discoverableViaMutualConnections
+          : discoverableViaMutualConnections // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -238,7 +252,8 @@ class _$AppUserImpl implements _AppUser {
       this.userType = UserType.user,
       this.isHelperVerified = false,
       this.fcmToken,
-      @DateTimeConverter() required this.createdAt});
+      @DateTimeConverter() required this.createdAt,
+      this.discoverableViaMutualConnections = false});
 
   factory _$AppUserImpl.fromJson(Map<String, dynamic> json) =>
       _$$AppUserImplFromJson(json);
@@ -268,10 +283,13 @@ class _$AppUserImpl implements _AppUser {
   @override
   @DateTimeConverter()
   final DateTime createdAt;
+  @override
+  @JsonKey()
+  final bool discoverableViaMutualConnections;
 
   @override
   String toString() {
-    return 'AppUser(uid: $uid, name: $name, phone: $phone, countryCode: $countryCode, address: $address, email: $email, gender: $gender, userType: $userType, isHelperVerified: $isHelperVerified, fcmToken: $fcmToken, createdAt: $createdAt)';
+    return 'AppUser(uid: $uid, name: $name, phone: $phone, countryCode: $countryCode, address: $address, email: $email, gender: $gender, userType: $userType, isHelperVerified: $isHelperVerified, fcmToken: $fcmToken, createdAt: $createdAt, discoverableViaMutualConnections: $discoverableViaMutualConnections)';
   }
 
   @override
@@ -294,13 +312,29 @@ class _$AppUserImpl implements _AppUser {
             (identical(other.fcmToken, fcmToken) ||
                 other.fcmToken == fcmToken) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.discoverableViaMutualConnections,
+                    discoverableViaMutualConnections) ||
+                other.discoverableViaMutualConnections ==
+                    discoverableViaMutualConnections));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, name, phone, countryCode,
-      address, email, gender, userType, isHelperVerified, fcmToken, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      name,
+      phone,
+      countryCode,
+      address,
+      email,
+      gender,
+      userType,
+      isHelperVerified,
+      fcmToken,
+      createdAt,
+      discoverableViaMutualConnections);
 
   @JsonKey(ignore: true)
   @override
@@ -328,7 +362,8 @@ abstract class _AppUser implements AppUser {
       final UserType userType,
       final bool isHelperVerified,
       final String? fcmToken,
-      @DateTimeConverter() required final DateTime createdAt}) = _$AppUserImpl;
+      @DateTimeConverter() required final DateTime createdAt,
+      final bool discoverableViaMutualConnections}) = _$AppUserImpl;
 
   factory _AppUser.fromJson(Map<String, dynamic> json) = _$AppUserImpl.fromJson;
 
@@ -355,6 +390,8 @@ abstract class _AppUser implements AppUser {
   @override
   @DateTimeConverter()
   DateTime get createdAt;
+  @override
+  bool get discoverableViaMutualConnections;
   @override
   @JsonKey(ignore: true)
   _$$AppUserImplCopyWith<_$AppUserImpl> get copyWith =>

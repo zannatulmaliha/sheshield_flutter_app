@@ -83,4 +83,10 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<void> updateFcmToken(String token) => _dataSource.updateFcmToken(token);
+
+  @override
+  Future<void> setDiscoverable(bool discoverable) async {
+    await _dataSource.setDiscoverable(discoverable);
+    await _restoreSession();
+  }
 }

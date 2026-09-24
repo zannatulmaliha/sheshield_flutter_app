@@ -23,6 +23,7 @@ class AppUser with _$AppUser {
     @Default(false) bool isHelperVerified,
     String? fcmToken,
     @DateTimeConverter() required DateTime createdAt,
+    @Default(false) bool discoverableViaMutualConnections,
   }) = _AppUser;
 
   factory AppUser.fromJson(Map<String, dynamic> json) =>

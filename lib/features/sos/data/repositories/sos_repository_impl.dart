@@ -18,13 +18,19 @@ class SosRepositoryImpl implements ISosRepository {
     required double longitude,
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
+    bool avConsent = false,
   }) =>
       _dataSource.send(
         latitude: latitude,
         longitude: longitude,
         accuracyMeters: accuracyMeters,
         notifiedByDevice: notifiedByDevice,
+        avConsent: avConsent,
       );
+
+  @override
+  Future<void> triggerDuress(String alertId, String type) =>
+      _dataSource.triggerDuress(alertId, type);
 
   @override
   Future<void> updateLocation({

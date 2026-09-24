@@ -8,6 +8,7 @@ import 'package:sheshield/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/update_profile_usecase.dart';
+import 'package:sheshield/features/auth/domain/usecases/set_discoverable_usecase.dart';
 import 'package:sheshield/features/auth/domain/usecases/watch_auth_state_usecase.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
 import 'package:sheshield/shared/entities/gender.dart';
@@ -93,5 +94,18 @@ class AuthController extends _$AuthController {
         address: address,
       ),
     );
+  }
+
+  /// The requester-side half of the §10 mutual-connection double opt-in.
+  /// Returns an error message on failure, or null on success -- same
+  /// convention as [HelperStatusController]'s toggle methods, so the
+  /// caller can show a snackbar without inspecting AsyncValue itself.
+  Future<String?> setDiscoverable(bool discoverable) async {
+    try {
+      await getIt<SetDiscoverableUseCase>().call(discoverable);
+      return null;
+    } on AuthFailure catch (e) {
+      return e.message;
+    }
   }
 }

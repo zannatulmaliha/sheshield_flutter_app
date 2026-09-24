@@ -12,12 +12,14 @@ class ActiveHelperCard extends StatelessWidget {
     required this.isBusy,
     required this.onToggle,
     required this.onRadiusChanged,
+    required this.onMutualConnectionChanged,
   });
 
   final HelperStatus status;
   final bool isBusy;
   final ValueChanged<bool> onToggle;
   final ValueChanged<double> onRadiusChanged;
+  final ValueChanged<bool> onMutualConnectionChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +97,35 @@ class ActiveHelperCard extends StatelessWidget {
             activeColor: active ? Colors.white : AppTheme.accentEmerald,
             label: '${status.radiusKm.toStringAsFixed(1)} km',
             onChanged: onRadiusChanged,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Prioritize my connections',
+                  style: TextStyle(
+                    color: active ? Colors.white.withValues(alpha: 0.9) : Colors.black54,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.5,
+                  ),
+                ),
+              ),
+              Switch(
+                value: status.mutualConnectionOptIn,
+                onChanged: onMutualConnectionChanged,
+                activeThumbColor: active ? Colors.white : AppTheme.accentEmerald,
+                activeTrackColor: active ? Colors.white.withValues(alpha: 0.4) : null,
+              ),
+            ],
+          ),
+          Text(
+            'Flags alerts from people you already know as a mutual connection, when they\'ve opted in too.',
+            style: TextStyle(
+              color: active ? Colors.white.withValues(alpha: 0.75) : Colors.black45,
+              fontSize: 11,
+              height: 1.3,
+            ),
           ),
         ],
       ),

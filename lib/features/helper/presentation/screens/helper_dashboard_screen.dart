@@ -114,6 +114,9 @@ class _HelperDashboardScreenState extends ConsumerState<HelperDashboardScreen> {
                 onToggle: _onToggle,
                 onRadiusChanged: (km) =>
                     ref.read(helperStatusControllerProvider.notifier).setRadius(km),
+                onMutualConnectionChanged: (value) => ref
+                    .read(helperStatusControllerProvider.notifier)
+                    .setMutualConnectionOptIn(value),
               ),
               const SizedBox(height: 22),
               if (status.isActive)

@@ -7,7 +7,7 @@ part of 'helper_status_provider.dart';
 // **************************************************************************
 
 String _$helperStatusControllerHash() =>
-    r'd96ef9ec136edb415d10cbb5009f2e61c6527962';
+    r'29cc4178313f74e88bb8b239d5e3ca22f1401a24';
 
 /// Owns "am I active, and at what radius". [toggleActive] and
 /// [setRadius] are the only way anything else in the app changes this

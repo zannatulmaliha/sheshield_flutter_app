@@ -47,6 +47,7 @@ class HelperStatusController extends _$HelperStatusController {
         radiusKm: previous.radiusKm,
         latitude: lat,
         longitude: lng,
+        mutualConnectionOptIn: previous.mutualConnectionOptIn,
       );
       state = AsyncData(updated);
       return null;
@@ -65,10 +66,34 @@ class HelperStatusController extends _$HelperStatusController {
     state = AsyncData(previous.copyWith(radiusKm: km));
     if (!previous.isActive) return;
     try {
-      await getIt<SetHelperStatusUseCase>().call(isActive: true, radiusKm: km);
+      await getIt<SetHelperStatusUseCase>().call(
+        isActive: true,
+        radiusKm: km,
+        mutualConnectionOptIn: previous.mutualConnectionOptIn,
+      );
     } on HelperFailure {
       // Leave the slider where the user put it; the next successful
       // sync (or the next toggle) reconciles with the server.
+    }
+  }
+
+  /// The helper-side half of the §10 double opt-in -- restricted to
+  /// verified helpers server-side, same as every other helper-only
+  /// action. Optimistic like [setRadius]; only synced to the server
+  /// while active since inactive helpers are never matched anyway.
+  Future<void> setMutualConnectionOptIn(bool value) async {
+    final previous = state.valueOrNull;
+    if (previous == null) return;
+    state = AsyncData(previous.copyWith(mutualConnectionOptIn: value));
+    try {
+      final updated = await getIt<SetHelperStatusUseCase>().call(
+        isActive: previous.isActive,
+        radiusKm: previous.radiusKm,
+        mutualConnectionOptIn: value,
+      );
+      state = AsyncData(updated);
+    } on HelperFailure {
+      state = AsyncData(previous);
     }
   }
 }

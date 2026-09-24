@@ -3,6 +3,7 @@ import 'package:sheshield/core/network/dio_client.dart';
 import '../../domain/entities/accepted_alert.dart';
 import '../../domain/entities/helper_status.dart';
 import '../../domain/entities/nearby_alert.dart';
+import '../../domain/entities/safety_status.dart';
 import '../../domain/repositories/i_helper_repository.dart';
 
 /// The only file that talks to the /api/v1/helper endpoints. These do
@@ -26,12 +27,13 @@ class HelperApiDataSource {
   }
 
   /// PUT /api/v1/helper/status
-  /// body: { isActive, radiusKm, latitude?, longitude? }
+  /// body: { isActive, radiusKm, latitude?, longitude?, mutualConnectionOptIn }
   Future<HelperStatus> setStatus({
     required bool isActive,
     required double radiusKm,
     double? latitude,
     double? longitude,
+    bool mutualConnectionOptIn = false,
   }) async {
     try {
       final res = await _client.dio.put('$_basePath/status', data: {
@@ -39,6 +41,7 @@ class HelperApiDataSource {
         'radiusKm': radiusKm,
         if (latitude != null) 'latitude': latitude,
         if (longitude != null) 'longitude': longitude,
+        'mutualConnectionOptIn': mutualConnectionOptIn,
       });
       return HelperStatus.fromJson(res.data['data'] as Map<String, dynamic>);
     } on DioException catch (e) {
@@ -72,6 +75,31 @@ class HelperApiDataSource {
       return AcceptedAlert.fromJson(res.data['data'] as Map<String, dynamic>);
     } on DioException catch (e) {
       if (e.response?.statusCode == 409) return null;
+      throw _fail(e);
+    }
+  }
+
+  /// POST /api/v1/helper/alerts/{id}/release -- back out of an alert this
+  /// helper currently holds. Reopens it server-side for standby helpers.
+  Future<void> release(String alertId) async {
+    try {
+      await _client.dio.post('$_basePath/alerts/$alertId/release');
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// GET /api/v1/helper/alerts/{id}/safety-status -> { duressActive, connectivityLost }
+  /// Polled while this helper holds the alert -- see spec §8.
+  Future<SafetyStatus> fetchSafetyStatus(String alertId) async {
+    try {
+      final res = await _client.dio.get('$_basePath/alerts/$alertId/safety-status');
+      final data = res.data['data'] as Map<String, dynamic>;
+      return SafetyStatus(
+        duressActive: data['duressActive'] as bool? ?? false,
+        connectivityLost: data['connectivityLost'] as bool? ?? false,
+      );
+    } on DioException catch (e) {
       throw _fail(e);
     }
   }
