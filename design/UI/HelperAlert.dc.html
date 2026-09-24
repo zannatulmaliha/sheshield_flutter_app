@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — SOS Alert</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1417; color: #FBF4F5; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px 24px 32px; overflow: hidden;">
+
+  <div style="width: 100%; display: flex; justify-content: flex-start;">
+    <a href="HelperHome.dc.html" aria-label="Back" style="width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #FBF4F5; text-decoration: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px; background: #FF5A5F; color: #FFFFFF; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; padding: 8px 16px; border-radius: 999px;">
+      <span style="width: 7px; height: 7px; border-radius: 50%; background: #FFFFFF;"></span>
+      NEW SOS ALERT
+    </div>
+    <div style="font-size: 20px; font-weight: 700; text-align: center; margin-top: 6px;">Someone nearby needs help</div>
+  </div>
+
+  <div style="height: 190px; border-radius: 20px; background: #3D1E22; border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; width: 100%; box-sizing: border-box;">
+    <svg width="100%" height="100%" viewBox="0 0 340 190" preserveAspectRatio="none" style="display: block;">
+      <line x1="110" y1="130" x2="230" y2="60" stroke="#FF5A5F" stroke-width="2.5" stroke-dasharray="2 8" stroke-linecap="round"/>
+      <circle cx="110" cy="130" r="9" fill="#C97B84" stroke="#FBF4F5" stroke-width="2.5"/>
+      <circle cx="230" cy="60" r="26" fill="rgba(255,90,95,0.2)"/>
+      <circle cx="230" cy="60" r="9" fill="#FF5A5F" stroke="#FBF4F5" stroke-width="2.5"/>
+    </svg>
+    <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.35); color: #FBF4F5; font-size: 10.5px; padding: 4px 8px; border-radius: 8px;">Map preview</div>
+    <div style="position: absolute; left: 88px; top: 138px; font-size: 10.5px; color: #FBF4F5; background: rgba(0,0,0,0.35); padding: 2px 6px; border-radius: 6px;">You</div>
+    <div style="position: absolute; left: 208px; top: 32px; font-size: 10.5px; color: #FBF4F5; background: rgba(0,0,0,0.35); padding: 2px 6px; border-radius: 6px;">Fatima</div>
+  </div>
+
+  <div style="width: 100%; background: #3D1E22; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 36px; height: 36px; border-radius: 50%; background: #2A1417; color: #FF9EA1; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">F</span>
+        <span style="font-size: 14.5px; font-weight: 700;">Fatima</span>
+        <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(74,222,128,0.15); color: #4ADE80; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px;">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Verified
+        </span>
+      </div>
+    </div>
+    <div style="height: 1px; background: rgba(255,255,255,0.08);"></div>
+    <div style="font-size: 12.5px; color: #D9AEB2;">Personal safety emergency &middot; 320 m away &middot; 2 min ago</div>
+  </div>
+
+  <div style="width: 100%; background: rgba(201,123,132,0.08); border: 1px solid rgba(201,123,132,0.25); border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; box-sizing: border-box;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C97B84" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div style="font-size: 12px; color: #E4D6DB; line-height: 1.45;">Only accept if you can safely respond. Your safety comes first — call emergency services if you're unsure.</div>
+  </div>
+
+  <div style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+    <a href="HelperResponse.dc.html" style="width: 100%; box-sizing: border-box; height: 52px; border-radius: 14px; background: #C97B84; color: #2A1B2D; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-decoration: none;">Accept &amp; Respond</a>
+    <a href="HelperHome.dc.html" style="width: 100%; box-sizing: border-box; height: 52px; border-radius: 14px; background: transparent; border: 1.5px solid rgba(255,255,255,0.28); color: #FBF4F5; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Decline</a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

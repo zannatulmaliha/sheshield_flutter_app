@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SheShield — Helper Alerts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+.ss-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;padding-top:8px;}
+.ss-switch{position:relative;display:inline-block;width:44px;height:26px;flex-shrink:0;}
+.ss-switch input{opacity:0;width:0;height:0;}
+.ss-switch-track{position:absolute;inset:0;background:rgba(255,255,255,0.18);border-radius:999px;transition:background 0.15s;}
+.ss-switch-track::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#FBF4F5;border-radius:50%;transition:transform 0.15s;}
+.ss-switch input:checked + .ss-switch-track{background:#4ADE80;}
+.ss-switch input:checked + .ss-switch-track::before{transform:translateX(18px);}
+.ss-tab{height:46px;padding:0 2px;margin-right:22px;background:none;border:none;font-family:inherit;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;}
+.ss-count{min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:999px;background:rgba(255,255,255,0.1);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
+.ss-acard{background:#3D2740;border-radius:16px;padding:16px;}
+.ss-btn-primary{flex:1;height:44px;border-radius:12px;background:#C97B84;color:#2A1B2D;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.ss-btn-outline{flex:1;height:44px;border-radius:12px;background:transparent;border:1.5px solid rgba(255,255,255,0.22);color:#FBF4F5;font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none;}
+.ss-icon-btn{width:44px;height:44px;border-radius:12px;background:transparent;border:1.5px solid rgba(255,255,255,0.22);color:#FBF4F5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0;}
+.ss-menu-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;text-decoration:none;color:inherit;}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2A1B2D; color: #FBF4F5; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+
+  <div style="flex-shrink: 0; padding: 24px 22px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="min-width: 0;">
+      <div style="font-size: 24px; font-weight: 800;">Alerts</div>
+      <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12.5px;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: {{statusColor}};"></span>
+        <span style="color: {{statusColor}}; font-weight: 700;">{{statusLabel}}</span>
+        <span style="color: #6E5A64;">&middot;</span>
+        <button type="button" onClick="{{toggleRadius}}" aria-expanded="{{radiusOpen}}" aria-label="Change alert radius" style="background: none; border: none; padding: 0; color: #E4D6DB; font-family: inherit; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 3px; cursor: pointer;">
+          Within {{radiusLabel}}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B7969E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px; flex-shrink: 0;">
+      <label class="ss-switch" aria-label="Available to receive alerts">
+        <input type="checkbox" checked="{{online}}" onChange="{{toggleOnline}}">
+        <span class="ss-switch-track"></span>
+      </label>
+      <div style="position: relative;">
+        <button type="button" onClick="{{toggleMenu}}" aria-label="Account and mode menu" aria-expanded="{{menuOpen}}" style="width: 44px; height: 44px; border-radius: 50%; background: #3D2740; display: flex; align-items: center; justify-content: center; color: #FBF4F5; font-weight: 700; font-size: 16px; border: 2px solid #C97B84; font-family: inherit; padding: 0;">A</button>
+        <div style="position: absolute; right: -3px; bottom: -3px; width: 18px; height: 18px; border-radius: 50%; background: #C97B84; border: 2px solid #2A1B2D; display: flex; align-items: center; justify-content: center; color: #2A1B2D; pointer-events: none;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex-shrink: 0; margin-top: 14px; padding: 0 22px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <button type="button" onClick="{{showNearby}}" class="ss-tab" style="color: {{nearbyTabColor}}; box-shadow: inset 0 -2px 0 {{nearbyTabLine}};">Nearby <span class="ss-count">{{nearbyCount}}</span></button>
+    <button type="button" onClick="{{showMine}}" class="ss-tab" style="color: {{mineTabColor}}; box-shadow: inset 0 -2px 0 {{mineTabLine}};">My Responses <span class="ss-count">1</span></button>
+    <span style="flex: 1;"></span>
+    <sc-if value="{{isNearby}}" hint-placeholder-val="{{true}}">
+      <button type="button" onClick="{{toggleView}}" aria-label="{{viewLabel}}" style="width: 36px; height: 36px; border-radius: 10px; background: #3D2740; border: 1px solid rgba(255,255,255,0.1); color: #FBF4F5; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
+        <sc-if value="{{isList}}" hint-placeholder-val="{{true}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        </sc-if>
+        <sc-if value="{{isMap}}" hint-placeholder-val="{{false}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </sc-if>
+      </button>
+    </sc-if>
+  </div>
+
+  <div style="flex: 1 1 auto; overflow-y: auto; padding: 16px 22px 20px; display: flex; flex-direction: column; gap: 14px;">
+
+    <sc-if value="{{showOffline}}" hint-placeholder-val="{{false}}">
+      <div style="padding: 60px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A7480" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <div style="font-size: 15px; font-weight: 700;">You're offline</div>
+        <div style="font-size: 13px; color: #B7969E; line-height: 1.5;">Turn on the switch at the top to start receiving nearby alerts.</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showNone}}" hint-placeholder-val="{{false}}">
+      <div style="padding: 60px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div style="font-size: 15px; font-weight: 700;">No alerts within {{radiusLabel}}</div>
+        <div style="font-size: 13px; color: #B7969E; line-height: 1.5;">Everyone nearby is safe right now.</div>
+        <button type="button" onClick="{{toggleRadius}}" style="margin-top: 4px; background: none; border: none; color: #C97B84; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;">Widen radius</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showListView}}" hint-placeholder-val="{{true}}">
+      <sc-for list="{{alerts}}" as="a" hint-placeholder-count="3">
+        <div class="ss-acard" style="border: 1px solid {{a.cardBorder}};">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="background: {{a.riskBg}}; color: {{a.riskColor}}; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; padding: 3px 7px; border-radius: 6px;">{{a.riskLabel}}</span>
+            <span style="font-size: 12px; color: #B7969E;">{{a.type}} &middot; {{a.distLabel}} &middot; {{a.ago}}</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 10px; line-height: 1.35;">{{a.desc}}</div>
+          <div style="font-size: 12px; color: #B7969E; margin-top: 5px;">{{a.name}} &middot; {{a.eta}}</div>
+          <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <a href="{{a.acceptHref}}" class="ss-btn-primary">Accept</a>
+            <button type="button" onClick="{{a.onMap}}" aria-label="View on map" class="ss-icon-btn">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{showMapView}}" hint-placeholder-val="{{false}}">
+      <div style="position: relative; height: 300px; border-radius: 18px; background: #241A26; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0;">
+        <svg width="100%" height="100%" viewBox="0 0 346 300" preserveAspectRatio="none" style="display: block; position: absolute; inset: 0;">
+          <line x1="0" y1="70" x2="346" y2="90" stroke="#4A3049" stroke-width="5"/>
+          <line x1="110" y1="0" x2="90" y2="300" stroke="#4A3049" stroke-width="4"/>
+          <line x1="0" y1="230" x2="346" y2="190" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <line x1="250" y1="0" x2="250" y2="300" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+        </svg>
+        <div style="position: absolute; left: 53px; top: 30px; width: 240px; height: 240px; box-sizing: border-box; border-radius: 50%; border: 1.5px dashed rgba(201,123,132,0.55); background: rgba(201,123,132,0.05);"></div>
+        <div style="position: absolute; left: 164px; top: 141px; width: 18px; height: 18px; border-radius: 50%; background: #C97B84; border: 2.5px solid #FBF4F5; box-sizing: border-box;"></div>
+        <sc-for list="{{alerts}}" as="a" hint-placeholder-count="3">
+          <button type="button" onClick="{{a.onSelect}}" aria-label="{{a.pinLabel}}" style="position: absolute; left: {{a.pinLeft}}px; top: {{a.pinTop}}px; width: 32px; height: 32px; border-radius: 50%; background: {{a.pinHalo}}; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <span style="width: 14px; height: 14px; border-radius: 50%; background: {{a.riskColor}}; border: 2px solid #FBF4F5;"></span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div class="ss-acard" style="border: 1px solid {{sel.cardBorder}};">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="background: {{sel.riskBg}}; color: {{sel.riskColor}}; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; padding: 3px 7px; border-radius: 6px;">{{sel.riskLabel}}</span>
+          <span style="font-size: 12px; color: #B7969E;">{{sel.type}} &middot; {{sel.distLabel}} &middot; {{sel.ago}}</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 700; margin-top: 10px; line-height: 1.35;">{{sel.desc}}</div>
+        <div style="font-size: 12px; color: #B7969E; margin-top: 5px;">{{sel.name}} &middot; {{sel.eta}}</div>
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
+          <a href="{{sel.acceptHref}}" class="ss-btn-primary">Accept</a>
+          <a href="HelperAlert.dc.html" class="ss-btn-outline">Details</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isMine}}" hint-placeholder-val="{{false}}">
+      <div class="ss-acard" style="border: 1px solid rgba(201,123,132,0.4);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="background: #C97B84; color: #2A1B2D; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 6px;">EN ROUTE</span>
+          <span style="font-size: 12px; color: #B7969E;">SOS &middot; accepted 3 min ago</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 700; margin-top: 10px;">Fatima &middot; Personal safety emergency</div>
+        <div style="font-size: 12px; color: #B7969E; margin-top: 5px;">320 m away &middot; ETA 4 min</div>
+        <div style="display: flex; margin-top: 14px;">
+          <a href="HelperResponse.dc.html" class="ss-btn-primary">Resume Response</a>
+        </div>
+      </div>
+      <div style="font-size: 12.5px; color: #B7969E; text-align: center; padding: 6px 0;">Completed responses are in <a href="HelperActivity.dc.html" style="color: #C97B84; font-weight: 700; text-decoration: none;">Activity</a></div>
+    </sc-if>
+
+  </div>
+
+  <a href="HelperResponse.dc.html" style="flex-shrink: 0; height: 50px; padding: 0 22px; display: flex; align-items: center; gap: 10px; background: #3D2740; border-top: 1px solid rgba(201,123,132,0.45); text-decoration: none; color: #FBF4F5;">
+    <span style="width: 8px; height: 8px; border-radius: 50%; background: #C97B84; flex-shrink: 0;"></span>
+    <span style="flex: 1; min-width: 0; font-size: 13px;"><span style="font-weight: 700;">Responding to Fatima</span> <span style="color: #B7969E;">&middot; ETA 4 min</span></span>
+    <span style="font-size: 13px; font-weight: 800; color: #C97B84;">Resume</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C97B84" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </a>
+
+  <div style="flex-shrink: 0; height: 78px; background: #241720; border-top: 1px solid rgba(255,255,255,0.08); display: flex;">
+    <a href="HelperHome.dc.html" class="ss-nav-item" style="color: #C97B84;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Alerts</span>
+    </a>
+    <a href="HelperActivity.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Activity</span>
+    </a>
+    <a href="HelperSafety.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Safety</span>
+    </a>
+    <a href="Profile.dc.html" class="ss-nav-item" style="color: #B7969E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span style="font-size: 10px; font-weight: 600;">Profile</span>
+    </a>
+  </div>
+
+  <sc-if value="{{radiusOpen}}" hint-placeholder-val="{{false}}">
+    <button type="button" onClick="{{toggleRadius}}" aria-label="Close radius picker" style="position: absolute; inset: 0; background: transparent; border: none; z-index: 5; padding: 0;"></button>
+    <div style="position: absolute; left: 22px; top: 84px; width: 200px; background: #3D2740; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 6px; box-shadow: 0 14px 32px rgba(0,0,0,0.45); z-index: 10;">
+      <div style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #B7969E; padding: 8px 10px 6px;">Alert radius</div>
+      <sc-for list="{{radiusOptions}}" as="r" hint-placeholder-count="4">
+        <button type="button" onClick="{{r.onPick}}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px; border-radius: 9px; border: none; background: {{r.bg}}; color: #FBF4F5; font-family: inherit; font-size: 13px; font-weight: {{r.weight}}; cursor: pointer;">
+          {{r.label}}
+          <span style="color: #C97B84; font-weight: 800;">{{r.check}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+    <button type="button" onClick="{{toggleMenu}}" aria-label="Close menu" style="position: absolute; inset: 0; background: transparent; border: none; z-index: 5; padding: 0;"></button>
+    <div style="position: absolute; right: 22px; top: 76px; width: 220px; background: #3D2740; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 6px; box-shadow: 0 14px 32px rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 2px; z-index: 10;">
+      <div class="ss-menu-row" style="background: rgba(201,123,132,0.14);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C97B84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span style="flex: 1; font-size: 13px; font-weight: 700;">Helper Mode</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C97B84" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <a href="Main.dc.html" class="ss-menu-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7969E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="flex: 1; font-size: 13px; font-weight: 600; color: #E4D6DB;">Switch to User</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B7969E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 3px 4px;"></div>
+      <a href="Profile.dc.html" class="ss-menu-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7969E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+        <span style="flex: 1; font-size: 13px; font-weight: 600; color: #E4D6DB;">View Profile</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B7969E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { online: true, tab: 'nearby', view: 'list', radius: 5, radiusOpen: false, menuOpen: false, selectedId: 1 };
+  }
+  renderVals() {
+    const s = this.state;
+    const RISK = {
+      high: { label: 'HIGH RISK', color: '#FF5A5F', bg: 'rgba(255,90,95,0.16)', border: 'rgba(255,90,95,0.35)' },
+      medium: { label: 'MEDIUM', color: '#FBBF24', bg: 'rgba(251,191,36,0.16)', border: 'rgba(255,255,255,0.06)' },
+      low: { label: 'LOW', color: '#4ADE80', bg: 'rgba(74,222,128,0.14)', border: 'rgba(255,255,255,0.06)' }
+    };
+    const ALL = [
+      { id: 1, name: 'Sumaiya R.', desc: 'Walking home, feeling followed', risk: 'high', type: 'SOS', d: 0.8, ago: '2 min ago', eta: '~3 min away', angle: 300 },
+      { id: 4, name: 'Tahmina K.', desc: 'Car broke down on an isolated road', risk: 'high', type: 'SOS', d: 4.1, ago: '1 min ago', eta: '~12 min away', angle: 215 },
+      { id: 2, name: 'Anika T.', desc: 'Needs a virtual companion for a late bus ride', risk: 'medium', type: 'Companion', d: 1.2, ago: '5 min ago', eta: 'Remote OK', angle: 150 },
+      { id: 3, name: 'Nabila H.', desc: 'Walking to the parking lot after a late shift', risk: 'low', type: 'Companion', d: 2.4, ago: '12 min ago', eta: '~9 min away', angle: 25 }
+    ];
+    const visible = s.online ? ALL.filter((a) => a.d <= s.radius) : [];
+    const selId = visible.some((a) => a.id === s.selectedId) ? s.selectedId : (visible[0] ? visible[0].id : null);
+    const alerts = visible.map((a) => {
+      const r = RISK[a.risk];
+      const off = Math.max(30, (a.d / s.radius) * 120);
+      const rad = (a.angle * Math.PI) / 180;
+      return {
+        ...a,
+        riskLabel: r.label, riskColor: r.color, riskBg: r.bg, cardBorder: r.border,
+        distLabel: a.d < 1 ? Math.round(a.d * 1000) + ' m' : a.d.toFixed(1) + ' km',
+        acceptHref: a.type === 'SOS' ? 'HelperResponse.dc.html' : 'HelperCompanion.dc.html',
+        pinLeft: Math.round(173 + off * Math.cos(rad) - 16),
+        pinTop: Math.round(150 + off * Math.sin(rad) - 16),
+        pinHalo: a.id === selId ? 'rgba(255,255,255,0.22)' : 'transparent',
+        pinLabel: r.label + ' ' + a.type + ' alert: ' + a.desc,
+        onMap: () => this.setState({ view: 'map', selectedId: a.id }),
+        onSelect: () => this.setState({ selectedId: a.id })
+      };
+    });
+    const sel = alerts.find((a) => a.id === selId) || {};
+    const isNearby = s.tab === 'nearby';
+    const isList = s.view === 'list';
+    return {
+      online: s.online,
+      statusLabel: s.online ? 'Online' : 'Offline',
+      statusColor: s.online ? '#4ADE80' : '#B7969E',
+      toggleOnline: () => this.setState({ online: !s.online }),
+      isNearby, isMine: !isNearby,
+      nearbyTabColor: isNearby ? '#FBF4F5' : '#B7969E',
+      nearbyTabLine: isNearby ? '#C97B84' : 'transparent',
+      mineTabColor: !isNearby ? '#FBF4F5' : '#B7969E',
+      mineTabLine: !isNearby ? '#C97B84' : 'transparent',
+      showNearby: () => this.setState({ tab: 'nearby' }),
+      showMine: () => this.setState({ tab: 'mine' }),
+      nearbyCount: visible.length,
+      isList, isMap: !isList,
+      viewLabel: isList ? 'Show alerts on map' : 'Show alerts as list',
+      toggleView: () => this.setState({ view: isList ? 'map' : 'list' }),
+      showOffline: isNearby && !s.online,
+      showNone: isNearby && s.online && visible.length === 0,
+      showListView: isNearby && isList && visible.length > 0,
+      showMapView: isNearby && !isList && visible.length > 0,
+      alerts, sel,
+      radiusLabel: s.radius + ' km',
+      radiusOptions: [1, 2, 5, 10].map((km) => ({
+        label: km + ' km',
+        bg: km === s.radius ? 'rgba(201,123,132,0.14)' : 'transparent',
+        weight: km === s.radius ? '700' : '500',
+        check: km === s.radius ? '✓' : '',
+        onPick: () => this.setState({ radius: km, radiusOpen: false })
+      })),
+      radiusOpen: s.radiusOpen,
+      toggleRadius: () => this.setState({ radiusOpen: !s.radiusOpen }),
+      menuOpen: s.menuOpen,
+      toggleMenu: () => this.setState({ menuOpen: !s.menuOpen })
+    };
+  }
+}
+</script>
+</body>
+</html>
