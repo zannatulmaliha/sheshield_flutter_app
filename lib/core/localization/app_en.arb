@@ -150,5 +150,14 @@
   "themeLight": "Light",
   "themeDark": "Dark",
   "helpSupport": "Help & Support",
-  "logOut": "Log Out"
+  "logOut": "Log Out",
+
+  "adminDashboardTitle": "Admin Dashboard",
+  "adminKeyPrompt": "Enter the operator admin key to open the moderation queue.",
+  "adminKeyFieldLabel": "Admin key",
+  "adminSignInButton": "Sign in",
+  "adminSignOut": "Sign out",
+  "adminQueueTitle": "Moderation Queue",
+  "adminQueueEmpty": "No pending reports.",
+  "adminReportDetailTitle": "Report"
 }

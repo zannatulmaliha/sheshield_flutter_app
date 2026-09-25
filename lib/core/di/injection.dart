@@ -76,6 +76,18 @@ import 'package:sheshield/features/verification/domain/repositories/i_verificati
 import 'package:sheshield/features/verification/domain/usecases/get_verification_status_usecase.dart';
 import 'package:sheshield/features/verification/domain/usecases/submit_verification_usecase.dart';
 
+// ==================== ADMIN ====================
+import 'package:sheshield/features/admin/data/datasources/admin_api_datasource.dart';
+import 'package:sheshield/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:sheshield/features/admin/domain/repositories/i_admin_repository.dart';
+import 'package:sheshield/features/admin/domain/usecases/has_admin_key_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/set_admin_key_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/clear_admin_key_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/get_report_queue_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/get_report_detail_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/review_report_usecase.dart';
+import 'package:sheshield/features/admin/domain/usecases/suspend_helper_usecase.dart';
+
 import 'native_dependencies.dart'
     if (dart.library.html) 'web_dependencies.dart';
 
@@ -313,5 +325,46 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => SubmitVerificationUseCase(getIt()),
+  );
+
+  // ==================== ADMIN FEATURE ====================
+  // Separate credential (X-Admin-Key) from the app's own user JWT -- see
+  // AdminApiDataSource's doc comment. Uses the same DioClient and CacheBox
+  // singletons every other feature does; nothing new to construct.
+
+  getIt.registerLazySingleton(
+    () => AdminApiDataSource(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton<IAdminRepository>(
+    () => AdminRepositoryImpl(getIt(), getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => HasAdminKeyUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => SetAdminKeyUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => ClearAdminKeyUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => GetReportQueueUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => GetReportDetailUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => ReviewReportUseCase(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => SuspendHelperUseCase(getIt()),
   );
 }
