@@ -150,5 +150,14 @@
   "themeLight": "লাইট",
   "themeDark": "ডার্ক",
   "helpSupport": "সাহায্য ও সহায়তা",
-  "logOut": "লগ আউট"
+  "logOut": "লগ আউট",
+
+  "adminDashboardTitle": "অ্যাডমিন ড্যাশবোর্ড",
+  "adminKeyPrompt": "মডারেশন কিউ খুলতে অপারেটর অ্যাডমিন কী দিন।",
+  "adminKeyFieldLabel": "অ্যাডমিন কী",
+  "adminSignInButton": "সাইন ইন",
+  "adminSignOut": "সাইন আউট",
+  "adminQueueTitle": "মডারেশন কিউ",
+  "adminQueueEmpty": "কোনো মুলতুবি রিপোর্ট নেই।",
+  "adminReportDetailTitle": "রিপোর্ট"
 }

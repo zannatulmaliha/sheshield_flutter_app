@@ -336,4 +336,28 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get logOut => 'লগ আউট';
+
+  @override
+  String get adminDashboardTitle => 'অ্যাডমিন ড্যাশবোর্ড';
+
+  @override
+  String get adminKeyPrompt => 'মডারেশন কিউ খুলতে অপারেটর অ্যাডমিন কী দিন।';
+
+  @override
+  String get adminKeyFieldLabel => 'অ্যাডমিন কী';
+
+  @override
+  String get adminSignInButton => 'সাইন ইন';
+
+  @override
+  String get adminSignOut => 'সাইন আউট';
+
+  @override
+  String get adminQueueTitle => 'মডারেশন কিউ';
+
+  @override
+  String get adminQueueEmpty => 'কোনো মুলতুবি রিপোর্ট নেই।';
+
+  @override
+  String get adminReportDetailTitle => 'রিপোর্ট';
 }

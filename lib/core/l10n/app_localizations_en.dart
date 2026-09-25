@@ -337,4 +337,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logOut => 'Log Out';
+
+  @override
+  String get adminDashboardTitle => 'Admin Dashboard';
+
+  @override
+  String get adminKeyPrompt =>
+      'Enter the operator admin key to open the moderation queue.';
+
+  @override
+  String get adminKeyFieldLabel => 'Admin key';
+
+  @override
+  String get adminSignInButton => 'Sign in';
+
+  @override
+  String get adminSignOut => 'Sign out';
+
+  @override
+  String get adminQueueTitle => 'Moderation Queue';
+
+  @override
+  String get adminQueueEmpty => 'No pending reports.';
+
+  @override
+  String get adminReportDetailTitle => 'Report';
 }
