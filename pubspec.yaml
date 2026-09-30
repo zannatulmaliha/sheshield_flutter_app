@@ -50,6 +50,15 @@ dependencies:
   firebase_messaging: ^16.7.0
   audio_session: ^0.2.4
 
+  # AI mode: on-device speech recognition for Voice Distress Detection and
+  # the Ask AI mic input
+  speech_to_text: ^7.0.0
+
+  # In-app live map for the helper "respond to alert" screen (OpenStreetMap
+  # tiles -- no API key needed, unlike google_maps_flutter)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

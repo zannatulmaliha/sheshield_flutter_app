@@ -2,17 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:sheshield/core/di/injection.dart';
+import 'package:sheshield/core/services/ringtone_service.dart';
 
-enum _CallStage { ringing, ongoing }
-
-/// A fake incoming call, pushed full-screen on the root navigator (see
-/// [showFakeCallSheet]) so it looks and behaves like a real call
-/// overlay -- useful for getting out of an uncomfortable situation
-/// without anyone nearby realising it's staged.
+/// Full-screen fake incoming-call UI, pushed after the delay chosen from
+/// the "Fake Call Generator" sheet on [AiModeScreen]. Rings on the
+/// *ringer* audio stream via [RingtoneService] -- a different stream
+/// than [DeviceAlarmService] uses for a real SOS -- so it reads as an
+/// ordinary incoming call to anyone nearby, not a siren.
 class FakeCallScreen extends StatefulWidget {
-  const FakeCallScreen({super.key, required this.callerName});
-
+  const FakeCallScreen({super.key, this.callerName = 'Mom'});
   final String callerName;
 
   @override
@@ -20,129 +19,97 @@ class FakeCallScreen extends StatefulWidget {
 }
 
 class _FakeCallScreenState extends State<FakeCallScreen> {
-  _CallStage _stage = _CallStage.ringing;
-  final _player = AudioPlayer();
-  Timer? _vibrateTimer;
-  Timer? _durationTimer;
-  Duration _elapsed = Duration.zero;
+  Timer? _hapticTimer;
 
   @override
   void initState() {
     super.initState();
-    _startRinging();
+    getIt<RingtoneService>().start();
+    _hapticTimer = Timer.periodic(
+      const Duration(milliseconds: 1200),
+      (_) => HapticFeedback.vibrate(),
+    );
   }
-
-  Future<void> _startRinging() async {
-    try {
-      await _player.setAsset('assets/sounds/sos_alarm.wav');
-      await _player.setLoopMode(LoopMode.all);
-      await _player.play();
-    } catch (_) {
-      // Best-effort -- a silent fake call still shows a convincing UI.
-    }
-    _vibrateTimer = Timer.periodic(const Duration(milliseconds: 900), (_) {
-      HapticFeedback.heavyImpact();
-    });
-  }
-
-  void _accept() {
-    _player.stop();
-    _vibrateTimer?.cancel();
-    setState(() => _stage = _CallStage.ongoing);
-    _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      setState(() => _elapsed += const Duration(seconds: 1));
-    });
-  }
-
-  void _end() => Navigator.of(context).maybePop();
 
   @override
   void dispose() {
-    _vibrateTimer?.cancel();
-    _durationTimer?.cancel();
-    _player.dispose();
+    _hapticTimer?.cancel();
+    getIt<RingtoneService>().stop();
     super.dispose();
   }
 
-  String get _elapsedLabel {
-    final m = _elapsed.inMinutes.toString().padLeft(2, '0');
-    final s = (_elapsed.inSeconds % 60).toString().padLeft(2, '0');
-    return '$m:$s';
+  void _end() => Navigator.of(context).pop();
+
+  String get _initials {
+    final parts = widget.callerName.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    return parts.first.substring(0, 1).toUpperCase();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ringing = _stage == _CallStage.ringing;
-
-    return Scaffold(
-      backgroundColor: const Color(0xFF14162B),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Text(
-                ringing ? 'Incoming call' : _elapsedLabel,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+    return PopScope(
+      // A real incoming call can't be dismissed with the back gesture --
+      // only Accept/Decline should end it.
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: const Color(0xFF121214),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
+                const Text(
+                  'Incoming call',
+                  style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600),
                 ),
-              ),
-              const SizedBox(height: 24),
-              CircleAvatar(
-                radius: 64,
-                backgroundColor: Colors.white24,
-                child: Text(
-                  widget.callerName.isNotEmpty
-                      ? widget.callerName[0].toUpperCase()
-                      : '?',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 48,
-                    fontWeight: FontWeight.w800,
+                const SizedBox(height: 28),
+                CircleAvatar(
+                  radius: 64,
+                  backgroundColor: Colors.white24,
+                  child: Text(
+                    _initials,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                widget.callerName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
+                const SizedBox(height: 20),
+                Text(
+                  widget.callerName,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800),
                 ),
-              ),
-              const Spacer(),
-              if (ringing)
+                const SizedBox(height: 6),
+                const Text('mobile', style: TextStyle(color: Colors.white54)),
+                const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _CallActionButton(
+                    _CallButton(
                       icon: Icons.call_end_rounded,
-                      color: const Color(0xFFC2185B),
+                      color: Colors.redAccent,
                       label: 'Decline',
                       onTap: _end,
                     ),
-                    _CallActionButton(
+                    _CallButton(
                       icon: Icons.call_rounded,
-                      color: const Color(0xFF2FC28E),
+                      color: Colors.green,
                       label: 'Accept',
-                      onTap: _accept,
+                      onTap: _end,
                     ),
                   ],
-                )
-              else
-                _CallActionButton(
-                  icon: Icons.call_end_rounded,
-                  color: const Color(0xFFC2185B),
-                  label: 'End',
-                  onTap: _end,
                 ),
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -150,8 +117,8 @@ class _FakeCallScreenState extends State<FakeCallScreen> {
   }
 }
 
-class _CallActionButton extends StatelessWidget {
-  const _CallActionButton({
+class _CallButton extends StatelessWidget {
+  const _CallButton({
     required this.icon,
     required this.color,
     required this.label,
@@ -167,8 +134,9 @@ class _CallActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
+        InkResponse(
           onTap: onTap,
+          radius: 46,
           child: Container(
             width: 68,
             height: 68,
@@ -176,11 +144,10 @@ class _CallActionButton extends StatelessWidget {
             child: Icon(icon, color: Colors.white, size: 30),
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
-        ),
+        const SizedBox(height: 10),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.white70, fontWeight: FontWeight.w600)),
       ],
     );
   }

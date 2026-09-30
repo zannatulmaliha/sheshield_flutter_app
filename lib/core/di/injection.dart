@@ -9,6 +9,8 @@ import 'package:sheshield/core/services/device_location_service.dart';
 import 'package:sheshield/core/services/device_sms_service.dart';
 import 'package:sheshield/core/services/evidence_service.dart';
 import 'package:sheshield/core/services/push_service.dart';
+import 'package:sheshield/core/services/ringtone_service.dart';
+import 'package:sheshield/core/services/voice_distress_service.dart';
 
 // ==================== AUTH ====================
 import 'package:sheshield/features/auth/data/datasources/auth_api_datasource.dart';
@@ -76,6 +78,12 @@ import 'package:sheshield/features/verification/domain/repositories/i_verificati
 import 'package:sheshield/features/verification/domain/usecases/get_verification_status_usecase.dart';
 import 'package:sheshield/features/verification/domain/usecases/submit_verification_usecase.dart';
 
+// ==================== AI FEATURE ====================
+import 'package:sheshield/features/ai/data/datasources/ai_api_datasource.dart';
+import 'package:sheshield/features/ai/data/repositories/ai_repository_impl.dart';
+import 'package:sheshield/features/ai/domain/repositories/i_ai_repository.dart';
+import 'package:sheshield/features/ai/domain/usecases/send_chat_message_usecase.dart';
+
 import 'native_dependencies.dart'
     if (dart.library.html) 'web_dependencies.dart';
 
@@ -113,6 +121,14 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => PushService(),
+  );
+
+  getIt.registerLazySingleton(
+    () => RingtoneService(),
+  );
+
+  getIt.registerLazySingleton(
+    () => VoiceDistressService(),
   );
 
   final cacheBox = await createCacheBox();
@@ -313,5 +329,19 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton(
     () => SubmitVerificationUseCase(getIt()),
+  );
+
+  // ==================== AI FEATURE ====================
+
+  getIt.registerLazySingleton(
+    () => AiApiDataSource(getIt()),
+  );
+
+  getIt.registerLazySingleton<IAiRepository>(
+    () => AiRepositoryImpl(getIt()),
+  );
+
+  getIt.registerLazySingleton(
+    () => SendChatMessageUseCase(getIt()),
   );
 }

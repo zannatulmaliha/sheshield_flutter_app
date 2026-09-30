@@ -43,6 +43,31 @@ class NearbyAlertCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text('Near ${alert.roughArea}',
                     style: const TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.w600)),
+                if (alert.mutualConnection) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentEmerald.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.link_rounded, size: 13, color: AppTheme.accentEmerald),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Connected via a mutual contact',
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.accentEmerald.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

@@ -12,6 +12,7 @@ _$NearbyAlertImpl _$$NearbyAlertImplFromJson(Map<String, dynamic> json) =>
       roughArea: json['roughArea'] as String? ?? 'Nearby',
       distanceMeters: (json['distanceMeters'] as num).toDouble(),
       createdAt: const DateTimeConverter().fromJson(json['createdAt']),
+      mutualConnection: json['mutualConnection'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$NearbyAlertImplToJson(_$NearbyAlertImpl instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$$NearbyAlertImplToJson(_$NearbyAlertImpl instance) =>
       'roughArea': instance.roughArea,
       'distanceMeters': instance.distanceMeters,
       'createdAt': const DateTimeConverter().toJson(instance.createdAt),
+      'mutualConnection': instance.mutualConnection,
     };
