@@ -19,6 +19,10 @@ import 'package:sheshield/features/verification/presentation/screens/verificatio
 import 'package:sheshield/shared/entities/user_type.dart';
 import 'root_shell.dart';
 
+import 'package:sheshield/features/admin/presentation/screens/admin_login_screen.dart';
+import 'package:sheshield/features/admin/presentation/screens/admin_queue_screen.dart';
+import 'package:sheshield/features/admin/presentation/screens/admin_report_detail_screen.dart';
+
 part 'app_router.g.dart';
 
 /// Lets code outside the widget tree (PushService, reacting to an FCM
@@ -40,6 +44,11 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 /// the current tab shows up in the URL. Dialogs and bottom sheets are not
 /// routes (go_router has no opinion on those) and stay as showDialog /
 /// showModalBottomSheet at their call sites.
+///
+/// Admin routes (`/admin`, `/admin/reports`, `/admin/reports/detail`) are
+/// deliberately outside this auth/role system entirely -- they authenticate
+/// with a separate server-side key (RequireAdminKey on the backend), not
+/// the app's user JWT. See the redirect callback below.
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
 
@@ -47,6 +56,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: rootNavigatorKey,
     initialLocation: const LoginRoute().location,
     redirect: (context, state) {
+      // Admin routes authenticate with a separate server-side key
+      // (RequireAdminKey), not the app's user JWT -- bypass the normal
+      // auth redirect entirely rather than requiring a logged-in user
+      // account just to reach the moderation dashboard.
+      if (state.matchedLocation.startsWith('/admin')) return null;
+
       if (authState.isLoading) return null; // still resolving; don't redirect yet
 
       final user = authState.valueOrNull;
@@ -142,6 +157,41 @@ class HelperAlertDetailRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => HelperAlertDetailScreen(alert: $extra);
+}
+
+// --- Admin dashboard: no user auth, gated by a separate server-side key ----
+// Reached only via a long-press on the login screen's logo (see
+// login_screen.dart) -- deliberately not a visible, discoverable link.
+
+@TypedGoRoute<AdminLoginRoute>(path: '/admin')
+class AdminLoginRoute extends GoRouteData {
+  const AdminLoginRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const AdminLoginScreen();
+}
+
+@TypedGoRoute<AdminQueueRoute>(path: '/admin/reports')
+class AdminQueueRoute extends GoRouteData {
+  const AdminQueueRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const AdminQueueScreen();
+}
+
+/// [$extra] carries the report id (a plain String, not the full
+/// [AdminReport]) so the detail screen always fetches fresh -- unlike
+/// [HelperAlertDetailRoute]'s momentary race-won data, a moderation report
+/// can be acted on by this same reviewer from two tabs/devices, so reusing
+/// a possibly-stale object here would be the wrong tradeoff.
+@TypedGoRoute<AdminReportDetailRoute>(path: '/admin/reports/detail')
+class AdminReportDetailRoute extends GoRouteData {
+  const AdminReportDetailRoute({required this.$extra});
+
+  final String $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => AdminReportDetailScreen(reportId: $extra);
 }
 
 /// Wraps whichever role-shell is active. Renders the [ModeSwitch] header

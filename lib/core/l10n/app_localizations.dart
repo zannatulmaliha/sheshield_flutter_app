@@ -637,6 +637,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log Out'**
   String get logOut;
+
+  /// No description provided for @adminDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard'**
+  String get adminDashboardTitle;
+
+  /// No description provided for @adminKeyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the operator admin key to open the moderation queue.'**
+  String get adminKeyPrompt;
+
+  /// No description provided for @adminKeyFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin key'**
+  String get adminKeyFieldLabel;
+
+  /// No description provided for @adminSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get adminSignInButton;
+
+  /// No description provided for @adminSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get adminSignOut;
+
+  /// No description provided for @adminQueueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderation Queue'**
+  String get adminQueueTitle;
+
+  /// No description provided for @adminQueueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending reports.'**
+  String get adminQueueEmpty;
+
+  /// No description provided for @adminReportDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get adminReportDetailTitle;
 }
 
 class _AppLocalizationsDelegate
