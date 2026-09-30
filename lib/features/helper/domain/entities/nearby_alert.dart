@@ -20,6 +20,7 @@ class NearbyAlert with _$NearbyAlert {
     @Default('Nearby') String roughArea,
     required double distanceMeters,
     @DateTimeConverter() required DateTime createdAt,
+    @Default(false) bool mutualConnection,
   }) = _NearbyAlert;
 
   factory NearbyAlert.fromJson(Map<String, dynamic> json) =>

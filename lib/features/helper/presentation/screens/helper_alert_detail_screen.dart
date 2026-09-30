@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sheshield/core/di/injection.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/helper/domain/entities/accepted_alert.dart';
 import 'package:sheshield/features/helper/domain/entities/safety_status.dart';
@@ -12,15 +16,15 @@ import 'package:sheshield/features/report/presentation/widgets/report_user_sheet
 /// Shown only after AcceptAlertUseCase succeeds -- the one screen in
 /// helper mode that ever displays an exact location or phone number,
 /// and only to the single helper who won the accept race.
-class HelperAlertDetailScreen extends StatefulWidget {
+class HelperAlertDetailScreen extends ConsumerStatefulWidget {
   const HelperAlertDetailScreen({super.key, required this.alert});
   final AcceptedAlert alert;
 
   @override
-  State<HelperAlertDetailScreen> createState() => _HelperAlertDetailScreenState();
+  ConsumerState<HelperAlertDetailScreen> createState() => _HelperAlertDetailScreenState();
 }
 
-class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
+class _HelperAlertDetailScreenState extends ConsumerState<HelperAlertDetailScreen> {
   bool _releasing = false;
   SafetyStatus? _safetyStatus;
   Timer? _safetyPollTimer;
@@ -109,10 +113,16 @@ class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final alert = widget.alert;
+    final colors = resolvePalette(context, ref);
     return Scaffold(
-      appBar: AppBar(title: const Text('Respond now')),
+      backgroundColor: colors.background,
+      appBar: AppBar(
+        title: const Text('Respond now'),
+        backgroundColor: colors.surface,
+        foregroundColor: colors.textPrimary,
+      ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,11 +140,16 @@ class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
                     Expanded(
                       child: Text(
                         '${alert.userName} needs help. You accepted this alert -- get there safely.',
-                        style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.black87, height: 1.4),
+                        style: TextStyle(fontWeight: FontWeight.w700, color: colors.textPrimary, height: 1.4),
                       ),
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Accepted ${_relativeTime(alert.acceptedAt)}',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: colors.textSecondary),
               ),
               if (_safetyStatus?.duressActive == true) ...[
                 const SizedBox(height: 12),
@@ -152,10 +167,79 @@ class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
                   color: Colors.orange.shade800,
                 ),
               ],
+              const SizedBox(height: 20),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: SizedBox(
+                  height: 210,
+                  child: Stack(
+                    children: [
+                      FlutterMap(
+                        options: MapOptions(
+                          initialCenter: LatLng(alert.latitude, alert.longitude),
+                          initialZoom: 15,
+                          interactionOptions: const InteractionOptions(
+                            flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+                          ),
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.sheshield.app',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: LatLng(alert.latitude, alert.longitude),
+                                width: 40,
+                                height: 40,
+                                child: const Icon(Icons.location_on, color: AppTheme.accentRed, size: 40),
+                              ),
+                            ],
+                          ),
+                          RichAttributionWidget(
+                            alignment: AttributionAlignment.bottomLeft,
+                            showFlutterMapAttribution: false,
+                            attributions: [
+                              TextSourceAttribution(
+                                'OpenStreetMap contributors',
+                                onTap: () async => launchUrl(
+                                  Uri.parse('https://openstreetmap.org/copyright'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: colors.surface.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Location at acceptance -- not live',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: colors.textSecondary),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
-              const Text('Contact', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Colors.black54)),
+              Text(
+                'Contact',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: colors.textSecondary),
+              ),
               const SizedBox(height: 6),
-              Text(alert.fullPhone, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: Colors.black87)),
+              Text(
+                alert.fullPhone,
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: colors.textPrimary),
+              ),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -209,7 +293,7 @@ class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
                   onPressed: _report,
                   icon: const Icon(Icons.flag_outlined, size: 18),
                   label: const Text('Report this person'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.black54),
+                  style: TextButton.styleFrom(foregroundColor: colors.textSecondary),
                 ),
               ),
             ],
@@ -218,6 +302,16 @@ class _HelperAlertDetailScreenState extends State<HelperAlertDetailScreen> {
       ),
     );
   }
+}
+
+/// Small hand-rolled relative-time label ("3 min ago") -- not worth a
+/// package dependency for the one field that needs it.
+String _relativeTime(DateTime from) {
+  final diff = DateTime.now().difference(from);
+  if (diff.inSeconds < 60) return 'just now';
+  if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+  if (diff.inHours < 24) return '${diff.inHours} h ago';
+  return '${diff.inDays} d ago';
 }
 
 class _SafetyBanner extends StatelessWidget {

@@ -6,11 +6,10 @@ import '../../domain/entities/nearby_alert.dart';
 import '../../domain/entities/safety_status.dart';
 import '../../domain/repositories/i_helper_repository.dart';
 
-/// The only file that talks to the /api/v1/helper endpoints. These do
-/// not exist on the backend yet -- see the contract in each method's
-/// doc comment for what internal/helper/ needs to implement, following
-/// the same handler -> service -> repository shape as
-/// internal/verification/.
+/// The only file that talks to the /api/v1/helper endpoints. All of
+/// these are implemented server-side in internal/helper/handler.go --
+/// see the contract in each method's doc comment for the exact
+/// request/response shape.
 class HelperApiDataSource {
   HelperApiDataSource(this._client);
   final DioClient _client;

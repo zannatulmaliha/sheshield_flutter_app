@@ -25,6 +25,7 @@ mixin _$NearbyAlert {
   double get distanceMeters => throw _privateConstructorUsedError;
   @DateTimeConverter()
   DateTime get createdAt => throw _privateConstructorUsedError;
+  bool get mutualConnection => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -42,7 +43,8 @@ abstract class $NearbyAlertCopyWith<$Res> {
       {String id,
       String roughArea,
       double distanceMeters,
-      @DateTimeConverter() DateTime createdAt});
+      @DateTimeConverter() DateTime createdAt,
+      bool mutualConnection});
 }
 
 /// @nodoc
@@ -62,6 +64,7 @@ class _$NearbyAlertCopyWithImpl<$Res, $Val extends NearbyAlert>
     Object? roughArea = null,
     Object? distanceMeters = null,
     Object? createdAt = null,
+    Object? mutualConnection = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -80,6 +83,10 @@ class _$NearbyAlertCopyWithImpl<$Res, $Val extends NearbyAlert>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      mutualConnection: null == mutualConnection
+          ? _value.mutualConnection
+          : mutualConnection // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -96,7 +103,8 @@ abstract class _$$NearbyAlertImplCopyWith<$Res>
       {String id,
       String roughArea,
       double distanceMeters,
-      @DateTimeConverter() DateTime createdAt});
+      @DateTimeConverter() DateTime createdAt,
+      bool mutualConnection});
 }
 
 /// @nodoc
@@ -114,6 +122,7 @@ class __$$NearbyAlertImplCopyWithImpl<$Res>
     Object? roughArea = null,
     Object? distanceMeters = null,
     Object? createdAt = null,
+    Object? mutualConnection = null,
   }) {
     return _then(_$NearbyAlertImpl(
       id: null == id
@@ -132,6 +141,10 @@ class __$$NearbyAlertImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      mutualConnection: null == mutualConnection
+          ? _value.mutualConnection
+          : mutualConnection // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -143,7 +156,8 @@ class _$NearbyAlertImpl extends _NearbyAlert {
       {required this.id,
       this.roughArea = 'Nearby',
       required this.distanceMeters,
-      @DateTimeConverter() required this.createdAt})
+      @DateTimeConverter() required this.createdAt,
+      this.mutualConnection = false})
       : super._();
 
   factory _$NearbyAlertImpl.fromJson(Map<String, dynamic> json) =>
@@ -159,10 +173,13 @@ class _$NearbyAlertImpl extends _NearbyAlert {
   @override
   @DateTimeConverter()
   final DateTime createdAt;
+  @override
+  @JsonKey()
+  final bool mutualConnection;
 
   @override
   String toString() {
-    return 'NearbyAlert(id: $id, roughArea: $roughArea, distanceMeters: $distanceMeters, createdAt: $createdAt)';
+    return 'NearbyAlert(id: $id, roughArea: $roughArea, distanceMeters: $distanceMeters, createdAt: $createdAt, mutualConnection: $mutualConnection)';
   }
 
   @override
@@ -176,13 +193,15 @@ class _$NearbyAlertImpl extends _NearbyAlert {
             (identical(other.distanceMeters, distanceMeters) ||
                 other.distanceMeters == distanceMeters) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.mutualConnection, mutualConnection) ||
+                other.mutualConnection == mutualConnection));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, roughArea, distanceMeters, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType, id, roughArea, distanceMeters, createdAt, mutualConnection);
 
   @JsonKey(ignore: true)
   @override
@@ -200,11 +219,11 @@ class _$NearbyAlertImpl extends _NearbyAlert {
 
 abstract class _NearbyAlert extends NearbyAlert {
   const factory _NearbyAlert(
-          {required final String id,
-          final String roughArea,
-          required final double distanceMeters,
-          @DateTimeConverter() required final DateTime createdAt}) =
-      _$NearbyAlertImpl;
+      {required final String id,
+      final String roughArea,
+      required final double distanceMeters,
+      @DateTimeConverter() required final DateTime createdAt,
+      final bool mutualConnection}) = _$NearbyAlertImpl;
   const _NearbyAlert._() : super._();
 
   factory _NearbyAlert.fromJson(Map<String, dynamic> json) =
@@ -219,6 +238,8 @@ abstract class _NearbyAlert extends NearbyAlert {
   @override
   @DateTimeConverter()
   DateTime get createdAt;
+  @override
+  bool get mutualConnection;
   @override
   @JsonKey(ignore: true)
   _$$NearbyAlertImplCopyWith<_$NearbyAlertImpl> get copyWith =>
