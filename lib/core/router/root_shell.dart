@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/router/app_router.dart';
+import 'package:sheshield/core/services/motion/motion_guard.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
 import 'package:sheshield/shared/widgets/mode_switch.dart';
@@ -21,10 +22,17 @@ class RootShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider).valueOrNull;
     if (user == null) return const SizedBox.shrink(); // router redirects to /login
+
+    // Start movement protection if the person had it switched on (idempotent).
+    Future.microtask(() => ref.read(motionGuardProvider.notifier).init());
     if (user.userType != UserType.userHelper) return child;
 
     final isHelperArea = GoRouterState.of(context).matchedLocation.startsWith('/home/helper');
-    return Column(
+    return Material(
+      type: MaterialType.transparency,
+      child: SafeArea(
+        bottom: false,
+        child: Column(
       children: [
         ModeSwitch(
           mode: isHelperArea ? AppMode.helper : AppMode.user,
@@ -38,6 +46,6 @@ class RootShell extends ConsumerWidget {
         ),
         Expanded(child: child),
       ],
-    );
+    )));
   }
 }

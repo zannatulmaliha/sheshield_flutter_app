@@ -37,6 +37,7 @@ dependencies:
 
   # Helper-mode location + "open route" / "call"
   geolocator: ^12.0.0
+  sensors_plus: ^6.1.0
   permission_handler: ^11.3.1
   url_launcher: ^6.3.0
 

@@ -1,5 +1,6 @@
 import 'package:sheshield/core/cache/cache_box_interface.dart';
 import '../../domain/entities/accepted_alert.dart';
+import '../../domain/entities/helper_models.dart';
 import '../../domain/entities/helper_status.dart';
 import '../../domain/entities/nearby_alert.dart';
 import '../../domain/entities/safety_status.dart';
@@ -68,4 +69,24 @@ class HelperRepositoryImpl implements IHelperRepository {
 
   @override
   Future<SafetyStatus> fetchSafetyStatus(String alertId) => _dataSource.fetchSafetyStatus(alertId);
+
+  // Stats/history/response state are deliberately NOT cached: they change
+  // the moment a response ends and a stale read would show the wrong thing.
+  @override
+  Future<HelperStats> fetchStats() => _dataSource.fetchStats();
+
+  @override
+  Future<List<HelperHistoryItem>> fetchHistory() => _dataSource.fetchHistory();
+
+  @override
+  Future<MyResponse?> fetchCurrentResponse() => _dataSource.fetchCurrentResponse();
+
+  @override
+  Future<LiveState> fetchLive(String alertId) => _dataSource.fetchLive(alertId);
+
+  @override
+  Future<void> setProgress(String alertId, ResponseStage stage) => _dataSource.setProgress(alertId, stage);
+
+  @override
+  Future<void> resolve(String alertId) => _dataSource.resolve(alertId);
 }

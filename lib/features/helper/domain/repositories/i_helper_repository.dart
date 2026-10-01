@@ -1,4 +1,5 @@
 import '../entities/accepted_alert.dart';
+import '../entities/helper_models.dart';
 import '../entities/helper_status.dart';
 import '../entities/nearby_alert.dart';
 import '../entities/safety_status.dart';
@@ -37,6 +38,15 @@ abstract class IHelperRepository {
   /// Polls the live duress/connectivity signals for an alert this helper
   /// currently holds -- see the spec's §8.
   Future<SafetyStatus> fetchSafetyStatus(String alertId);
+
+  Future<HelperStats> fetchStats();
+  Future<List<HelperHistoryItem>> fetchHistory();
+  Future<MyResponse?> fetchCurrentResponse();
+  Future<LiveState> fetchLive(String alertId);
+  Future<void> setProgress(String alertId, ResponseStage stage);
+
+  /// Helper-side "situation handled" -- closes the alert and revokes access.
+  Future<void> resolve(String alertId);
 }
 
 class HelperFailure implements Exception {

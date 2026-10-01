@@ -1,32 +1,57 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sheshield/core/utils/json_converters.dart';
-
-part 'nearby_alert.freezed.dart';
-part 'nearby_alert.g.dart';
-
 /// A nearby SOS alert as seen by a helper before responding. Only a
-/// rough area and distance are exposed here -- the exact address and
-/// the person's phone number are revealed only after AcceptAlertUseCase
-/// succeeds (see [AcceptedAlert]). The server enforces this; this
-/// entity structurally cannot carry precise coordinates, so there is
-/// nothing sensitive to leak even if this screen were shown to the
-/// wrong person.
-@freezed
-class NearbyAlert with _$NearbyAlert {
-  const NearbyAlert._();
+/// rough area, distance and WHAT is happening (never who) are exposed here;
+/// the exact address and phone number are revealed only after
+/// AcceptAlertUseCase succeeds (see [AcceptedAlert]). The entity
+/// structurally cannot carry precise coordinates or identity.
+class NearbyAlert {
+  const NearbyAlert({
+    required this.id,
+    this.roughArea = 'Nearby',
+    required this.distanceMeters,
+    required this.createdAt,
+    this.mutualConnection = false,
+    this.trigger = 'manual',
+    this.label = 'SOS button pressed',
+    this.riskLevel = 'high',
+    this.duressActive = false,
+  });
 
-  const factory NearbyAlert({
-    required String id,
-    @Default('Nearby') String roughArea,
-    required double distanceMeters,
-    @DateTimeConverter() required DateTime createdAt,
-    @Default(false) bool mutualConnection,
-  }) = _NearbyAlert;
+  final String id;
+  final String roughArea;
+  final double distanceMeters;
+  final DateTime createdAt;
+  final bool mutualConnection;
 
-  factory NearbyAlert.fromJson(Map<String, dynamic> json) =>
-      _$NearbyAlertFromJson(json);
+  /// What fired the SOS: manual | voice | motion_fall | motion_sprint |
+  /// motion_struggle | motion_inactive | missed_checkin.
+  final String trigger;
+
+  /// Plain-language reason shown on the card ("Possible fall detected").
+  final String label;
+
+  /// "high" | "medium".
+  final String riskLevel;
+  final bool duressActive;
+
+  bool get isHighRisk => riskLevel == 'high';
+
+  factory NearbyAlert.fromJson(Map<String, dynamic> json) => NearbyAlert(
+        id: json['id'] as String,
+        roughArea: (json['roughArea'] as String?) ?? 'Nearby',
+        distanceMeters: (json['distanceMeters'] as num).toDouble(),
+        createdAt: DateTime.tryParse((json['createdAt'] as String?) ?? '') ?? DateTime.now(),
+        mutualConnection: json['mutualConnection'] as bool? ?? false,
+        trigger: (json['trigger'] as String?) ?? 'manual',
+        label: (json['label'] as String?) ?? 'SOS button pressed',
+        riskLevel: (json['riskLevel'] as String?) ?? 'high',
+        duressActive: json['duressActive'] as bool? ?? false,
+      );
 
   String get distanceLabel => distanceMeters < 1000
       ? '${distanceMeters.round()} m away'
       : '${(distanceMeters / 1000).toStringAsFixed(1)} km away';
+
+  /// Rough walking/driving ETA at ~25 km/h average urban speed -- an
+  /// estimate for triage only; the helper's map app gives the real one.
+  int get etaMinutes => (distanceMeters / 1000 / 25 * 60).ceil().clamp(1, 999);
 }

@@ -19,6 +19,7 @@ class SosRepositoryImpl implements ISosRepository {
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
     bool avConsent = false,
+    String trigger = 'manual',
   }) =>
       _dataSource.send(
         latitude: latitude,
@@ -26,6 +27,7 @@ class SosRepositoryImpl implements ISosRepository {
         accuracyMeters: accuracyMeters,
         notifiedByDevice: notifiedByDevice,
         avConsent: avConsent,
+        trigger: trigger,
       );
 
   @override

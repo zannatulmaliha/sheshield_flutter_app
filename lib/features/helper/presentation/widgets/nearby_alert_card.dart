@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sheshield/features/helper/presentation/helper_colors.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/helper/domain/entities/nearby_alert.dart';
 
@@ -17,12 +18,12 @@ class NearbyAlertCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.hp.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 16, offset: const Offset(0, 6)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 16, offset: Offset(0, 6)),
         ],
       ),
       child: Row(
@@ -30,38 +31,64 @@ class NearbyAlertCard extends StatelessWidget {
           Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(color: AppTheme.accentRed.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: const Icon(Icons.warning_rounded, color: AppTheme.accentRed),
+            decoration: BoxDecoration(
+              color: (alert.isHighRisk ? AppTheme.accentRed : Colors.orange).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.warning_rounded, color: alert.isHighRisk ? AppTheme.accentRed : Colors.orange.shade800),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(alert.distanceLabel,
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Colors.black87)),
-                const SizedBox(height: 2),
-                Text('Near ${alert.roughArea}',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.w600)),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: (alert.isHighRisk ? Color(0xFFEF4444) : Color(0xFFF59E0B)).withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        alert.isHighRisk ? 'HIGH RISK' : 'MEDIUM RISK',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w800,
+                          color: alert.isHighRisk ? Color(0xFFEF4444) : Color(0xFFD97706),
+                        ),
+                      ),
+                    ),
+                    if (alert.duressActive) ...[
+                      SizedBox(width: 6),
+                      Text('DURESS', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w900, color: Color(0xFFEF4444))),
+                    ],
+                  ],
+                ),
+                SizedBox(height: 4),
+                Text(alert.label, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: context.hp.textPrimary)),
+                SizedBox(height: 2),
+                Text('${alert.distanceLabel} - ~${alert.etaMinutes} min away',
+                    style: TextStyle(fontSize: 12, color: context.hp.textSecondary, fontWeight: FontWeight.w600)),
                 if (alert.mutualConnection) ...[
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentEmerald.withValues(alpha: 0.1),
+                      color: context.hp.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.link_rounded, size: 13, color: AppTheme.accentEmerald),
-                        const SizedBox(width: 4),
+                        Icon(Icons.link_rounded, size: 13, color: context.hp.primary),
+                        SizedBox(width: 4),
                         Text(
                           'Connected via a mutual contact',
                           style: TextStyle(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w700,
-                            color: AppTheme.accentEmerald.withValues(alpha: 0.9),
+                            color: context.hp.primary.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -74,13 +101,13 @@ class NearbyAlertCard extends StatelessWidget {
           ElevatedButton(
             onPressed: isBusy ? null : onAccept,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.accentEmerald,
+              backgroundColor: context.hp.primary,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text('Accept', style: TextStyle(fontWeight: FontWeight.w800)),
+            child: Text('Accept', style: TextStyle(fontWeight: FontWeight.w800)),
           ),
         ],
       ),

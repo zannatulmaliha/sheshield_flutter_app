@@ -26,6 +26,9 @@ import 'package:sheshield/features/auth/domain/usecases/update_fcm_token_usecase
 import 'package:sheshield/features/auth/domain/usecases/set_discoverable_usecase.dart';
 
 // ==================== HELPER ====================
+import 'package:sheshield/core/services/motion/motion_api.dart';
+import 'package:sheshield/core/services/motion/motion_settings.dart';
+import 'package:sheshield/features/chat/data/sos_chat_api.dart';
 import 'package:sheshield/features/helper/data/datasources/helper_api_datasource.dart';
 import 'package:sheshield/features/helper/data/repositories/helper_repository_impl.dart';
 import 'package:sheshield/features/helper/domain/repositories/i_helper_repository.dart';
@@ -198,6 +201,12 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(
     () => SetDiscoverableUseCase(getIt()),
   );
+
+  // ==================== MOVEMENT DETECTION + SOS CHAT ====================
+
+  getIt.registerLazySingleton(() => MotionSettingsStore(getIt()));
+  getIt.registerLazySingleton(() => MotionApi(getIt()));
+  getIt.registerLazySingleton(() => SosChatApi(getIt()));
 
   // ==================== HELPER FEATURE ====================
 

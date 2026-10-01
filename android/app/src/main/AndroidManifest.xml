@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <application
         android:label="sheshield"
@@ -48,6 +49,16 @@
             android:name=".VoiceDistressForegroundService"
             android:exported="false"
             android:foregroundServiceType="microphone" />
+        <!-- Keeps accelerometer/gyroscope sampling alive with the screen off
+             for movement detection; see MotionForegroundService.kt. -->
+        <service
+            android:name=".MotionForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="On-device fall, sprint and struggle detection that can start an SOS" />
+        </service>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

@@ -11,6 +11,7 @@ class SendSosUseCase {
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
     bool avConsent = false,
+    String trigger = 'manual',
   }) =>
       _repository.send(
         latitude: latitude,
@@ -18,5 +19,6 @@ class SendSosUseCase {
         accuracyMeters: accuracyMeters,
         notifiedByDevice: notifiedByDevice,
         avConsent: avConsent,
+        trigger: trigger,
       );
 }

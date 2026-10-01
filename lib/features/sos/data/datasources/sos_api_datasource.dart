@@ -27,6 +27,7 @@ class SosApiDataSource {
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
     bool avConsent = false,
+    String trigger = 'manual',
   }) async {
     try {
       final res = await _client.dio.post(_basePath, data: {
@@ -35,6 +36,7 @@ class SosApiDataSource {
         'accuracyMeters': accuracyMeters,
         'notifiedByDevice': notifiedByDevice,
         'avConsent': avConsent,
+        'trigger': trigger,
       });
       return SosAlert.fromJson(res.data['data'] as Map<String, dynamic>);
     } on DioException catch (e) {

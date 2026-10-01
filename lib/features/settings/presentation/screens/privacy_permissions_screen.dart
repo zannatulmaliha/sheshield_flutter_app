@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
+import 'package:sheshield/core/services/motion/motion_settings_screen.dart';
 import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
 
 /// The runtime permissions SheShield actually asks for, and why -- so a
@@ -124,6 +125,16 @@ class _PrivacyPermissionsScreenState extends ConsumerState<PrivacyPermissionsScr
           Text(
             'What each permission is for, and whether it\'s currently allowed on this device.',
             style: TextStyle(color: colors.textSecondary, fontSize: 12.5),
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            tileColor: colors.surface,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            leading: Icon(Icons.directions_run_rounded, color: colors.primary),
+            title: Text('Movement protection', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800)),
+            subtitle: Text('Fall, sprint and struggle detection', style: TextStyle(color: colors.textSecondary, fontSize: 12)),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const MotionSettingsScreen())),
           ),
           const SizedBox(height: 16),
           Container(
