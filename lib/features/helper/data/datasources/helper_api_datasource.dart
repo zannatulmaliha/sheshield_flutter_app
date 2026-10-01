@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:sheshield/core/network/dio_client.dart';
 import '../../domain/entities/accepted_alert.dart';
 import '../../domain/entities/helper_status.dart';
+import '../../domain/entities/helper_models.dart';
 import '../../domain/entities/nearby_alert.dart';
 import '../../domain/entities/safety_status.dart';
 import '../../domain/repositories/i_helper_repository.dart';
@@ -13,7 +14,10 @@ import '../../domain/repositories/i_helper_repository.dart';
 class HelperApiDataSource {
   HelperApiDataSource(this._client);
   final DioClient _client;
-  static const _basePath = '/api/v1/helper';
+  // NOTE: DioClient's baseUrl already ends in /api/v1. This used to be
+  // '/api/v1/helper', which produced /api/v1/api/v1/helper/... (404) for
+  // every helper call.
+  static const _basePath = '/helper';
 
   /// GET /api/v1/helper/status -> { "data": { isActive, radiusKm } }
   Future<HelperStatus> fetchStatus() async {
@@ -98,6 +102,62 @@ class HelperApiDataSource {
         duressActive: data['duressActive'] as bool? ?? false,
         connectivityLost: data['connectivityLost'] as bool? ?? false,
       );
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  Future<HelperStats> fetchStats() async {
+    try {
+      final res = await _client.dio.get('$_basePath/stats');
+      return HelperStats.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  Future<List<HelperHistoryItem>> fetchHistory() async {
+    try {
+      final res = await _client.dio.get('$_basePath/history');
+      final list = (res.data['data'] as List<dynamic>?) ?? const [];
+      return list.map((j) => HelperHistoryItem.fromJson(j as Map<String, dynamic>)).toList();
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  /// null when the helper isn't currently holding an alert.
+  Future<MyResponse?> fetchCurrentResponse() async {
+    try {
+      final res = await _client.dio.get('$_basePath/responses/current');
+      final data = res.data is Map ? (res.data as Map)['data'] : null;
+      if (data is! Map<String, dynamic>) return null;
+      return MyResponse.fromJson(data);
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  Future<LiveState> fetchLive(String alertId) async {
+    try {
+      final res = await _client.dio.get('$_basePath/alerts/$alertId/live');
+      return LiveState.fromJson(res.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  Future<void> setProgress(String alertId, ResponseStage stage) async {
+    try {
+      await _client.dio.post('$_basePath/alerts/$alertId/progress', data: {'status': stage.wire});
+    } on DioException catch (e) {
+      throw _fail(e);
+    }
+  }
+
+  Future<void> resolve(String alertId) async {
+    try {
+      await _client.dio.post('$_basePath/alerts/$alertId/resolve');
     } on DioException catch (e) {
       throw _fail(e);
     }

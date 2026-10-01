@@ -39,7 +39,10 @@ class SosController extends _$SosController {
   /// [avConsent] is the real-time answer to "start audio/video recording
   /// for this emergency?" -- passed straight through, never defaulted to
   /// true. Returns null on success, or a message to show the user.
-  Future<String?> send({bool avConsent = false}) async {
+  ///
+  /// [trigger] records what fired the SOS ("manual", "voice",
+  /// "motion_fall", ...) so helpers see a plain-language reason.
+  Future<String?> send({bool avConsent = false, String trigger = 'manual'}) async {
     state = const AsyncLoading<SosAlert?>().copyWithPrevious(state);
 
     final position = await getIt<DeviceLocationService>().getCurrentPosition();
@@ -57,6 +60,7 @@ class SosController extends _$SosController {
         accuracyMeters: position.accuracy,
         notifiedByDevice: notifiedByDevice,
         avConsent: avConsent,
+        trigger: trigger,
       );
       state = AsyncData(alert);
       _startLiveLocation(alert.id);

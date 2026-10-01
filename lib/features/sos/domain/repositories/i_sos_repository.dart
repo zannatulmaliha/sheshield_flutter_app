@@ -19,6 +19,7 @@ abstract class ISosRepository {
     double? accuracyMeters,
     List<String> notifiedByDevice = const [],
     bool avConsent = false,
+    String trigger = 'manual',
   });
 
   /// Records a duress signal on an active/accepted SOS and escalates:

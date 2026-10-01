@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
+import 'package:sheshield/features/chat/presentation/sos_chat_screen.dart';
 import 'package:sheshield/features/sos/domain/entities/duress_type.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
@@ -57,6 +58,17 @@ class SosActivatedView extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
               ),
+              if (alert != null) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => SosChatScreen(sosId: alert.id, iAmHelper: false)),
+                  ),
+                  icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
+                  label: const Text('Chat with your helper', style: TextStyle(color: Colors.white)),
+                  style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white54)),
+                ),
+              ],
               if (alert?.shareUrl != null) ...[
                 const SizedBox(height: 16),
                 Container(
