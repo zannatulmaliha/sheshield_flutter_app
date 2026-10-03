@@ -1,20 +1,21 @@
-import '../../domain/entities/blocked_user.dart';
-import '../../domain/entities/report_category.dart';
-import '../../domain/repositories/i_report_repository.dart';
-import '../datasources/report_api_datasource.dart';
+import 'package:sheshield/features/report/data/datasources/report_api_datasource.dart';
+import 'package:sheshield/features/report/domain/entities/blocked_user.dart';
+import 'package:sheshield/features/report/domain/entities/report_category.dart';
+import 'package:sheshield/features/report/domain/repositories/report_repository.dart';
 
-class ReportRepositoryImpl implements IReportRepository {
-  ReportRepositoryImpl(this._dataSource);
-  final ReportApiDataSource _dataSource;
+class ReportRepositoryImpl implements ReportRepository {
+  const ReportRepositoryImpl(this._apiDataSource);
+
+  final ReportApiDataSource _apiDataSource;
 
   @override
-  Future<void> file({
+  Future<void> fileReport({
     required String reportedId,
     required ReportCategory category,
     required String reporterRole,
     String? sosId,
   }) =>
-      _dataSource.file(
+      _apiDataSource.fileReport(
         reportedId: reportedId,
         category: category,
         reporterRole: reporterRole,
@@ -22,11 +23,14 @@ class ReportRepositoryImpl implements IReportRepository {
       );
 
   @override
-  Future<void> block(String userId) => _dataSource.block(userId);
+  Future<void> blockUser(String userId) => _apiDataSource.blockUser(userId);
 
   @override
-  Future<void> unblock(String userId) => _dataSource.unblock(userId);
+  Future<void> unblockUser(String userId) => _apiDataSource.unblockUser(userId);
 
   @override
-  Future<List<BlockedUser>> listBlocks() => _dataSource.listBlocks();
+  Future<List<BlockedUser>> fetchBlockedUsers() async {
+    final models = await _apiDataSource.fetchBlockedUsers();
+    return models.map((model) => model.toEntity()).toList();
+  }
 }

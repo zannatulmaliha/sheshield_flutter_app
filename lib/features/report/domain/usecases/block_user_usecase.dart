@@ -1,8 +1,9 @@
-import '../repositories/i_report_repository.dart';
+import 'package:sheshield/features/report/domain/repositories/report_repository.dart';
 
 class BlockUserUseCase {
-  const BlockUserUseCase(this._repository);
-  final IReportRepository _repository;
+  const BlockUserUseCase(this._reportRepository);
 
-  Future<void> call(String userId) => _repository.block(userId);
+  final ReportRepository _reportRepository;
+
+  Future<void> call(String userId) => _reportRepository.blockUser(userId);
 }

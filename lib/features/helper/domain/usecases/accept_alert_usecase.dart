@@ -1,13 +1,13 @@
-import '../entities/accepted_alert.dart';
-import '../repositories/i_helper_repository.dart';
+import 'package:sheshield/features/helper/domain/entities/accepted_alert.dart';
+import 'package:sheshield/features/helper/domain/repositories/helper_alert_repository.dart';
 
 class AcceptAlertUseCase {
-  const AcceptAlertUseCase(this._repository);
-  final IHelperRepository _repository;
+  const AcceptAlertUseCase(this._helperAlertRepository);
 
-  /// Null return means another helper won the race -- pure Dart,
-  /// testable with a fake [IHelperRepository] and no server involved,
-  /// which is exactly where the "exactly one must win" scenario should
-  /// be exercised on the Flutter side.
-  Future<AcceptedAlert?> call(String alertId) => _repository.accept(alertId);
+  final HelperAlertRepository _helperAlertRepository;
+
+  /// A null result means another helper won the race. Pure Dart, so the
+  /// "exactly one must win" scenario is testable with a fake repository.
+  Future<AcceptedAlert?> call(String alertId) =>
+      _helperAlertRepository.acceptAlert(alertId);
 }

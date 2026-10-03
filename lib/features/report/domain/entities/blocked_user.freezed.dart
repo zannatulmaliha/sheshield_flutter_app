@@ -14,18 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-BlockedUser _$BlockedUserFromJson(Map<String, dynamic> json) {
-  return _BlockedUser.fromJson(json);
-}
-
 /// @nodoc
 mixin _$BlockedUser {
   String get blockerId => throw _privateConstructorUsedError;
   String get blockedId => throw _privateConstructorUsedError;
-  @DateTimeConverter()
   DateTime get createdAt => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $BlockedUserCopyWith<BlockedUser> get copyWith =>
       throw _privateConstructorUsedError;
@@ -37,10 +31,7 @@ abstract class $BlockedUserCopyWith<$Res> {
           BlockedUser value, $Res Function(BlockedUser) then) =
       _$BlockedUserCopyWithImpl<$Res, BlockedUser>;
   @useResult
-  $Res call(
-      {String blockerId,
-      String blockedId,
-      @DateTimeConverter() DateTime createdAt});
+  $Res call({String blockerId, String blockedId, DateTime createdAt});
 }
 
 /// @nodoc
@@ -85,10 +76,7 @@ abstract class _$$BlockedUserImplCopyWith<$Res>
       __$$BlockedUserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String blockerId,
-      String blockedId,
-      @DateTimeConverter() DateTime createdAt});
+  $Res call({String blockerId, String blockedId, DateTime createdAt});
 }
 
 /// @nodoc
@@ -124,22 +112,18 @@ class __$$BlockedUserImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$BlockedUserImpl implements _BlockedUser {
   const _$BlockedUserImpl(
       {required this.blockerId,
       required this.blockedId,
-      @DateTimeConverter() required this.createdAt});
-
-  factory _$BlockedUserImpl.fromJson(Map<String, dynamic> json) =>
-      _$$BlockedUserImplFromJson(json);
+      required this.createdAt});
 
   @override
   final String blockerId;
   @override
   final String blockedId;
   @override
-  @DateTimeConverter()
   final DateTime createdAt;
 
   @override
@@ -160,7 +144,6 @@ class _$BlockedUserImpl implements _BlockedUser {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, blockerId, blockedId, createdAt);
 
@@ -169,31 +152,19 @@ class _$BlockedUserImpl implements _BlockedUser {
   @pragma('vm:prefer-inline')
   _$$BlockedUserImplCopyWith<_$BlockedUserImpl> get copyWith =>
       __$$BlockedUserImplCopyWithImpl<_$BlockedUserImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$BlockedUserImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _BlockedUser implements BlockedUser {
   const factory _BlockedUser(
-          {required final String blockerId,
-          required final String blockedId,
-          @DateTimeConverter() required final DateTime createdAt}) =
-      _$BlockedUserImpl;
-
-  factory _BlockedUser.fromJson(Map<String, dynamic> json) =
-      _$BlockedUserImpl.fromJson;
+      {required final String blockerId,
+      required final String blockedId,
+      required final DateTime createdAt}) = _$BlockedUserImpl;
 
   @override
   String get blockerId;
   @override
   String get blockedId;
   @override
-  @DateTimeConverter()
   DateTime get createdAt;
   @override
   @JsonKey(ignore: true)

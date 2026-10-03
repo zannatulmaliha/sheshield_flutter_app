@@ -1,10 +1,11 @@
-import '../repositories/i_auth_repository.dart';
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 
-/// Re-fetches the signed-in user from the server (e.g. after an admin
-/// approves a helper's verification) and pushes it onto [authStateProvider].
+/// Re-fetches the signed-in user (e.g. after an admin approves a helper's
+/// verification) and pushes it onto the auth state stream.
 class RefreshSessionUseCase {
-  const RefreshSessionUseCase(this._repository);
-  final IAuthRepository _repository;
+  const RefreshSessionUseCase(this._authRepository);
 
-  Future<void> call() => _repository.refreshSession();
+  final AuthRepository _authRepository;
+
+  Future<void> call() => _authRepository.refreshSession();
 }

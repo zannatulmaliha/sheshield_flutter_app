@@ -46,6 +46,6 @@ class RootShell extends ConsumerWidget {
         ),
         Expanded(child: child),
       ],
-    )));
+    ),),);
   }
 }

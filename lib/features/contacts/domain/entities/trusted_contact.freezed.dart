@@ -14,10 +14,6 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-TrustedContact _$TrustedContactFromJson(Map<String, dynamic> json) {
-  return _TrustedContact.fromJson(json);
-}
-
 /// @nodoc
 mixin _$TrustedContact {
   String get id => throw _privateConstructorUsedError;
@@ -25,15 +21,12 @@ mixin _$TrustedContact {
   String get relation => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
   String get countryCode => throw _privateConstructorUsedError;
-  @DateTimeConverter()
-  DateTime get createdAt =>
-      throw _privateConstructorUsedError; // Set once this contact accepts an invite from their own SheShield
-// account (see ContactsRepository.acceptInvite). Null means they can
-// only be reached by SMS -- there's no linked account to push an alarm
-// to yet.
+  DateTime get createdAt => throw _privateConstructorUsedError;
+
+  /// Set once the contact accepts an invite from their own SheShield
+  /// account. Null means they can only be reached by SMS.
   String? get linkedUserUid => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $TrustedContactCopyWith<TrustedContact> get copyWith =>
       throw _privateConstructorUsedError;
@@ -51,7 +44,7 @@ abstract class $TrustedContactCopyWith<$Res> {
       String relation,
       String phone,
       String countryCode,
-      @DateTimeConverter() DateTime createdAt,
+      DateTime createdAt,
       String? linkedUserUid});
 }
 
@@ -123,7 +116,7 @@ abstract class _$$TrustedContactImplCopyWith<$Res>
       String relation,
       String phone,
       String countryCode,
-      @DateTimeConverter() DateTime createdAt,
+      DateTime createdAt,
       String? linkedUserUid});
 }
 
@@ -180,7 +173,7 @@ class __$$TrustedContactImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$TrustedContactImpl extends _TrustedContact {
   const _$TrustedContactImpl(
       {required this.id,
@@ -188,12 +181,9 @@ class _$TrustedContactImpl extends _TrustedContact {
       required this.relation,
       required this.phone,
       required this.countryCode,
-      @DateTimeConverter() required this.createdAt,
+      required this.createdAt,
       this.linkedUserUid})
       : super._();
-
-  factory _$TrustedContactImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TrustedContactImplFromJson(json);
 
   @override
   final String id;
@@ -206,12 +196,10 @@ class _$TrustedContactImpl extends _TrustedContact {
   @override
   final String countryCode;
   @override
-  @DateTimeConverter()
   final DateTime createdAt;
-// Set once this contact accepts an invite from their own SheShield
-// account (see ContactsRepository.acceptInvite). Null means they can
-// only be reached by SMS -- there's no linked account to push an alarm
-// to yet.
+
+  /// Set once the contact accepts an invite from their own SheShield
+  /// account. Null means they can only be reached by SMS.
   @override
   final String? linkedUserUid;
 
@@ -238,7 +226,6 @@ class _$TrustedContactImpl extends _TrustedContact {
                 other.linkedUserUid == linkedUserUid));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, relation, phone,
       countryCode, createdAt, linkedUserUid);
@@ -249,13 +236,6 @@ class _$TrustedContactImpl extends _TrustedContact {
   _$$TrustedContactImplCopyWith<_$TrustedContactImpl> get copyWith =>
       __$$TrustedContactImplCopyWithImpl<_$TrustedContactImpl>(
           this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TrustedContactImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _TrustedContact extends TrustedContact {
@@ -265,12 +245,9 @@ abstract class _TrustedContact extends TrustedContact {
       required final String relation,
       required final String phone,
       required final String countryCode,
-      @DateTimeConverter() required final DateTime createdAt,
+      required final DateTime createdAt,
       final String? linkedUserUid}) = _$TrustedContactImpl;
   const _TrustedContact._() : super._();
-
-  factory _TrustedContact.fromJson(Map<String, dynamic> json) =
-      _$TrustedContactImpl.fromJson;
 
   @override
   String get id;
@@ -283,12 +260,11 @@ abstract class _TrustedContact extends TrustedContact {
   @override
   String get countryCode;
   @override
-  @DateTimeConverter()
   DateTime get createdAt;
-  @override // Set once this contact accepts an invite from their own SheShield
-// account (see ContactsRepository.acceptInvite). Null means they can
-// only be reached by SMS -- there's no linked account to push an alarm
-// to yet.
+  @override
+
+  /// Set once the contact accepts an invite from their own SheShield
+  /// account. Null means they can only be reached by SMS.
   String? get linkedUserUid;
   @override
   @JsonKey(ignore: true)

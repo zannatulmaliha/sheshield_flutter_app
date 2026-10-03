@@ -6,22 +6,20 @@ part of 'checkin_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkInControllerHash() => r'fa055d8be16b806b067e0049e8dfe804cb7a1e56';
+String _$checkInControllerHash() => r'8e9f59bf94c0cfab4c01ee6917ad551e6c6090a7';
 
 /// A safety countdown the person sets before doing something risky (walking
 /// home alone, meeting a stranger, ...). If it reaches zero without them
-/// checking in, an SOS goes out on their behalf via [SosController.send] --
+/// checking in, an SOS goes out on their behalf via `SosController.send`:
 /// the exact same alert (live location + every trusted contact) a manual SOS
 /// press triggers.
 ///
-/// Ticks once a second with a plain [Timer], which only ever fires while
-/// this app process is alive and in the foreground. There is deliberately
-/// no WorkManager/AlarmManager-backed background service behind it yet, so
-/// a fully backgrounded (and especially a killed) app will NOT fire the
-/// automatic SOS -- the same class of limitation already called out for
-/// [PushService] on this codebase's MIUI test devices. Good enough for "I
-/// forgot to check in while the app was open"; not yet a substitute for a
-/// true OS-level background timer.
+/// Ticks once a second with a plain [Timer], which only fires while this app
+/// process is alive. There is deliberately no WorkManager/AlarmManager
+/// background service behind it yet, so a fully backgrounded (and especially
+/// a killed) app will NOT fire the automatic SOS. Good enough for "I forgot
+/// to check in while the app was open"; not a substitute for an OS-level
+/// background timer.
 ///
 /// Copied from [CheckInController].
 @ProviderFor(CheckInController)

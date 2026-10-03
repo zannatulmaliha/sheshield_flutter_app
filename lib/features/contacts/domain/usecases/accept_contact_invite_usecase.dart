@@ -1,8 +1,9 @@
-import '../repositories/i_contacts_repository.dart';
+import 'package:sheshield/features/contacts/domain/repositories/contacts_repository.dart';
 
 class AcceptContactInviteUseCase {
-  const AcceptContactInviteUseCase(this._repository);
-  final IContactsRepository _repository;
+  const AcceptContactInviteUseCase(this._contactsRepository);
 
-  Future<void> call(String code) => _repository.acceptInvite(code);
+  final ContactsRepository _contactsRepository;
+
+  Future<void> call(String code) => _contactsRepository.acceptInvite(code);
 }

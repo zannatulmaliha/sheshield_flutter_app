@@ -14,17 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-HelperStatus _$HelperStatusFromJson(Map<String, dynamic> json) {
-  return _HelperStatus.fromJson(json);
-}
-
 /// @nodoc
 mixin _$HelperStatus {
   bool get isActive => throw _privateConstructorUsedError;
   double get radiusKm => throw _privateConstructorUsedError;
   bool get mutualConnectionOptIn => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $HelperStatusCopyWith<HelperStatus> get copyWith =>
       throw _privateConstructorUsedError;
@@ -117,15 +112,12 @@ class __$$HelperStatusImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$HelperStatusImpl implements _HelperStatus {
   const _$HelperStatusImpl(
       {this.isActive = false,
       this.radiusKm = 3.0,
       this.mutualConnectionOptIn = false});
-
-  factory _$HelperStatusImpl.fromJson(Map<String, dynamic> json) =>
-      _$$HelperStatusImplFromJson(json);
 
   @override
   @JsonKey()
@@ -155,7 +147,6 @@ class _$HelperStatusImpl implements _HelperStatus {
                 other.mutualConnectionOptIn == mutualConnectionOptIn));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, isActive, radiusKm, mutualConnectionOptIn);
@@ -165,13 +156,6 @@ class _$HelperStatusImpl implements _HelperStatus {
   @pragma('vm:prefer-inline')
   _$$HelperStatusImplCopyWith<_$HelperStatusImpl> get copyWith =>
       __$$HelperStatusImplCopyWithImpl<_$HelperStatusImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$HelperStatusImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _HelperStatus implements HelperStatus {
@@ -179,9 +163,6 @@ abstract class _HelperStatus implements HelperStatus {
       {final bool isActive,
       final double radiusKm,
       final bool mutualConnectionOptIn}) = _$HelperStatusImpl;
-
-  factory _HelperStatus.fromJson(Map<String, dynamic> json) =
-      _$HelperStatusImpl.fromJson;
 
   @override
   bool get isActive;

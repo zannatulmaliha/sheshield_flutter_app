@@ -10,33 +10,33 @@ class HelperNotVerifiedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.hourglass_empty_rounded, size: 48, color: AppTheme.accentOrange),
-            SizedBox(height: 16),
+            const Icon(Icons.hourglass_empty_rounded, size: 48, color: AppTheme.accentOrange),
+            const SizedBox(height: 16),
             Text(
               'Get verified to start responding',
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: context.hp.textPrimary),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Helpers must be verified before they can see or accept SOS alerts.',
               textAlign: TextAlign.center,
               style: TextStyle(color: context.hp.textSecondary, fontSize: 13, height: 1.4),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: onVerify,
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.hp.primary,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: Text('Get verified', style: TextStyle(fontWeight: FontWeight.w800)),
+              child: const Text('Get verified', style: TextStyle(fontWeight: FontWeight.w800)),
             ),
           ],
         ),

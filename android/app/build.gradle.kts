@@ -19,6 +19,12 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
+    // The per-flavor resValue("string", "app_name", ...) calls below need
+    // this explicitly opted in on current AGP versions.
+    buildFeatures {
+        resValues = true
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.sheshield"
@@ -32,6 +38,27 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    // Three flavors: same code, separate identity. `flutter run --flavor dev
+    // -t lib/main_dev.dart`. Each flavor needs its own Firebase app (see
+    // android/app/src/<flavor>/README.md) because the application id differs.
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "SheShield Dev")
+        }
+        create("staging") {
+            dimension = "environment"
+            applicationIdSuffix = ".staging"
+            resValue("string", "app_name", "SheShield Staging")
+        }
+        create("production") {
+            dimension = "environment"
+            resValue("string", "app_name", "SheShield")
+        }
     }
 
     buildTypes {

@@ -186,7 +186,7 @@ class MotionDetector {
         type: MotionEventType.struggle,
         confidence: math.min(1.0, 0.7 + 0.3 * over.clamp(0.0, 1.0)),
         timestampMs: t,
-      ));
+      ),);
       _struggleCooldownUntil = t + 60000;
       _struggleEmittedAt = t;
       _shakePeaks.clear();
@@ -264,7 +264,7 @@ class MotionDetector {
         type: MotionEventType.fall,
         confidence: math.min(1.0, score),
         timestampMs: t,
-      ));
+      ),);
       _fallEmittedAt = t;
       _inactivityDone = false;
       _lastMovingAt = t;
@@ -327,7 +327,7 @@ class MotionDetector {
     _lastT = t;
 
     // One-pole low-pass at ~6 Hz on the dynamic (gravity-removed) magnitude.
-    final rc = 1 / (2 * math.pi * 6);
+    const rc = 1 / (2 * math.pi * 6);
     final alpha = (dt / 1000) / ((dt / 1000) + rc);
     final prev = _sm;
     _sm = prev == null ? dyn : prev + alpha * (dyn - prev);

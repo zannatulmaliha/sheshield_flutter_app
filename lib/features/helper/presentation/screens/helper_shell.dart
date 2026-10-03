@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
@@ -28,22 +29,16 @@ const List<NavItemData> _helperNavItems = [
 /// Uses the SAME look as the User shell (themed Scaffold, aurora
 /// background, floating bottom bar). The five tabs live in an IndexedStack
 /// so switching tabs never reloads a list or drops a scroll position.
-class HelperShell extends ConsumerStatefulWidget {
+class HelperShell extends HookConsumerWidget {
   const HelperShell({super.key, required this.navigationShell});
+
+  static const _titles = ['Helper Dashboard', 'Alerts', 'Profile', 'Help & Support', 'History'];
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  ConsumerState<HelperShell> createState() => _HelperShellState();
-}
-
-class _HelperShellState extends ConsumerState<HelperShell> {
-  int _index = 0;
-
-  static const _titles = ['Helper Dashboard', 'Alerts', 'Profile', 'Help & Support', 'History'];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = useState(0);
     final colors = resolvePalette(context, ref);
     final user = ref.watch(authStateProvider).valueOrNull;
     final verified = user?.isHelperVerified ?? false;
@@ -59,7 +54,7 @@ class _HelperShellState extends ConsumerState<HelperShell> {
     ];
 
     // Dashboard and Profile draw their own heading, like the User tabs do.
-    final showTitle = _index != 0 && _index != 2;
+    final showTitle = selectedIndex.value != 0 && selectedIndex.value != 2;
 
     return Theme(
       data: AppTheme.themeFor(colors),
@@ -78,10 +73,10 @@ class _HelperShellState extends ConsumerState<HelperShell> {
                       padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(_titles[_index], style: Theme.of(context).textTheme.headlineSmall),
+                        child: Text(_titles[selectedIndex.value], style: Theme.of(context).textTheme.headlineSmall),
                       ),
                     ),
-                  Expanded(child: IndexedStack(index: _index, children: pages)),
+                  Expanded(child: IndexedStack(index: selectedIndex.value, children: pages)),
                 ],
               ),
             ),
@@ -89,8 +84,8 @@ class _HelperShellState extends ConsumerState<HelperShell> {
         ),
         bottomNavigationBar: AppBottomNav(
           items: _helperNavItems,
-          currentIndex: _index,
-          onTap: (i) => setState(() => _index = i),
+          currentIndex: selectedIndex.value,
+          onTap: (index) => selectedIndex.value = index,
         ),
       ),
     );

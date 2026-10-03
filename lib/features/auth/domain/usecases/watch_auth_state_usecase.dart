@@ -1,11 +1,12 @@
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
-import '../repositories/i_auth_repository.dart';
 
-/// Backs the router's redirect logic and any "is someone logged in"
-/// check — the single source of truth for auth state in the whole app.
+/// Backs the router's redirect logic and any "is someone signed in" check:
+/// the single source of truth for auth state in the whole app.
 class WatchAuthStateUseCase {
-  const WatchAuthStateUseCase(this._repository);
-  final IAuthRepository _repository;
+  const WatchAuthStateUseCase(this._authRepository);
 
-  Stream<AppUser?> call() => _repository.authStateChanges;
+  final AuthRepository _authRepository;
+
+  Stream<AppUser?> call() => _authRepository.authStateChanges;
 }

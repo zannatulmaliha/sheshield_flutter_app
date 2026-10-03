@@ -4,7 +4,7 @@
 enum ReportCategory {
   harassment('harassment', 'Harassment or inappropriate behavior'),
   unsafeBehavior('unsafe_behavior', 'Unsafe or reckless behavior'),
-  didNotShowUp('did_not_show_up', "Accepted but never showed up"),
+  didNotShowUp('did_not_show_up', 'Accepted but never showed up'),
   falseAlarm('false_alarm', 'This was not a real emergency'),
   other('other', 'Something else');
 

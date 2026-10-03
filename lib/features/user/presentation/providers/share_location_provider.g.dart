@@ -7,11 +7,11 @@ part of 'share_location_provider.dart';
 // **************************************************************************
 
 String _$shareLocationControllerHash() =>
-    r'a30df82c7b64dff1cd57e8bd7e954319b6d24d61';
+    r'90000585146792a9d5d51d8453776c6a57917aa1';
 
-/// One-shot "send my current location now" -- a lighter-weight sibling
-/// of [SosController.send] that skips the backend alert/live-tracking
-/// entirely and just texts a maps pin to every trusted contact.
+/// One-shot "send my current location now": a lighter sibling of
+/// `SosController.send` that skips the backend alert / live tracking and
+/// just texts a maps pin to every trusted contact.
 ///
 /// Copied from [ShareLocationController].
 @ProviderFor(ShareLocationController)

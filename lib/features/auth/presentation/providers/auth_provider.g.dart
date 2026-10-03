@@ -6,12 +6,11 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authStateHash() => r'f9d9d1151443d5fbb8a5b209ad79c032b135351c';
+String _$authStateHash() => r'9df20a0ee21894d55f78b38d621180de1bc7101d';
 
-/// Reactive stream of the current signed-in user (null when signed
-/// out). The router's redirect and every screen that needs "who's
-/// logged in" watch this -- nothing outside data/ ever touches the
-/// auth transport directly.
+/// Reactive stream of the current signed-in user (null when signed out).
+/// The router's redirect and every screen that needs "who's signed in"
+/// watch this; nothing outside data/ touches the auth transport.
 ///
 /// Copied from [authState].
 @ProviderFor(authState)
@@ -25,13 +24,13 @@ final authStateProvider = AutoDisposeStreamProvider<AppUser?>.internal(
 );
 
 typedef AuthStateRef = AutoDisposeStreamProviderRef<AppUser?>;
-String _$authControllerHash() => r'7150ee74e053edbc949d207498e0ca530f5e7c75';
+String _$authControllerHash() => r'626bdd0ecbf0da68d7ffcac413d1f9268414fa6a';
 
-/// Drives the login/signup/profile forms: loading + error state for
-/// whichever *action* is in flight, kept separate from [authState] so
-/// a failed action doesn't affect the app's broader auth state.
-/// `build` returns nothing meaningful -- this is a "command" notifier,
-/// its value only ever represents the last action's loading/error status.
+/// Drives the login / signup / profile forms: loading + error state for
+/// whichever *action* is in flight, kept separate from [authState] so a
+/// failed action doesn't affect the app's broader auth state. `build`
+/// returns nothing meaningful: the value only ever represents the last
+/// action's loading/error status.
 ///
 /// Copied from [AuthController].
 @ProviderFor(AuthController)

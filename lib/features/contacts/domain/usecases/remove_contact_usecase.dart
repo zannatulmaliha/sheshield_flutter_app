@@ -1,8 +1,9 @@
-import '../repositories/i_contacts_repository.dart';
+import 'package:sheshield/features/contacts/domain/repositories/contacts_repository.dart';
 
 class RemoveContactUseCase {
-  const RemoveContactUseCase(this._repository);
-  final IContactsRepository _repository;
+  const RemoveContactUseCase(this._contactsRepository);
 
-  Future<void> call(String contactId) => _repository.remove(contactId);
+  final ContactsRepository _contactsRepository;
+
+  Future<void> call(String contactId) => _contactsRepository.removeContact(contactId);
 }

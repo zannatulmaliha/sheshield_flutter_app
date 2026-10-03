@@ -1,16 +1,21 @@
 import 'dart:typed_data';
-import '../entities/verification_status.dart';
-import '../repositories/i_verification_repository.dart';
+
+import 'package:sheshield/features/verification/domain/entities/verification_status.dart';
+import 'package:sheshield/features/verification/domain/repositories/verification_repository.dart';
 
 class SubmitVerificationUseCase {
-  const SubmitVerificationUseCase(this._repository);
-  final IVerificationRepository _repository;
+  const SubmitVerificationUseCase(this._verificationRepository);
+
+  final VerificationRepository _verificationRepository;
 
   Future<VerificationStatus> call({
     required Uint8List nidFront,
     required Uint8List nidBack,
     required Uint8List selfie,
-  }) {
-    return _repository.submit(nidFront: nidFront, nidBack: nidBack, selfie: selfie);
-  }
+  }) =>
+      _verificationRepository.submitVerification(
+        nidFront: nidFront,
+        nidBack: nidBack,
+        selfie: selfie,
+      );
 }

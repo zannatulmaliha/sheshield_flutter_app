@@ -1,158 +1,118 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sheshield/core/constants/country_dial_codes.dart';
 import 'package:sheshield/core/l10n/app_localizations.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
+import 'package:sheshield/features/auth/presentation/hooks/use_auth_error_listener.dart';
+import 'package:sheshield/features/auth/presentation/providers/auth_provider.dart';
+import 'package:sheshield/features/auth/presentation/widgets/auth_submit_button.dart';
+import 'package:sheshield/features/auth/presentation/widgets/gender_dropdown.dart';
+import 'package:sheshield/features/auth/presentation/widgets/signup_account_fields.dart';
+import 'package:sheshield/features/auth/presentation/widgets/user_type_selector.dart';
 import 'package:sheshield/shared/entities/gender.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
-import '../providers/auth_provider.dart';
-import '../widgets/gender_dropdown.dart';
-import '../widgets/signup_account_fields.dart';
-import '../widgets/user_type_selector.dart';
 
-class SignupScreen extends ConsumerStatefulWidget {
+class SignupScreen extends HookConsumerWidget {
   const SignupScreen({super.key});
 
   @override
-  ConsumerState<SignupScreen> createState() => _SignupScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final l10n = AppLocalizations.of(context);
+    final formKey = useMemoized(GlobalKey<FormState>.new);
+    final nameController = useTextEditingController();
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+    final phoneController = useTextEditingController();
+    final country = useState(CountryDialCode.bangladesh);
+    final gender = useState(Gender.female);
+    final userType = useState(UserType.user);
+    final isSigningUp = ref.watch(authControllerProvider).isLoading;
 
-class _SignupScreenState extends ConsumerState<SignupScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _name = TextEditingController();
-  final _email = TextEditingController();
-  final _password = TextEditingController();
-  final _phone = TextEditingController();
+    listenForAuthErrors(context, ref);
 
-  CountryDialCode _country = CountryDialCode.bangladesh;
-  Gender _gender = Gender.female;
-  UserType _userType = UserType.user;
+    // Only female accounts can choose User, Helper, or Both; every other
+    // gender can only register as a Helper.
+    void changeGender(Gender? selected) {
+      gender.value = selected ?? gender.value;
+      if (gender.value != Gender.female) userType.value = UserType.helper;
+    }
 
-  @override
-  void dispose() {
-    _name.dispose();
-    _email.dispose();
-    _password.dispose();
-    _phone.dispose();
-    super.dispose();
-  }
+    void submit() {
+      if (!formKey.currentState!.validate()) return;
+      // Defense in depth: re-apply the rule at submit time.
+      final effectiveUserType =
+          gender.value == Gender.female ? userType.value : UserType.helper;
 
-  /// Only female accounts can choose User, Helper, or Both.
-  /// All other genders can only register as a Helper.
-  void _onGenderChanged(Gender? value) {
-    setState(() {
-      _gender = value ?? _gender;
-
-      if (_gender != Gender.female) {
-        _userType = UserType.helper;
-      }
-    });
-  }
-
-  void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-
-    // Defense in depth: only female accounts may use
-    // User or User + Helper. All other genders must be Helper.
-    final userType =
-        _gender == Gender.female ? _userType : UserType.helper;
-
-    ref.read(authControllerProvider.notifier).signUp(
-          name: _name.text.trim(),
-          email: _email.text.trim(),
-          password: _password.text,
-          phone: _phone.text.trim(),
-          countryCode: _country.dialCode,
-          gender: _gender,
-          userType: userType,
-        );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = resolvePalette(context, ref);
-    final l10n = AppLocalizations.of(context)!;
-    final authState = ref.watch(authControllerProvider);
-
-    ref.listen(authControllerProvider, (previous, next) {
-      next.whenOrNull(
-        error: (error, _) => ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.toString())),
-        ),
-      );
-    });
+      ref.read(authControllerProvider.notifier).signUp(
+            name: nameController.text.trim(),
+            email: emailController.text.trim(),
+            password: passwordController.text,
+            phone: phoneController.text.trim(),
+            countryCode: country.value.dialCode,
+            gender: gender.value,
+            userType: effectiveUserType,
+          );
+    }
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: palette.background,
       appBar: AppBar(
         title: Text(l10n.createAccount),
-        backgroundColor: colors.background,
-        foregroundColor: colors.textPrimary,
+        backgroundColor: palette.background,
+        foregroundColor: palette.textPrimary,
         elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SignupAccountFields(
-                  name: _name,
-                  email: _email,
-                  country: _country,
-                  onCountryChanged: (c) => setState(() => _country = c),
-                  phone: _phone,
-                  password: _password,
+                  name: nameController,
+                  email: emailController,
+                  country: country.value,
+                  onCountryChanged: (selected) => country.value = selected,
+                  phone: phoneController,
+                  password: passwordController,
                 ),
                 const SizedBox(height: 8),
-                GenderDropdown(
-                  value: _gender,
-                  onChanged: _onGenderChanged,
-                ),
+                GenderDropdown(value: gender.value, onChanged: changeGender),
                 const SizedBox(height: 16),
                 Text(
                   l10n.iWantTo,
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
-                    color: colors.textPrimary,
+                    color: palette.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 UserTypeSelector(
-                  gender: _gender,
-                  value: _userType,
-                  onChanged: (v) => setState(() => _userType = v),
+                  gender: gender.value,
+                  value: userType.value,
+                  onChanged: (selected) => userType.value = selected,
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: authState.isLoading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: authState.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(l10n.createAccount, style: const TextStyle(fontWeight: FontWeight.w800)),
+                AuthSubmitButton(
+                  label: l10n.createAccount,
+                  isLoading: isSigningUp,
+                  palette: palette,
+                  onPressed: submit,
                 ),
                 TextButton(
                   onPressed: () => context.pop(),
                   child: Text(
                     l10n.alreadyHaveAccount,
-                    style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: palette.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

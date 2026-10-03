@@ -1,8 +1,9 @@
-import '../repositories/i_sos_repository.dart';
+import 'package:sheshield/features/sos/domain/repositories/sos_repository.dart';
 
 class UpdateSosLocationUseCase {
-  const UpdateSosLocationUseCase(this._repository);
-  final ISosRepository _repository;
+  const UpdateSosLocationUseCase(this._sosRepository);
+
+  final SosRepository _sosRepository;
 
   Future<void> call({
     required String alertId,
@@ -10,7 +11,7 @@ class UpdateSosLocationUseCase {
     required double longitude,
     double? accuracyMeters,
   }) =>
-      _repository.updateLocation(
+      _sosRepository.updateAlertLocation(
         alertId: alertId,
         latitude: latitude,
         longitude: longitude,

@@ -1,14 +1,18 @@
-import '../repositories/i_admin_repository.dart';
+import 'package:sheshield/features/admin/domain/repositories/admin_repository.dart';
 
 class SuspendHelperUseCase {
-  const SuspendHelperUseCase(this._repository);
-  final IAdminRepository _repository;
+  const SuspendHelperUseCase(this._adminRepository);
+
+  final AdminRepository _adminRepository;
 
   Future<String?> call({
     required String uid,
     required String reason,
     String? reviewerName,
   }) =>
-      _repository.suspendHelper(
-          uid: uid, reason: reason, reviewerName: reviewerName);
+      _adminRepository.suspendHelper(
+        uid: uid,
+        reason: reason,
+        reviewerName: reviewerName,
+      );
 }

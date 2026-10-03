@@ -1,8 +1,9 @@
-import '../repositories/i_auth_repository.dart';
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 
 class SetDiscoverableUseCase {
-  const SetDiscoverableUseCase(this._repository);
-  final IAuthRepository _repository;
+  const SetDiscoverableUseCase(this._authRepository);
 
-  Future<void> call(bool discoverable) => _repository.setDiscoverable(discoverable);
+  final AuthRepository _authRepository;
+
+  Future<void> call(bool discoverable) => _authRepository.setDiscoverable(discoverable);
 }

@@ -7,12 +7,11 @@ part of 'helper_status_provider.dart';
 // **************************************************************************
 
 String _$helperStatusControllerHash() =>
-    r'29cc4178313f74e88bb8b239d5e3ca22f1401a24';
+    r'7e3a109062bd83d7a756ec4fa2928a71915fec9c';
 
-/// Owns "am I active, and at what radius". [toggleActive] and
-/// [setRadius] are the only way anything else in the app changes this
-/// state -- both go through the domain use cases, never straight to
-/// the repository.
+/// Owns "am I active, and at what radius". [toggleActive], [setRadius] and
+/// [setMutualConnectionOptIn] are the only ways anything else in the app
+/// changes this state.
 ///
 /// Copied from [HelperStatusController].
 @ProviderFor(HelperStatusController)

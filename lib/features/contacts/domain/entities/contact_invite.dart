@@ -1,15 +1,13 @@
-/// A short code, valid for a limited time, that a trusted contact enters
-/// (after installing SheShield and signing up) to link their own account --
-/// see ContactsRepository.acceptInvite. Not a freezed model: it's a
-/// throwaway value shown once on screen, never cached or round-tripped.
-class ContactInvite {
-  const ContactInvite({required this.code, required this.expiresAt});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  factory ContactInvite.fromJson(Map<String, dynamic> json) => ContactInvite(
-        code: json['code'] as String,
-        expiresAt: DateTime.parse(json['expiresAt'] as String),
-      );
+part 'contact_invite.freezed.dart';
 
-  final String code;
-  final DateTime expiresAt;
+/// A short-lived code a trusted contact enters (after installing the app
+/// and signing up) to link their own account. Shown once, never cached.
+@freezed
+class ContactInvite with _$ContactInvite {
+  const factory ContactInvite({
+    required String code,
+    required DateTime expiresAt,
+  }) = _ContactInvite;
 }

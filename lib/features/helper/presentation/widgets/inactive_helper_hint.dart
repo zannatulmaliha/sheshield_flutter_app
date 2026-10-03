@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sheshield/features/helper/presentation/helper_colors.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
 
 class InactiveHelperHint extends StatelessWidget {
   const InactiveHelperHint({super.key});
@@ -8,7 +7,7 @@ class InactiveHelperHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: context.hp.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(20),
@@ -16,7 +15,7 @@ class InactiveHelperHint extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.info_outline_rounded, color: context.hp.primary),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Turn on the switch above to see SOS alerts near you and respond to them.',

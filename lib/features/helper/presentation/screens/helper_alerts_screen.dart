@@ -1,125 +1,62 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:sheshield/features/helper/presentation/helper_colors.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sheshield/core/router/app_router.dart';
-import 'package:sheshield/features/helper/domain/entities/nearby_alert.dart';
-import '../providers/helper_extras_provider.dart';
-import '../providers/helper_status_provider.dart';
-import '../providers/nearby_alerts_provider.dart';
-import '../widgets/helper_response_view.dart';
-import '../widgets/nearby_alert_card.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sheshield/core/hooks/use_periodic_callback.dart';
+import 'package:sheshield/core/theme/app_palette.dart';
+import 'package:sheshield/features/helper/presentation/providers/helper_activity_providers.dart';
+import 'package:sheshield/features/helper/presentation/providers/nearby_alerts_provider.dart';
+import 'package:sheshield/features/helper/presentation/widgets/accept_alert_flow.dart';
+import 'package:sheshield/features/helper/presentation/widgets/my_response_tab.dart';
+import 'package:sheshield/features/helper/presentation/widgets/nearby_alerts_tab.dart';
 
 /// Alerts tab: "Nearby Alerts (n)" and "My Response (0/1)".
-class HelperAlertsScreen extends ConsumerStatefulWidget {
+class HelperAlertsScreen extends HookConsumerWidget {
   const HelperAlertsScreen({super.key});
 
-  @override
-  ConsumerState<HelperAlertsScreen> createState() => _HelperAlertsScreenState();
-}
-
-class _HelperAlertsScreenState extends ConsumerState<HelperAlertsScreen> with SingleTickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 2, vsync: this);
-  Timer? _poll;
+  static const _pollInterval = Duration(seconds: 10);
+  static const _myResponseTabIndex = 1;
 
   @override
-  void initState() {
-    super.initState();
-    _poll = Timer.periodic(Duration(seconds: 10), (_) {
-      ref.read(nearbyAlertsControllerProvider.notifier).refresh();
-    });
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final tabController = useTabController(initialLength: 2);
+    final alertCount =
+        ref.watch(nearbyAlertsControllerProvider).valueOrNull?.length ?? 0;
+    final myResponseCount = ref.watch(myResponseProvider).valueOrNull == null ? 0 : 1;
 
-  @override
-  void dispose() {
-    _poll?.cancel();
-    _tabs.dispose();
-    super.dispose();
-  }
-
-  Future<void> _accept(NearbyAlert alert) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Accept this alert?'),
-        content: Text('${alert.label}. You will get the exact location of the person ${alert.distanceLabel}. Only accept if you can get there safely.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Accept')),
-        ],
-      ),
+    usePeriodicCallback(
+      _pollInterval,
+      () => ref.read(nearbyAlertsControllerProvider.notifier).refresh(),
     );
-    if (confirmed != true) return;
-    final accepted = await ref.read(nearbyAlertsControllerProvider.notifier).accept(alert.id);
-    if (!mounted) return;
-    if (accepted != null) {
-      ref.invalidate(myResponseProvider);
-      _tabs.animateTo(1);
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Already matched - someone else responded first.')));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final alertsAsync = ref.watch(nearbyAlertsControllerProvider);
-    final status = ref.watch(helperStatusControllerProvider).valueOrNull;
-    final mine = ref.watch(myResponseProvider);
-    final alerts = alertsAsync.valueOrNull ?? <NearbyAlert>[];
-    final myCount = mine.valueOrNull == null ? 0 : 1;
 
     return Column(
       children: [
         Material(
-          color: context.hp.surface,
+          color: palette.surface,
           child: TabBar(
-            controller: _tabs,
-            labelColor: context.hp.primary,
-            unselectedLabelColor: context.hp.textSecondary,
-            indicatorColor: context.hp.primary,
-            tabs: [Tab(text: 'Nearby Alerts (${alerts.length})'), Tab(text: 'My Response ($myCount)')],
+            controller: tabController,
+            labelColor: palette.primary,
+            unselectedLabelColor: palette.textSecondary,
+            indicatorColor: palette.primary,
+            tabs: [
+              Tab(text: 'Nearby Alerts ($alertCount)'),
+              Tab(text: 'My Response ($myResponseCount)'),
+            ],
           ),
         ),
         Expanded(
           child: TabBarView(
-            controller: _tabs,
+            controller: tabController,
             children: [
-              RefreshIndicator(
-                onRefresh: () => ref.read(nearbyAlertsControllerProvider.notifier).refresh(),
-                child: ListView(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 110),
-                  children: [
-                    if (status != null)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12),
-                        child: Text(
-                          status.isActive ? 'Showing alerts within ${status.radiusKm.round()}km' : 'You are inactive. Go active on the Dashboard to receive alerts.',
-                          style: TextStyle(color: context.hp.textSecondary),
-                        ),
-                      ),
-                    if (alertsAsync.isLoading && alerts.isEmpty)
-                      Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()))
-                    else if (alerts.isEmpty)
-                      Padding(padding: EdgeInsets.all(32), child: Center(child: Text('No active SOS calls nearby.', style: TextStyle(color: context.hp.textSecondary))))
-                    else
-                      for (final a in alerts)
-                        Padding(padding: EdgeInsets.only(bottom: 12), child: NearbyAlertCard(alert: a, isBusy: false, onAccept: () => _accept(a))),
-                  ],
-                ),
+              NearbyAlertsTab(
+                onAccept: (alert) async {
+                  final acceptedAlert = await runAcceptAlertFlow(context, ref, alert);
+                  if (acceptedAlert != null) {
+                    tabController.animateTo(_myResponseTabIndex);
+                  }
+                },
               ),
-              mine.when(
-                loading: () => Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('$e')),
-                data: (r) => r == null
-                    ? Center(child: Padding(padding: EdgeInsets.all(32), child: Text('You are not responding to an alert right now.', style: TextStyle(color: context.hp.textSecondary))))
-                    : HelperResponseView(
-                        key: ValueKey(r.alert.id),
-                        alert: r.alert,
-                        initialStage: r.stage,
-                        onEnded: () => ref.invalidate(myResponseProvider),
-                      ),
-              ),
+              const MyResponseTab(),
             ],
           ),
         ),

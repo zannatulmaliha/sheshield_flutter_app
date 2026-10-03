@@ -1,65 +1,71 @@
 import 'package:sheshield/core/cache/cache_box_interface.dart';
-import '../../domain/entities/contact_invite.dart';
-import '../../domain/entities/trusted_contact.dart';
-import '../../domain/repositories/i_contacts_repository.dart';
-import '../datasources/contacts_api_datasource.dart';
+import 'package:sheshield/features/contacts/data/datasources/contacts_api_datasource.dart';
+import 'package:sheshield/features/contacts/data/models/trusted_contact_model.dart';
+import 'package:sheshield/features/contacts/domain/entities/contact_invite.dart';
+import 'package:sheshield/features/contacts/domain/entities/trusted_contact.dart';
+import 'package:sheshield/features/contacts/domain/repositories/contacts_repository.dart';
 
-/// Thin adapter satisfying [IContactsRepository]. The list is cached
-/// with a short TTL -- long enough to skip a redundant round-trip
-/// when Home and the Contacts tab both mount in the same session,
-/// short enough that a contact added elsewhere shows up quickly.
-/// [add]/[remove] always invalidate the cache immediately rather than
-/// waiting out the TTL, so the list never looks stale right after a
-/// write the user just made.
-class ContactsRepositoryImpl implements IContactsRepository {
-  ContactsRepositoryImpl(this._dataSource, this._cache);
-  final ContactsApiDataSource _dataSource;
-  final CacheBox _cache;
+/// Caches the contact list briefly so Home and the Contacts tab mounting
+/// together share one round-trip. Writes invalidate immediately so the
+/// list never looks stale right after the person's own change.
+class ContactsRepositoryImpl implements ContactsRepository {
+  const ContactsRepositoryImpl(this._apiDataSource, this._cache);
 
   static const _cacheKey = 'contacts:list';
-  static const _ttl = Duration(minutes: 2);
+  static const _cacheTtl = Duration(minutes: 2);
+
+  final ContactsApiDataSource _apiDataSource;
+  final CacheBox _cache;
 
   @override
-  Future<List<TrustedContact>> list() async {
-    final cached = await _cache.read(_cacheKey, ttl: _ttl);
-    if (cached != null) {
-      final items = (cached['items'] as List).cast<Map<String, dynamic>>();
-      return items.map(TrustedContact.fromJson).toList();
-    }
+  Future<List<TrustedContact>> fetchContacts() async {
+    final cachedModels = await _readCachedModels();
+    if (cachedModels != null) return _toEntities(cachedModels);
 
-    final contacts = await _dataSource.list();
+    final models = await _apiDataSource.fetchContacts();
     await _cache.write(_cacheKey, {
-      'items': contacts.map((c) => c.toJson()).toList(),
+      'items': models.map((model) => model.toJson()).toList(),
     });
-    return contacts;
+    return _toEntities(models);
   }
 
   @override
-  Future<TrustedContact> add({
+  Future<TrustedContact> addContact({
     required String name,
     required String relation,
     required String phone,
     required String countryCode,
   }) async {
-    final contact = await _dataSource.add(
+    final model = await _apiDataSource.addContact(
       name: name,
       relation: relation,
       phone: phone,
       countryCode: countryCode,
     );
     await _cache.invalidate(_cacheKey);
-    return contact;
+    return model.toEntity();
   }
 
   @override
-  Future<void> remove(String contactId) async {
-    await _dataSource.remove(contactId);
+  Future<void> removeContact(String contactId) async {
+    await _apiDataSource.removeContact(contactId);
     await _cache.invalidate(_cacheKey);
   }
 
   @override
-  Future<ContactInvite> invite(String contactId) => _dataSource.invite(contactId);
+  Future<ContactInvite> createInvite(String contactId) async =>
+      (await _apiDataSource.createInvite(contactId)).toEntity();
 
   @override
-  Future<void> acceptInvite(String code) => _dataSource.acceptInvite(code);
+  Future<void> acceptInvite(String code) => _apiDataSource.acceptInvite(code);
+
+  Future<List<TrustedContactModel>?> _readCachedModels() async {
+    final cached = await _cache.read(_cacheKey, ttl: _cacheTtl);
+    if (cached == null) return null;
+    final items = (cached['items'] as List).cast<Map<String, dynamic>>();
+    return items.map(TrustedContactModel.fromJson).toList();
+  }
+
+  List<TrustedContact> _toEntities(List<TrustedContactModel> models) =>
+      models.map((model) => model.toEntity()).toList();
 }

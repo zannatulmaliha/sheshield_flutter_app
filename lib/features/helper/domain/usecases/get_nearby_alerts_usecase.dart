@@ -1,9 +1,10 @@
-import '../entities/nearby_alert.dart';
-import '../repositories/i_helper_repository.dart';
+import 'package:sheshield/features/helper/domain/entities/nearby_alert.dart';
+import 'package:sheshield/features/helper/domain/repositories/helper_alert_repository.dart';
 
 class GetNearbyAlertsUseCase {
-  const GetNearbyAlertsUseCase(this._repository);
-  final IHelperRepository _repository;
+  const GetNearbyAlertsUseCase(this._helperAlertRepository);
 
-  Future<List<NearbyAlert>> call() => _repository.fetchNearbyAlerts();
+  final HelperAlertRepository _helperAlertRepository;
+
+  Future<List<NearbyAlert>> call() => _helperAlertRepository.fetchNearbyAlerts();
 }

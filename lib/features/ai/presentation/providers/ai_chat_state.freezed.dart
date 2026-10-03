@@ -1,0 +1,163 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'ai_chat_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+/// @nodoc
+mixin _$AiChatState {
+  List<ChatMessage> get messages => throw _privateConstructorUsedError;
+  bool get isSending => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AiChatStateCopyWith<AiChatState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AiChatStateCopyWith<$Res> {
+  factory $AiChatStateCopyWith(
+          AiChatState value, $Res Function(AiChatState) then) =
+      _$AiChatStateCopyWithImpl<$Res, AiChatState>;
+  @useResult
+  $Res call({List<ChatMessage> messages, bool isSending});
+}
+
+/// @nodoc
+class _$AiChatStateCopyWithImpl<$Res, $Val extends AiChatState>
+    implements $AiChatStateCopyWith<$Res> {
+  _$AiChatStateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+    Object? isSending = null,
+  }) {
+    return _then(_value.copyWith(
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<ChatMessage>,
+      isSending: null == isSending
+          ? _value.isSending
+          : isSending // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AiChatStateImplCopyWith<$Res>
+    implements $AiChatStateCopyWith<$Res> {
+  factory _$$AiChatStateImplCopyWith(
+          _$AiChatStateImpl value, $Res Function(_$AiChatStateImpl) then) =
+      __$$AiChatStateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ChatMessage> messages, bool isSending});
+}
+
+/// @nodoc
+class __$$AiChatStateImplCopyWithImpl<$Res>
+    extends _$AiChatStateCopyWithImpl<$Res, _$AiChatStateImpl>
+    implements _$$AiChatStateImplCopyWith<$Res> {
+  __$$AiChatStateImplCopyWithImpl(
+      _$AiChatStateImpl _value, $Res Function(_$AiChatStateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+    Object? isSending = null,
+  }) {
+    return _then(_$AiChatStateImpl(
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<ChatMessage>,
+      isSending: null == isSending
+          ? _value.isSending
+          : isSending // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AiChatStateImpl implements _AiChatState {
+  const _$AiChatStateImpl(
+      {final List<ChatMessage> messages = const <ChatMessage>[],
+      this.isSending = false})
+      : _messages = messages;
+
+  final List<ChatMessage> _messages;
+  @override
+  @JsonKey()
+  List<ChatMessage> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  @override
+  @JsonKey()
+  final bool isSending;
+
+  @override
+  String toString() {
+    return 'AiChatState(messages: $messages, isSending: $isSending)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AiChatStateImpl &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
+            (identical(other.isSending, isSending) ||
+                other.isSending == isSending));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_messages), isSending);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AiChatStateImplCopyWith<_$AiChatStateImpl> get copyWith =>
+      __$$AiChatStateImplCopyWithImpl<_$AiChatStateImpl>(this, _$identity);
+}
+
+abstract class _AiChatState implements AiChatState {
+  const factory _AiChatState(
+      {final List<ChatMessage> messages,
+      final bool isSending}) = _$AiChatStateImpl;
+
+  @override
+  List<ChatMessage> get messages;
+  @override
+  bool get isSending;
+  @override
+  @JsonKey(ignore: true)
+  _$$AiChatStateImplCopyWith<_$AiChatStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

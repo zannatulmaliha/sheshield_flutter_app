@@ -76,3 +76,13 @@ while you work instead of re-running it by hand each time.
 - `features/contacts/`, `features/sos/`, `features/verification/`, `features/profile/` — none built in this scaffold
 - The corresponding Go backend endpoints for helper mode (`/api/v1/helper/*`) — contract is documented in `helper_api_datasource.dart`'s doc comments, not implemented server-side
 - `root_shell.dart`'s plain-`user` branch is a placeholder (`_UserModePlaceholder`) — there's no SOS/home screen in this scaffold to route to yet
+
+
+## Flavors & running (updated)
+
+The app has `dev`, `staging` and `production` flavors. See `docs/ARCHITECTURE.md`.
+
+```bash
+scripts/codegen.sh                                   # generate freezed/json/riverpod/router code
+flutter run --flavor dev -t lib/main_dev.dart        # or scripts/run_phone.sh for a USB phone
+```

@@ -1,9 +1,10 @@
-import '../entities/sos_alert.dart';
-import '../repositories/i_sos_repository.dart';
+import 'package:sheshield/features/sos/domain/entities/sos_alert.dart';
+import 'package:sheshield/features/sos/domain/repositories/sos_repository.dart';
 
 class SendSosUseCase {
-  const SendSosUseCase(this._repository);
-  final ISosRepository _repository;
+  const SendSosUseCase(this._sosRepository);
+
+  final SosRepository _sosRepository;
 
   Future<SosAlert> call({
     required double latitude,
@@ -13,7 +14,7 @@ class SendSosUseCase {
     bool avConsent = false,
     String trigger = 'manual',
   }) =>
-      _repository.send(
+      _sosRepository.sendAlert(
         latitude: latitude,
         longitude: longitude,
         accuracyMeters: accuracyMeters,

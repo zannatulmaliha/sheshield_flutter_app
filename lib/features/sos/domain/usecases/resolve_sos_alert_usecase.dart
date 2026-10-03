@@ -1,8 +1,9 @@
-import '../repositories/i_sos_repository.dart';
+import 'package:sheshield/features/sos/domain/repositories/sos_repository.dart';
 
 class ResolveSosAlertUseCase {
-  const ResolveSosAlertUseCase(this._repository);
-  final ISosRepository _repository;
+  const ResolveSosAlertUseCase(this._sosRepository);
 
-  Future<void> call(String alertId) => _repository.resolve(alertId);
+  final SosRepository _sosRepository;
+
+  Future<void> call(String alertId) => _sosRepository.resolveAlert(alertId);
 }

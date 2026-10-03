@@ -14,17 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-VerificationStatus _$VerificationStatusFromJson(Map<String, dynamic> json) {
-  return _VerificationStatus.fromJson(json);
-}
-
 /// @nodoc
 mixin _$VerificationStatus {
   VerificationState get status => throw _privateConstructorUsedError;
   String get note => throw _privateConstructorUsedError;
   DateTime? get submittedAt => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $VerificationStatusCopyWith<VerificationStatus> get copyWith =>
       throw _privateConstructorUsedError;
@@ -117,13 +112,10 @@ class __$$VerificationStatusImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$VerificationStatusImpl implements _VerificationStatus {
   const _$VerificationStatusImpl(
       {required this.status, this.note = '', this.submittedAt});
-
-  factory _$VerificationStatusImpl.fromJson(Map<String, dynamic> json) =>
-      _$$VerificationStatusImplFromJson(json);
 
   @override
   final VerificationState status;
@@ -149,7 +141,6 @@ class _$VerificationStatusImpl implements _VerificationStatus {
                 other.submittedAt == submittedAt));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, status, note, submittedAt);
 
@@ -159,13 +150,6 @@ class _$VerificationStatusImpl implements _VerificationStatus {
   _$$VerificationStatusImplCopyWith<_$VerificationStatusImpl> get copyWith =>
       __$$VerificationStatusImplCopyWithImpl<_$VerificationStatusImpl>(
           this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$VerificationStatusImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _VerificationStatus implements VerificationStatus {
@@ -173,9 +157,6 @@ abstract class _VerificationStatus implements VerificationStatus {
       {required final VerificationState status,
       final String note,
       final DateTime? submittedAt}) = _$VerificationStatusImpl;
-
-  factory _VerificationStatus.fromJson(Map<String, dynamic> json) =
-      _$VerificationStatusImpl.fromJson;
 
   @override
   VerificationState get status;

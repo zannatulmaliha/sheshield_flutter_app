@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
 
 class NavItemData {
   const NavItemData(this.icon, this.activeIcon, this.label);
@@ -16,7 +15,7 @@ const List<NavItemData> navItems = [
   NavItemData(Icons.home_outlined, Icons.home_rounded, 'Home'),
   NavItemData(Icons.people_alt_outlined, Icons.people_alt_rounded, 'Contacts'),
   NavItemData(
-      Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, 'AI Mode'),
+      Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, 'AI Mode',),
   NavItemData(Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
 ];
 
@@ -55,7 +54,7 @@ class AppBottomNav extends ConsumerWidget {
               color: barColor.withValues(alpha: 0.97),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                  color: colors.primary.withValues(alpha: 0.45), width: 1.2),
+                  color: colors.primary.withValues(alpha: 0.45), width: 1.2,),
               boxShadow: [
                 BoxShadow(
                   color: colors.primary.withValues(alpha: 0.28),
@@ -82,7 +81,7 @@ class AppBottomNav extends ConsumerWidget {
                       duration: const Duration(milliseconds: 220),
                       curve: Curves.easeOutCubic,
                       margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 3),
+                          vertical: 10, horizontal: 3,),
                       padding:
                           EdgeInsets.symmetric(horizontal: isActive ? 8 : 0),
                       decoration: BoxDecoration(

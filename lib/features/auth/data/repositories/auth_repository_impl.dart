@@ -1,36 +1,35 @@
 import 'dart:async';
+
+import 'package:sheshield/features/auth/data/datasources/auth_api_datasource.dart';
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
 import 'package:sheshield/shared/entities/gender.dart';
 import 'package:sheshield/shared/entities/user_type.dart';
-import '../../domain/repositories/i_auth_repository.dart';
-import '../datasources/auth_api_datasource.dart';
 
-/// REST has no native "auth state stream", so this repository
-/// simulates one: it restores the session once at startup (via the
-/// stored JWT) and re-emits whenever sign in/out/update happens.
-class AuthRepositoryImpl implements IAuthRepository {
-  AuthRepositoryImpl(this._dataSource) {
-    _restoreSession();
+/// REST has no native "auth state stream", so this repository simulates one:
+/// it restores the session once at startup (from the stored JWT) and
+/// re-emits whenever sign-in, sign-out or an update happens.
+class AuthRepositoryImpl implements AuthRepository {
+  AuthRepositoryImpl(this._apiDataSource) {
+    refreshSession();
   }
 
-  final AuthApiDataSource _dataSource;
-  final StreamController<AppUser?> _controller =
+  final AuthApiDataSource _apiDataSource;
+  final StreamController<AppUser?> _authStateController =
       StreamController<AppUser?>.broadcast();
 
-  Future<void> _restoreSession() async {
-    final user = await _dataSource.me();
-    _controller.add(user);
+  @override
+  Stream<AppUser?> get authStateChanges => _authStateController.stream;
+
+  @override
+  Future<void> refreshSession() async {
+    final model = await _apiDataSource.fetchCurrentUser();
+    _authStateController.add(model?.toEntity());
   }
 
   @override
-  Stream<AppUser?> get authStateChanges => _controller.stream;
-
-  @override
-  Future<AppUser> signIn({required String email, required String password}) async {
-    final user = await _dataSource.signIn(email, password);
-    _controller.add(user);
-    return user;
-  }
+  Future<AppUser> signIn({required String email, required String password}) async =>
+      _emit((await _apiDataSource.signIn(email, password)).toEntity());
 
   @override
   Future<AppUser> signUp({
@@ -42,7 +41,7 @@ class AuthRepositoryImpl implements IAuthRepository {
     required Gender gender,
     required UserType userType,
   }) async {
-    final user = await _dataSource.signUp(
+    final model = await _apiDataSource.signUp(
       name: name,
       email: email,
       password: password,
@@ -51,19 +50,15 @@ class AuthRepositoryImpl implements IAuthRepository {
       gender: gender,
       userType: userType,
     );
-    _controller.add(user);
-    return user;
+    return _emit(model.toEntity());
   }
 
   @override
   Future<void> signOut() async {
-    await _dataSource.signOut();
-    _controller.add(null);
+    await _apiDataSource.signOut();
+    _authStateController.add(null);
   }
 
-  @override
-  Future<void> refreshSession() => _restoreSession();
-  
   @override
   Future<AppUser> updateProfile({
     String? name,
@@ -71,22 +66,26 @@ class AuthRepositoryImpl implements IAuthRepository {
     String? countryCode,
     String? address,
   }) async {
-    final user = await _dataSource.updateProfile(
+    final model = await _apiDataSource.updateProfile(
       name: name,
       phone: phone,
       countryCode: countryCode,
       address: address,
     );
-    _controller.add(user);
-    return user;
+    return _emit(model.toEntity());
   }
 
   @override
-  Future<void> updateFcmToken(String token) => _dataSource.updateFcmToken(token);
+  Future<void> updateFcmToken(String token) => _apiDataSource.updateFcmToken(token);
 
   @override
   Future<void> setDiscoverable(bool discoverable) async {
-    await _dataSource.setDiscoverable(discoverable);
-    await _restoreSession();
+    await _apiDataSource.setDiscoverable(discoverable);
+    await refreshSession();
+  }
+
+  AppUser _emit(AppUser user) {
+    _authStateController.add(user);
+    return user;
   }
 }

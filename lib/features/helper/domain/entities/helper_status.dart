@@ -1,10 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'helper_status.freezed.dart';
-part 'helper_status.g.dart';
 
-/// Whether this account is currently accepting alerts, and how far it
-/// will look for them.
+/// Whether this account is currently accepting alerts, and how far it will
+/// look for them.
 @freezed
 class HelperStatus with _$HelperStatus {
   const factory HelperStatus({
@@ -12,7 +11,4 @@ class HelperStatus with _$HelperStatus {
     @Default(3.0) double radiusKm,
     @Default(false) bool mutualConnectionOptIn,
   }) = _HelperStatus;
-
-  factory HelperStatus.fromJson(Map<String, dynamic> json) =>
-      _$HelperStatusFromJson(json);
 }

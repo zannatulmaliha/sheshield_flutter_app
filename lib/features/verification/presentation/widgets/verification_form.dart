@@ -1,137 +1,100 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sheshield/core/hooks/use_async_action.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
-import '../../domain/entities/verification_status.dart';
-import 'photo_picker_tile.dart';
+import 'package:sheshield/features/verification/domain/entities/verification_status.dart';
+import 'package:sheshield/features/verification/presentation/hooks/use_verification_photos.dart';
+import 'package:sheshield/features/verification/presentation/providers/verification_provider.dart';
+import 'package:sheshield/features/verification/presentation/widgets/photo_picker_tile.dart';
+import 'package:sheshield/features/verification/presentation/widgets/verification_photo_slot.dart';
+import 'package:sheshield/features/verification/presentation/widgets/verification_rejection_banner.dart';
 
-/// The upload form, shown when status is none or rejected. Owns its own
-/// in-progress photo state; only calls [onSubmit] once all three are picked.
-class VerificationForm extends ConsumerStatefulWidget {
-  const VerificationForm({super.key, required this.status, required this.onSubmit});
+/// The upload form, shown while status is none or rejected. Submit stays
+/// disabled until all three photos are picked.
+class VerificationForm extends HookConsumerWidget {
+  const VerificationForm({super.key, required this.status});
 
   final VerificationStatus status;
-  final Future<String?> Function({
-    required Uint8List nidFront,
-    required Uint8List nidBack,
-    required Uint8List selfie,
-  }) onSubmit;
 
   @override
-  ConsumerState<VerificationForm> createState() => _VerificationFormState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final photos = useVerificationPhotos();
+    final submitAction = useAsyncAction();
+    final errorMessage = photos.errorMessage ?? submitAction.errorMessage;
+    final canSubmit = photos.isComplete && !submitAction.isRunning;
 
-class _VerificationFormState extends ConsumerState<VerificationForm> {
-  static const _maxBytes = 5 * 1024 * 1024; // matches the server's 5 MB limit
-  final _picker = ImagePicker();
-
-  Uint8List? _front, _back, _selfie;
-  String? _error;
-  bool _submitting = false;
-
-  Future<void> _pick(bool selfie, void Function(Uint8List) set) async {
-    final file = await _picker.pickImage(
-      source: selfie ? ImageSource.camera : ImageSource.gallery,
-      imageQuality: 85,
-      maxWidth: 1600,
-      preferredCameraDevice: CameraDevice.front,
-    );
-    if (file == null) return;
-    final bytes = await file.readAsBytes();
-    if (bytes.length > _maxBytes) {
-      setState(() => _error = 'That photo is too large (5 MB max).');
-      return;
+    Future<void> submitPhotos() async {
+      final wasSubmitted = await submitAction.run(
+        () => ref.read(verificationControllerProvider.notifier).submit(
+              nidFront: photos[VerificationPhotoSlot.idFront]!,
+              nidBack: photos[VerificationPhotoSlot.idBack]!,
+              selfie: photos[VerificationPhotoSlot.selfie]!,
+            ),
+      );
+      if (wasSubmitted) photos.clear();
     }
-    setState(() {
-      set(bytes);
-      _error = null;
-    });
-  }
 
-  Future<void> _submit() async {
-    final front = _front, back = _back, selfie = _selfie;
-    if (front == null || back == null || selfie == null) return;
-    setState(() {
-      _submitting = true;
-      _error = null;
-    });
-    final error = await widget.onSubmit(nidFront: front, nidBack: back, selfie: selfie);
-    if (!mounted) return;
-    setState(() {
-      _submitting = false;
-      _error = error;
-      if (error == null) _front = _back = _selfie = null;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = resolvePalette(context, ref);
-    final ready = _front != null && _back != null && _selfie != null;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
       children: [
-        if (widget.status.status == VerificationState.rejected && widget.status.note.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.all(14),
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: colors.sosEnd.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text('Not approved: ${widget.status.note}\nYou can send new photos below.',
-                style: TextStyle(color: colors.textPrimary, fontSize: 13)),
+        if (status.status == VerificationState.rejected && status.note.isNotEmpty)
+          VerificationRejectionBanner(palette: palette, reviewerNote: status.note),
+        Text(
+          'Verify your identity',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            color: palette.textPrimary,
           ),
-        Text('Verify your identity',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, color: colors.textPrimary)),
+        ),
         const SizedBox(height: 8),
         Text(
-          'Add a photo of the front and back of your national ID, and a selfie so we can compare your face to it.',
-          style: TextStyle(color: colors.textSecondary, fontSize: 13.5, height: 1.45),
+          'Add a photo of the front and back of your national ID, and a selfie '
+          'so we can compare your face to it.',
+          style: TextStyle(color: palette.textSecondary, fontSize: 13.5, height: 1.45),
         ),
         const SizedBox(height: 20),
-        PhotoPickerTile(
-          colors: colors,
-          label: 'ID card: front',
-          hint: 'All corners visible, text readable',
-          icon: Icons.badge_outlined,
-          bytes: _front,
-          onTap: _submitting ? null : () => _pick(false, (b) => setState(() => _front = b)),
-        ),
-        PhotoPickerTile(
-          colors: colors,
-          label: 'ID card: back',
-          hint: 'Flat, in good light, no glare',
-          icon: Icons.credit_card_rounded,
-          bytes: _back,
-          onTap: _submitting ? null : () => _pick(false, (b) => setState(() => _back = b)),
-        ),
-        PhotoPickerTile(
-          colors: colors,
-          label: 'Selfie',
-          hint: 'Your face, clearly visible, taken now',
-          icon: Icons.face_rounded,
-          bytes: _selfie,
-          onTap: _submitting ? null : () => _pick(true, (b) => setState(() => _selfie = b)),
-        ),
-        if (_error != null)
+        for (final slot in VerificationPhotoSlot.values)
+          PhotoPickerTile(
+            colors: palette,
+            label: slot.label,
+            hint: slot.hint,
+            icon: slot.icon,
+            bytes: photos[slot],
+            onTap: submitAction.isRunning ? null : () => photos.pick(slot),
+          ),
+        if (errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 10),
-            child: Text(_error!, style: TextStyle(color: colors.sosEnd, fontWeight: FontWeight.w700, fontSize: 12.5)),
+            child: Text(
+              errorMessage,
+              style: TextStyle(
+                color: palette.sosEnd,
+                fontWeight: FontWeight.w700,
+                fontSize: 12.5,
+              ),
+            ),
           ),
         const SizedBox(height: 8),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: colors.primary,
+            backgroundColor: palette.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
-          onPressed: (ready && !_submitting) ? _submit : null,
-          child: _submitting
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white))
-              : const Text('Submit for review', style: TextStyle(fontWeight: FontWeight.w800)),
+          onPressed: canSubmit ? submitPhotos : null,
+          child: submitAction.isRunning
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+                )
+              : const Text(
+                  'Submit for review',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
         ),
       ],
     );

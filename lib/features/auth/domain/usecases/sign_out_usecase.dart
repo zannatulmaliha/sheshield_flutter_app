@@ -1,8 +1,9 @@
-import '../repositories/i_auth_repository.dart';
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 
 class SignOutUseCase {
-  const SignOutUseCase(this._repository);
-  final IAuthRepository _repository;
+  const SignOutUseCase(this._authRepository);
 
-  Future<void> call() => _repository.signOut();
+  final AuthRepository _authRepository;
+
+  Future<void> call() => _authRepository.signOut();
 }

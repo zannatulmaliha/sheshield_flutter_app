@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:sheshield/core/di/injection.dart';
 import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/features/auth/domain/usecases/update_fcm_token_usecase.dart';
 import 'package:sheshield/features/sos/presentation/screens/sos_alarm_screen.dart';
@@ -36,7 +35,7 @@ Future<void> _showAlarmNotification(Map<String, dynamic> data) async {
   const details = AndroidNotificationDetails(
     _alarmChannelId,
     'SOS Alarm',
-    channelDescription: "Alerts you the instant a trusted contact sends an SOS.",
+    channelDescription: 'Alerts you the instant a trusted contact sends an SOS.',
     importance: Importance.max,
     priority: Priority.max,
     category: AndroidNotificationCategory.alarm,
@@ -63,6 +62,10 @@ Future<void> _showAlarmNotification(Map<String, dynamic> data) async {
 /// Firebase project exists (see the FCM_PROJECT_ID/FCM_CREDENTIALS_PATH
 /// backend config); calling it before then would crash on startup.
 class PushService {
+  PushService(this._updateFcmToken);
+
+  final UpdateFcmTokenUseCase _updateFcmToken;
+
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
@@ -111,7 +114,7 @@ class PushService {
     const channel = AndroidNotificationChannel(
       _alarmChannelId,
       'SOS Alarm',
-      description: "Alerts you the instant a trusted contact sends an SOS.",
+      description: 'Alerts you the instant a trusted contact sends an SOS.',
       importance: Importance.max,
       sound: RawResourceAndroidNotificationSound('sos_alarm'),
       audioAttributesUsage: AudioAttributesUsage.alarm,
@@ -125,7 +128,7 @@ class PushService {
     final token = await FirebaseMessaging.instance.getToken();
     if (token == null) return;
     try {
-      await getIt<UpdateFcmTokenUseCase>().call(token);
+      await _updateFcmToken(token);
     } catch (_) {
       // Best-effort -- retried on the next app start or token refresh.
     }

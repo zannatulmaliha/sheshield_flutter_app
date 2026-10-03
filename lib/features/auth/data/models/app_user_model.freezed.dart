@@ -1,0 +1,406 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'app_user_model.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+AppUserModel _$AppUserModelFromJson(Map<String, dynamic> json) {
+  return _AppUserModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AppUserModel {
+  String get uid => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get countryCode => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
+  @DateTimeConverter()
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  String get gender => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+  String get userType => throw _privateConstructorUsedError;
+  bool get isHelperVerified => throw _privateConstructorUsedError;
+  String? get fcmToken => throw _privateConstructorUsedError;
+  bool get discoverableViaMutualConnections =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AppUserModelCopyWith<AppUserModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AppUserModelCopyWith<$Res> {
+  factory $AppUserModelCopyWith(
+          AppUserModel value, $Res Function(AppUserModel) then) =
+      _$AppUserModelCopyWithImpl<$Res, AppUserModel>;
+  @useResult
+  $Res call(
+      {String uid,
+      String name,
+      String phone,
+      String countryCode,
+      String email,
+      @DateTimeConverter() DateTime createdAt,
+      String gender,
+      String? address,
+      String userType,
+      bool isHelperVerified,
+      String? fcmToken,
+      bool discoverableViaMutualConnections});
+}
+
+/// @nodoc
+class _$AppUserModelCopyWithImpl<$Res, $Val extends AppUserModel>
+    implements $AppUserModelCopyWith<$Res> {
+  _$AppUserModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = null,
+    Object? name = null,
+    Object? phone = null,
+    Object? countryCode = null,
+    Object? email = null,
+    Object? createdAt = null,
+    Object? gender = null,
+    Object? address = freezed,
+    Object? userType = null,
+    Object? isHelperVerified = null,
+    Object? fcmToken = freezed,
+    Object? discoverableViaMutualConnections = null,
+  }) {
+    return _then(_value.copyWith(
+      uid: null == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      countryCode: null == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      gender: null == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userType: null == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String,
+      isHelperVerified: null == isHelperVerified
+          ? _value.isHelperVerified
+          : isHelperVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      discoverableViaMutualConnections: null == discoverableViaMutualConnections
+          ? _value.discoverableViaMutualConnections
+          : discoverableViaMutualConnections // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AppUserModelImplCopyWith<$Res>
+    implements $AppUserModelCopyWith<$Res> {
+  factory _$$AppUserModelImplCopyWith(
+          _$AppUserModelImpl value, $Res Function(_$AppUserModelImpl) then) =
+      __$$AppUserModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String uid,
+      String name,
+      String phone,
+      String countryCode,
+      String email,
+      @DateTimeConverter() DateTime createdAt,
+      String gender,
+      String? address,
+      String userType,
+      bool isHelperVerified,
+      String? fcmToken,
+      bool discoverableViaMutualConnections});
+}
+
+/// @nodoc
+class __$$AppUserModelImplCopyWithImpl<$Res>
+    extends _$AppUserModelCopyWithImpl<$Res, _$AppUserModelImpl>
+    implements _$$AppUserModelImplCopyWith<$Res> {
+  __$$AppUserModelImplCopyWithImpl(
+      _$AppUserModelImpl _value, $Res Function(_$AppUserModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = null,
+    Object? name = null,
+    Object? phone = null,
+    Object? countryCode = null,
+    Object? email = null,
+    Object? createdAt = null,
+    Object? gender = null,
+    Object? address = freezed,
+    Object? userType = null,
+    Object? isHelperVerified = null,
+    Object? fcmToken = freezed,
+    Object? discoverableViaMutualConnections = null,
+  }) {
+    return _then(_$AppUserModelImpl(
+      uid: null == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      countryCode: null == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      gender: null == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userType: null == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String,
+      isHelperVerified: null == isHelperVerified
+          ? _value.isHelperVerified
+          : isHelperVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      discoverableViaMutualConnections: null == discoverableViaMutualConnections
+          ? _value.discoverableViaMutualConnections
+          : discoverableViaMutualConnections // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AppUserModelImpl extends _AppUserModel {
+  const _$AppUserModelImpl(
+      {required this.uid,
+      required this.name,
+      required this.phone,
+      required this.countryCode,
+      required this.email,
+      @DateTimeConverter() required this.createdAt,
+      this.gender = '',
+      this.address,
+      this.userType = 'user',
+      this.isHelperVerified = false,
+      this.fcmToken,
+      this.discoverableViaMutualConnections = false})
+      : super._();
+
+  factory _$AppUserModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AppUserModelImplFromJson(json);
+
+  @override
+  final String uid;
+  @override
+  final String name;
+  @override
+  final String phone;
+  @override
+  final String countryCode;
+  @override
+  final String email;
+  @override
+  @DateTimeConverter()
+  final DateTime createdAt;
+  @override
+  @JsonKey()
+  final String gender;
+  @override
+  final String? address;
+  @override
+  @JsonKey()
+  final String userType;
+  @override
+  @JsonKey()
+  final bool isHelperVerified;
+  @override
+  final String? fcmToken;
+  @override
+  @JsonKey()
+  final bool discoverableViaMutualConnections;
+
+  @override
+  String toString() {
+    return 'AppUserModel(uid: $uid, name: $name, phone: $phone, countryCode: $countryCode, email: $email, createdAt: $createdAt, gender: $gender, address: $address, userType: $userType, isHelperVerified: $isHelperVerified, fcmToken: $fcmToken, discoverableViaMutualConnections: $discoverableViaMutualConnections)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AppUserModelImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.countryCode, countryCode) ||
+                other.countryCode == countryCode) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.userType, userType) ||
+                other.userType == userType) &&
+            (identical(other.isHelperVerified, isHelperVerified) ||
+                other.isHelperVerified == isHelperVerified) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken) &&
+            (identical(other.discoverableViaMutualConnections,
+                    discoverableViaMutualConnections) ||
+                other.discoverableViaMutualConnections ==
+                    discoverableViaMutualConnections));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      uid,
+      name,
+      phone,
+      countryCode,
+      email,
+      createdAt,
+      gender,
+      address,
+      userType,
+      isHelperVerified,
+      fcmToken,
+      discoverableViaMutualConnections);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AppUserModelImplCopyWith<_$AppUserModelImpl> get copyWith =>
+      __$$AppUserModelImplCopyWithImpl<_$AppUserModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AppUserModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AppUserModel extends AppUserModel {
+  const factory _AppUserModel(
+      {required final String uid,
+      required final String name,
+      required final String phone,
+      required final String countryCode,
+      required final String email,
+      @DateTimeConverter() required final DateTime createdAt,
+      final String gender,
+      final String? address,
+      final String userType,
+      final bool isHelperVerified,
+      final String? fcmToken,
+      final bool discoverableViaMutualConnections}) = _$AppUserModelImpl;
+  const _AppUserModel._() : super._();
+
+  factory _AppUserModel.fromJson(Map<String, dynamic> json) =
+      _$AppUserModelImpl.fromJson;
+
+  @override
+  String get uid;
+  @override
+  String get name;
+  @override
+  String get phone;
+  @override
+  String get countryCode;
+  @override
+  String get email;
+  @override
+  @DateTimeConverter()
+  DateTime get createdAt;
+  @override
+  String get gender;
+  @override
+  String? get address;
+  @override
+  String get userType;
+  @override
+  bool get isHelperVerified;
+  @override
+  String? get fcmToken;
+  @override
+  bool get discoverableViaMutualConnections;
+  @override
+  @JsonKey(ignore: true)
+  _$$AppUserModelImplCopyWith<_$AppUserModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

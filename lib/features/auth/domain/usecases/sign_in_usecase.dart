@@ -1,13 +1,13 @@
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
-import '../repositories/i_auth_repository.dart';
 
-/// One job: sign an existing user in. Pure Dart — testable with a fake
-/// [IAuthRepository], no Firebase or widget involved.
+/// One job: sign an existing user in. Pure Dart, testable with a fake
+/// repository and no widget involved.
 class SignInUseCase {
-  const SignInUseCase(this._repository);
-  final IAuthRepository _repository;
+  const SignInUseCase(this._authRepository);
 
-  Future<AppUser> call({required String email, required String password}) {
-    return _repository.signIn(email: email, password: password);
-  }
+  final AuthRepository _authRepository;
+
+  Future<AppUser> call({required String email, required String password}) =>
+      _authRepository.signIn(email: email, password: password);
 }
