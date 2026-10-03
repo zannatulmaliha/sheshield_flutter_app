@@ -37,7 +37,7 @@ class MotionPromptScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(prompt.event.type.title,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800)),
+                    style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800),),
                 const SizedBox(height: 8),
                 const Text('Are you OK?', style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w900)),
                 const SizedBox(height: 28),

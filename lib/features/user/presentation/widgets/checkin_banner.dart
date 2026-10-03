@@ -32,7 +32,7 @@ class _RunningCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = resolvePalette(context, ref);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final minutes = checkIn.remainingSeconds ~/ 60;
     final seconds = checkIn.remainingSeconds % 60;
     final time = '${minutes}m ${seconds.toString().padLeft(2, '0')}s';
@@ -94,7 +94,7 @@ class _SosSentCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = resolvePalette(context, ref);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(18),
       margin: const EdgeInsets.only(bottom: 28),

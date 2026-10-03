@@ -61,7 +61,7 @@ class PhotoPickerTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text('$label · tap to change',
-                style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w700)),
+                style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w700),),
           ),
         ),
       ],

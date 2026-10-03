@@ -1,10 +1,11 @@
-import '../entities/duress_type.dart';
-import '../repositories/i_sos_repository.dart';
+import 'package:sheshield/features/sos/domain/entities/duress_type.dart';
+import 'package:sheshield/features/sos/domain/repositories/sos_repository.dart';
 
 class TriggerDuressUseCase {
-  const TriggerDuressUseCase(this._repository);
-  final ISosRepository _repository;
+  const TriggerDuressUseCase(this._sosRepository);
+
+  final SosRepository _sosRepository;
 
   Future<void> call(String alertId, DuressType type) =>
-      _repository.triggerDuress(alertId, type.key);
+      _sosRepository.triggerDuress(alertId, type);
 }

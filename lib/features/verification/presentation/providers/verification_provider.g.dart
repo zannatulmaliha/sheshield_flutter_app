@@ -7,9 +7,9 @@ part of 'verification_provider.dart';
 // **************************************************************************
 
 String _$verificationControllerHash() =>
-    r'007d52eb1ada911e8dade96760964768e84665e6';
+    r'3b058f4c9c46488e0fc5a937e7f26b0f0e935d19';
 
-/// Where a helper's ID review stands.
+/// Where the signed-in helper's ID review stands.
 ///
 /// Copied from [VerificationController].
 @ProviderFor(VerificationController)

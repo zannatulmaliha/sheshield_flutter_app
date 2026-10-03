@@ -1,9 +1,11 @@
-import '../entities/verification_status.dart';
-import '../repositories/i_verification_repository.dart';
+import 'package:sheshield/features/verification/domain/entities/verification_status.dart';
+import 'package:sheshield/features/verification/domain/repositories/verification_repository.dart';
 
 class GetVerificationStatusUseCase {
-  const GetVerificationStatusUseCase(this._repository);
-  final IVerificationRepository _repository;
+  const GetVerificationStatusUseCase(this._verificationRepository);
 
-  Future<VerificationStatus> call() => _repository.fetchStatus();
+  final VerificationRepository _verificationRepository;
+
+  Future<VerificationStatus> call() =>
+      _verificationRepository.fetchVerificationStatus();
 }

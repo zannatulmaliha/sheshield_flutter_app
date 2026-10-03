@@ -410,6 +410,30 @@ abstract class AppLocalizations {
   /// **'Check-In Timer'**
   String get checkInTimer;
 
+  /// No description provided for @dangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get dangerZone;
+
+  /// No description provided for @dangerZoneLegendLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low activity'**
+  String get dangerZoneLegendLow;
+
+  /// No description provided for @dangerZoneLegendMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium activity'**
+  String get dangerZoneLegendMedium;
+
+  /// No description provided for @dangerZoneLegendHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High activity'**
+  String get dangerZoneLegendHigh;
+
   /// No description provided for @checkInSheetTitle.
   ///
   /// In en, this message translates to:

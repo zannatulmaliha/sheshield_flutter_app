@@ -114,7 +114,7 @@ class AppTheme {
 /// (see [AppPalette]), so callers that only ever pass [opacity] don't need
 /// to thread a palette through just for this.
 List<BoxShadow> softShadow(
-    {Color color = const Color(0xFF6C3CE9), double opacity = 0.12}) {
+    {Color color = const Color(0xFF6C3CE9), double opacity = 0.12,}) {
   return [
     BoxShadow(
       color: color.withValues(alpha: opacity),

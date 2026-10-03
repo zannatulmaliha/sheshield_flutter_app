@@ -1,8 +1,13 @@
-/// The live duress/connectivity signals for an alert a helper is currently
-/// responding to -- see the Trust & Safety spec's §8. Polled, not pushed.
-class SafetyStatus {
-  const SafetyStatus({required this.duressActive, required this.connectivityLost});
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final bool duressActive;
-  final bool connectivityLost;
+part 'safety_status.freezed.dart';
+
+/// Live duress / connectivity signals for an alert a helper is responding
+/// to (Trust & Safety spec §8). Polled, not pushed.
+@freezed
+class SafetyStatus with _$SafetyStatus {
+  const factory SafetyStatus({
+    required bool duressActive,
+    required bool connectivityLost,
+  }) = _SafetyStatus;
 }

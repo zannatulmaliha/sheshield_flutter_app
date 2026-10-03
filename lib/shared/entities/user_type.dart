@@ -1,28 +1,14 @@
-import 'package:json_annotation/json_annotation.dart';
-
-/// The account's role. A signup screen lets the person choose this
-/// (a plain "user", a "helper", or both).
+/// The account's role: a plain user, a helper, or both. Chosen at signup.
 enum UserType {
-  @JsonValue('user')
-  user,
+  user('user'),
+  helper('helper'),
+  userHelper('user_helper');
 
-  @JsonValue('helper')
-  helper,
+  const UserType(this.wireValue);
 
-  @JsonValue('user_helper')
-  userHelper,
-}
+  final String wireValue;
 
-extension UserTypeApi on UserType {
-  String get apiValue => switch (this) {
-        UserType.user => 'user',
-        UserType.helper => 'helper',
-        UserType.userHelper => 'user_helper',
-      };
-
-  static UserType fromApiValue(String value) => switch (value) {
-        'helper' => UserType.helper,
-        'user_helper' => UserType.userHelper,
-        _ => UserType.user,
-      };
+  /// Unknown values read as a plain user: the least-privileged role.
+  static UserType fromWireValue(String? value) => UserType.values
+      .firstWhere((type) => type.wireValue == value, orElse: () => user);
 }

@@ -1,101 +1,89 @@
-import 'package:sheshield/core/cache/cache_box_interface.dart';
-import '../../domain/entities/admin_report.dart';
-import '../../domain/entities/admin_report_detail.dart';
-import '../../domain/entities/admin_verification.dart';
-import '../../domain/repositories/i_admin_repository.dart';
-import '../datasources/admin_api_datasource.dart';
+import 'dart:typed_data';
 
-/// The queue is cached briefly (a reviewer bouncing between the queue and a
-/// detail screen shouldn't refetch every time); every write -- review,
-/// suspend, key change -- invalidates it immediately so it never looks stale
-/// right after an action. Pull-to-refresh passes forceRefresh.
-class AdminRepositoryImpl implements IAdminRepository {
-  AdminRepositoryImpl(this._api, this._cache);
-  final AdminApiDataSource _api;
+import 'package:sheshield/core/cache/cache_box_interface.dart';
+import 'package:sheshield/features/admin/data/datasources/admin_key_store.dart';
+import 'package:sheshield/features/admin/data/datasources/admin_report_api_datasource.dart';
+import 'package:sheshield/features/admin/data/datasources/admin_verification_api_datasource.dart';
+import 'package:sheshield/features/admin/data/models/admin_report_model.dart';
+import 'package:sheshield/features/admin/domain/entities/admin_report.dart';
+import 'package:sheshield/features/admin/domain/entities/admin_report_detail.dart';
+import 'package:sheshield/features/admin/domain/entities/admin_verification.dart';
+import 'package:sheshield/features/admin/domain/entities/review_decision.dart';
+import 'package:sheshield/features/admin/domain/entities/verification_image_kind.dart';
+import 'package:sheshield/features/admin/domain/repositories/admin_repository.dart';
+
+/// The report queue is cached briefly so bouncing between the queue and a
+/// detail screen doesn't refetch every time. Every write -- review,
+/// suspension, key change -- invalidates it, so it never looks stale right
+/// after an action. Pull-to-refresh passes `forceRefresh`.
+class AdminRepositoryImpl implements AdminRepository {
+  const AdminRepositoryImpl({
+    required AdminKeyStore keyStore,
+    required AdminReportApiDataSource reportDataSource,
+    required AdminVerificationApiDataSource verificationDataSource,
+    required CacheBox cache,
+  })  : _keyStore = keyStore,
+        _reportDataSource = reportDataSource,
+        _verificationDataSource = verificationDataSource,
+        _cache = cache;
+
+  static const _queueCacheKey = 'admin:queue';
+  static const _queueCacheTtl = Duration(seconds: 20);
+
+  final AdminKeyStore _keyStore;
+  final AdminReportApiDataSource _reportDataSource;
+  final AdminVerificationApiDataSource _verificationDataSource;
   final CacheBox _cache;
 
-  static const _cacheKey = 'admin:queue';
-  static const _ttl = Duration(seconds: 20);
+  @override
+  Future<bool> hasAdminKey() => _keyStore.hasKey();
 
   @override
-  Future<bool> hasAdminKey() => _api.hasKey();
-
-  @override
-  Future<void> setAdminKey(String key) async {
-    await _api.saveKey(key);
-    await _cache.invalidate(_cacheKey);
+  Future<void> saveAdminKey(String key) async {
+    await _keyStore.saveAdminKey(key);
+    await _cache.invalidate(_queueCacheKey);
   }
 
   @override
   Future<void> clearAdminKey() async {
-    await _api.clearKey();
+    await _keyStore.clearAdminKey();
     // Don't leave moderation data on the device after sign-out.
-    await _cache.invalidate(_cacheKey);
+    await _cache.invalidate(_queueCacheKey);
   }
 
   @override
-  Future<List<AdminReport>> getQueue({bool forceRefresh = false}) async {
+  Future<List<AdminReport>> fetchReportQueue({bool forceRefresh = false}) async {
     if (!forceRefresh) {
-      final cached = await _cache.read(_cacheKey, ttl: _ttl);
-      if (cached != null) {
-        final items = (cached['items'] as List).cast<Map<String, dynamic>>();
-        return items.map(AdminReport.fromJson).toList();
-      }
+      final cachedModels = await _readCachedQueue();
+      if (cachedModels != null) return _toEntities(cachedModels);
     }
-    final reports = await _api.fetchQueue();
-    await _cache
-        .write(_cacheKey, {'items': reports.map((r) => r.toJson()).toList()});
-    return reports;
+    final models = await _reportDataSource.fetchReportQueue();
+    await _cache.write(_queueCacheKey, {
+      'items': models.map((model) => model.toJson()).toList(),
+    });
+    return _toEntities(models);
   }
 
   @override
-  Future<AdminReportDetail> getDetail(String reportId) =>
-      _api.fetchDetail(reportId);
+  Future<AdminReportDetail> fetchReportDetail(String reportId) async =>
+      (await _reportDataSource.fetchReportDetail(reportId)).toEntity();
 
   @override
-  Future<void> review({
+  Future<void> reviewReport({
     required String reportId,
     required ReviewDecision decision,
     required String resolution,
     bool markFalseSos = false,
     String? reviewerName,
   }) async {
-    await _api.review(
+    await _reportDataSource.reviewReport(
       reportId: reportId,
       decision: decision,
       resolution: resolution,
       markFalseSos: markFalseSos,
       reviewerName: reviewerName,
     );
-    await _cache.invalidate(_cacheKey);
-  }
-
-  @override
-  Future<List<AdminVerification>> getVerificationQueue(
-          {bool forceRefresh = false}) =>
-      _api.fetchVerificationQueue();
-
-  @override
-  Future<AdminVerification> getVerificationDetail(String verificationId) =>
-      _api.fetchVerificationDetail(verificationId);
-
-  @override
-  Future<List<int>> getVerificationImage(
-          {required String verificationId, required String kind}) =>
-      _api.fetchVerificationImage(verificationId: verificationId, kind: kind);
-
-  @override
-  Future<void> decideVerification(
-      {required String verificationId,
-      required bool approved,
-      String note = '',
-      String? reviewerName}) async {
-    await _api.decideVerification(
-      verificationId: verificationId,
-      approved: approved,
-      note: note,
-      reviewerName: reviewerName,
-    );
+    await _cache.invalidate(_queueCacheKey);
   }
 
   @override
@@ -104,9 +92,57 @@ class AdminRepositoryImpl implements IAdminRepository {
     required String reason,
     String? reviewerName,
   }) async {
-    final released = await _api.suspendHelper(
-        uid: uid, reason: reason, reviewerName: reviewerName);
-    await _cache.invalidate(_cacheKey);
-    return released;
+    final releasedSosId = await _reportDataSource.suspendHelper(
+      uid: uid,
+      reason: reason,
+      reviewerName: reviewerName,
+    );
+    await _cache.invalidate(_queueCacheKey);
+    return releasedSosId;
   }
+
+  @override
+  Future<List<AdminVerification>> fetchVerificationQueue() async {
+    final models = await _verificationDataSource.fetchVerificationQueue();
+    return models.map((model) => model.toEntity()).toList();
+  }
+
+  @override
+  Future<AdminVerification> fetchVerificationDetail(String verificationId) async =>
+      (await _verificationDataSource.fetchVerificationDetail(verificationId))
+          .toEntity();
+
+  @override
+  Future<Uint8List> fetchVerificationImage({
+    required String verificationId,
+    required VerificationImageKind kind,
+  }) =>
+      _verificationDataSource.fetchVerificationImage(
+        verificationId: verificationId,
+        kind: kind,
+      );
+
+  @override
+  Future<void> decideVerification({
+    required String verificationId,
+    required bool approved,
+    String note = '',
+    String? reviewerName,
+  }) =>
+      _verificationDataSource.decideVerification(
+        verificationId: verificationId,
+        approved: approved,
+        note: note,
+        reviewerName: reviewerName,
+      );
+
+  Future<List<AdminReportModel>?> _readCachedQueue() async {
+    final cached = await _cache.read(_queueCacheKey, ttl: _queueCacheTtl);
+    if (cached == null) return null;
+    final items = (cached['items'] as List).cast<Map<String, dynamic>>();
+    return items.map(AdminReportModel.fromJson).toList();
+  }
+
+  List<AdminReport> _toEntities(List<AdminReportModel> models) =>
+      models.map((model) => model.toEntity()).toList();
 }

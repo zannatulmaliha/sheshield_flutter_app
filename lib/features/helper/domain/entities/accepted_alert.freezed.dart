@@ -14,23 +14,17 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-AcceptedAlert _$AcceptedAlertFromJson(Map<String, dynamic> json) {
-  return _AcceptedAlert.fromJson(json);
-}
-
 /// @nodoc
 mixin _$AcceptedAlert {
   String get id => throw _privateConstructorUsedError;
   String get userName => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  String get countryCode => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
-  @DateTimeConverter()
   DateTime get acceptedAt => throw _privateConstructorUsedError;
+  String get countryCode => throw _privateConstructorUsedError;
   String get requesterUid => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $AcceptedAlertCopyWith<AcceptedAlert> get copyWith =>
       throw _privateConstructorUsedError;
@@ -46,10 +40,10 @@ abstract class $AcceptedAlertCopyWith<$Res> {
       {String id,
       String userName,
       String phone,
-      String countryCode,
       double latitude,
       double longitude,
-      @DateTimeConverter() DateTime acceptedAt,
+      DateTime acceptedAt,
+      String countryCode,
       String requesterUid});
 }
 
@@ -69,10 +63,10 @@ class _$AcceptedAlertCopyWithImpl<$Res, $Val extends AcceptedAlert>
     Object? id = null,
     Object? userName = null,
     Object? phone = null,
-    Object? countryCode = null,
     Object? latitude = null,
     Object? longitude = null,
     Object? acceptedAt = null,
+    Object? countryCode = null,
     Object? requesterUid = null,
   }) {
     return _then(_value.copyWith(
@@ -88,10 +82,6 @@ class _$AcceptedAlertCopyWithImpl<$Res, $Val extends AcceptedAlert>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
-      countryCode: null == countryCode
-          ? _value.countryCode
-          : countryCode // ignore: cast_nullable_to_non_nullable
-              as String,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -104,6 +94,10 @@ class _$AcceptedAlertCopyWithImpl<$Res, $Val extends AcceptedAlert>
           ? _value.acceptedAt
           : acceptedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      countryCode: null == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String,
       requesterUid: null == requesterUid
           ? _value.requesterUid
           : requesterUid // ignore: cast_nullable_to_non_nullable
@@ -124,10 +118,10 @@ abstract class _$$AcceptedAlertImplCopyWith<$Res>
       {String id,
       String userName,
       String phone,
-      String countryCode,
       double latitude,
       double longitude,
-      @DateTimeConverter() DateTime acceptedAt,
+      DateTime acceptedAt,
+      String countryCode,
       String requesterUid});
 }
 
@@ -145,10 +139,10 @@ class __$$AcceptedAlertImplCopyWithImpl<$Res>
     Object? id = null,
     Object? userName = null,
     Object? phone = null,
-    Object? countryCode = null,
     Object? latitude = null,
     Object? longitude = null,
     Object? acceptedAt = null,
+    Object? countryCode = null,
     Object? requesterUid = null,
   }) {
     return _then(_$AcceptedAlertImpl(
@@ -164,10 +158,6 @@ class __$$AcceptedAlertImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
-      countryCode: null == countryCode
-          ? _value.countryCode
-          : countryCode // ignore: cast_nullable_to_non_nullable
-              as String,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -180,6 +170,10 @@ class __$$AcceptedAlertImplCopyWithImpl<$Res>
           ? _value.acceptedAt
           : acceptedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      countryCode: null == countryCode
+          ? _value.countryCode
+          : countryCode // ignore: cast_nullable_to_non_nullable
+              as String,
       requesterUid: null == requesterUid
           ? _value.requesterUid
           : requesterUid // ignore: cast_nullable_to_non_nullable
@@ -189,21 +183,18 @@ class __$$AcceptedAlertImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$AcceptedAlertImpl extends _AcceptedAlert {
   const _$AcceptedAlertImpl(
       {required this.id,
       required this.userName,
       required this.phone,
-      this.countryCode = '',
       required this.latitude,
       required this.longitude,
-      @DateTimeConverter() required this.acceptedAt,
+      required this.acceptedAt,
+      this.countryCode = '',
       this.requesterUid = ''})
       : super._();
-
-  factory _$AcceptedAlertImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AcceptedAlertImplFromJson(json);
 
   @override
   final String id;
@@ -212,22 +203,21 @@ class _$AcceptedAlertImpl extends _AcceptedAlert {
   @override
   final String phone;
   @override
-  @JsonKey()
-  final String countryCode;
-  @override
   final double latitude;
   @override
   final double longitude;
   @override
-  @DateTimeConverter()
   final DateTime acceptedAt;
+  @override
+  @JsonKey()
+  final String countryCode;
   @override
   @JsonKey()
   final String requesterUid;
 
   @override
   String toString() {
-    return 'AcceptedAlert(id: $id, userName: $userName, phone: $phone, countryCode: $countryCode, latitude: $latitude, longitude: $longitude, acceptedAt: $acceptedAt, requesterUid: $requesterUid)';
+    return 'AcceptedAlert(id: $id, userName: $userName, phone: $phone, latitude: $latitude, longitude: $longitude, acceptedAt: $acceptedAt, countryCode: $countryCode, requesterUid: $requesterUid)';
   }
 
   @override
@@ -239,35 +229,27 @@ class _$AcceptedAlertImpl extends _AcceptedAlert {
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.countryCode, countryCode) ||
-                other.countryCode == countryCode) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             (identical(other.acceptedAt, acceptedAt) ||
                 other.acceptedAt == acceptedAt) &&
+            (identical(other.countryCode, countryCode) ||
+                other.countryCode == countryCode) &&
             (identical(other.requesterUid, requesterUid) ||
                 other.requesterUid == requesterUid));
   }
 
-  @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userName, phone, countryCode,
-      latitude, longitude, acceptedAt, requesterUid);
+  int get hashCode => Object.hash(runtimeType, id, userName, phone, latitude,
+      longitude, acceptedAt, countryCode, requesterUid);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$AcceptedAlertImplCopyWith<_$AcceptedAlertImpl> get copyWith =>
       __$$AcceptedAlertImplCopyWithImpl<_$AcceptedAlertImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AcceptedAlertImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _AcceptedAlert extends AcceptedAlert {
@@ -275,15 +257,12 @@ abstract class _AcceptedAlert extends AcceptedAlert {
       {required final String id,
       required final String userName,
       required final String phone,
-      final String countryCode,
       required final double latitude,
       required final double longitude,
-      @DateTimeConverter() required final DateTime acceptedAt,
+      required final DateTime acceptedAt,
+      final String countryCode,
       final String requesterUid}) = _$AcceptedAlertImpl;
   const _AcceptedAlert._() : super._();
-
-  factory _AcceptedAlert.fromJson(Map<String, dynamic> json) =
-      _$AcceptedAlertImpl.fromJson;
 
   @override
   String get id;
@@ -292,14 +271,13 @@ abstract class _AcceptedAlert extends AcceptedAlert {
   @override
   String get phone;
   @override
-  String get countryCode;
-  @override
   double get latitude;
   @override
   double get longitude;
   @override
-  @DateTimeConverter()
   DateTime get acceptedAt;
+  @override
+  String get countryCode;
   @override
   String get requesterUid;
   @override

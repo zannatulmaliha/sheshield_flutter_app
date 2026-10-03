@@ -7,12 +7,12 @@ part of 'admin_queue_provider.dart';
 // **************************************************************************
 
 String _$adminQueueControllerHash() =>
-    r'b95ccc185cae4013677fc6742d673b26d2c70fe4';
+    r'93413d9ff7913cd034f45b7f518e7dbc6fa9da07';
 
-/// The pending moderation queue -- one shared list regardless of
-/// reporter_role (user report, helper report, or an automated rate-limit
-/// flag), per the spec's symmetric-review principle. Backed by
-/// AdminRepositoryImpl's short-TTL cache, so build() is cheap to re-invoke.
+/// The pending moderation queue -- one shared list whoever filed the
+/// report (user, helper, or an automated rate-limit flag), per the spec's
+/// symmetric-review principle. The repository's short-TTL cache keeps
+/// `build()` cheap to re-run.
 ///
 /// Copied from [AdminQueueController].
 @ProviderFor(AdminQueueController)

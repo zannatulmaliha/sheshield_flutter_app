@@ -1,8 +1,9 @@
-import '../repositories/i_admin_repository.dart';
+import 'package:sheshield/features/admin/domain/repositories/admin_repository.dart';
 
 class HasAdminKeyUseCase {
-  const HasAdminKeyUseCase(this._repository);
-  final IAdminRepository _repository;
+  const HasAdminKeyUseCase(this._adminRepository);
 
-  Future<bool> call() => _repository.hasAdminKey();
+  final AdminRepository _adminRepository;
+
+  Future<bool> call() => _adminRepository.hasAdminKey();
 }

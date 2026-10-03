@@ -1,9 +1,10 @@
-import '../entities/report_category.dart';
-import '../repositories/i_report_repository.dart';
+import 'package:sheshield/features/report/domain/entities/report_category.dart';
+import 'package:sheshield/features/report/domain/repositories/report_repository.dart';
 
 class FileReportUseCase {
-  const FileReportUseCase(this._repository);
-  final IReportRepository _repository;
+  const FileReportUseCase(this._reportRepository);
+
+  final ReportRepository _reportRepository;
 
   Future<void> call({
     required String reportedId,
@@ -11,7 +12,7 @@ class FileReportUseCase {
     required String reporterRole,
     String? sosId,
   }) =>
-      _repository.file(
+      _reportRepository.fileReport(
         reportedId: reportedId,
         category: category,
         reporterRole: reporterRole,

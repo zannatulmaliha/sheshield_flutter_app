@@ -1,8 +1,9 @@
-import '../repositories/i_admin_repository.dart';
+import 'package:sheshield/features/admin/domain/repositories/admin_repository.dart';
 
 class ClearAdminKeyUseCase {
-  const ClearAdminKeyUseCase(this._repository);
-  final IAdminRepository _repository;
+  const ClearAdminKeyUseCase(this._adminRepository);
 
-  Future<void> call() => _repository.clearAdminKey();
+  final AdminRepository _adminRepository;
+
+  Future<void> call() => _adminRepository.clearAdminKey();
 }

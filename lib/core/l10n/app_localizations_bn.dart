@@ -207,6 +207,18 @@ class AppLocalizationsBn extends AppLocalizations {
   String get checkInTimer => 'চেক-ইন টাইমার';
 
   @override
+  String get dangerZone => 'ডেঞ্জার জোন';
+
+  @override
+  String get dangerZoneLegendLow => 'কম কার্যকলাপ';
+
+  @override
+  String get dangerZoneLegendMedium => 'মাঝারি কার্যকলাপ';
+
+  @override
+  String get dangerZoneLegendHigh => 'উচ্চ কার্যকলাপ';
+
+  @override
   String get checkInSheetTitle => 'চেক-ইন টাইমার সেট করুন';
 
   @override

@@ -20,7 +20,7 @@ class DeviceAlarmService {
         contentType: AndroidAudioContentType.sonification,
       ),
       androidAudioFocusGainType: AndroidAudioFocusGainType.gainTransientMayDuck,
-    ));
+    ),);
     await _player.setAsset('assets/sounds/sos_alarm.wav');
     await _player.setLoopMode(LoopMode.all);
     await _player.setVolume(1.0);

@@ -6,12 +6,12 @@ part of 'locale_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$localeControllerHash() => r'fdda91eebe33240ae73adbc5cf71970c7627bcef';
+String _$localeControllerHash() => r'790860d8d0befd8187e15c8dd5e6519b8138ed1e';
 
-/// Drives `MaterialApp.router`'s `locale:` parameter. `null` state
-/// means "no saved preference" -- Flutter then resolves the best
-/// match from the device's system locales against `supportedLocales`
-/// on its own, so we never have to duplicate that fallback logic here.
+/// Drives `MaterialApp.router`'s `locale:`. A `null` state means "no saved
+/// preference": Flutter then resolves the best match from the device's
+/// locales against `supportedLocales` itself, so that fallback logic is
+/// never duplicated here.
 ///
 /// Copied from [LocaleController].
 @ProviderFor(LocaleController)

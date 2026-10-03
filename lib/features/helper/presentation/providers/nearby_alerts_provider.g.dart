@@ -7,12 +7,11 @@ part of 'nearby_alerts_provider.dart';
 // **************************************************************************
 
 String _$nearbyAlertsControllerHash() =>
-    r'6d8d73af88a25f12dd263f64d1b7088a185d7578';
+    r'c9a7944b3385e7aba737a170c1aeff2bfced35f0';
 
-/// The nearby-alerts list. Declaring `ref.watch(helperStatusControllerProvider.future)`
-/// inside [build] means this provider automatically re-fetches whenever
-/// active status flips on, and returns an empty list the moment it
-/// flips off -- no manual wiring between the two controllers.
+/// The nearby-alerts list. Watching `helperStatusControllerProvider.future`
+/// inside [build] re-fetches whenever active status flips on and returns an
+/// empty list the moment it flips off, with no manual wiring.
 ///
 /// Copied from [NearbyAlertsController].
 @ProviderFor(NearbyAlertsController)

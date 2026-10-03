@@ -7,7 +7,7 @@ part of 'alert_history_provider.dart';
 // **************************************************************************
 
 String _$alertHistoryControllerHash() =>
-    r'79e80ae2f931ed65da31a3242c4450a7bff81455';
+    r'2f974e13b850cffb885e3bb6ead0ff8b1fbba8ac';
 
 /// The signed-in user's own SOS history, for the notification-history
 /// screen reached from the home bell icon.

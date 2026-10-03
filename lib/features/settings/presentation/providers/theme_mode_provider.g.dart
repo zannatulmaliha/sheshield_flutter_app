@@ -7,9 +7,9 @@ part of 'theme_mode_provider.dart';
 // **************************************************************************
 
 String _$themeModeControllerHash() =>
-    r'011185b54f321c892d5d1e8199da9a03a5ebbb38';
+    r'03fec1f310726b87f2aa7c0dbb34ab490f5b432a';
 
-/// Drives [resolvePalette] (core/theme/app_palette.dart) and, through it,
+/// Drives `resolvePalette` (core/theme/app_palette.dart) and, through it,
 /// every User-mode screen's colors.
 ///
 /// Copied from [ThemeModeController].

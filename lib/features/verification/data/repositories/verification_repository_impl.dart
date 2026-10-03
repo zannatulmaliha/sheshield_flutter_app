@@ -1,21 +1,29 @@
 import 'dart:typed_data';
-import '../../domain/entities/verification_status.dart';
-import '../../domain/repositories/i_verification_repository.dart';
-import '../datasources/verification_api_datasource.dart';
 
-class VerificationRepositoryImpl implements IVerificationRepository {
-  VerificationRepositoryImpl(this._api);
-  final VerificationApiDataSource _api;
+import 'package:sheshield/features/verification/data/datasources/verification_api_datasource.dart';
+import 'package:sheshield/features/verification/domain/entities/verification_status.dart';
+import 'package:sheshield/features/verification/domain/repositories/verification_repository.dart';
+
+class VerificationRepositoryImpl implements VerificationRepository {
+  const VerificationRepositoryImpl(this._apiDataSource);
+
+  final VerificationApiDataSource _apiDataSource;
 
   @override
-  Future<VerificationStatus> fetchStatus() => _api.fetchStatus();
+  Future<VerificationStatus> fetchVerificationStatus() async =>
+      (await _apiDataSource.fetchVerificationStatus()).toEntity();
 
   @override
-  Future<VerificationStatus> submit({
+  Future<VerificationStatus> submitVerification({
     required Uint8List nidFront,
     required Uint8List nidBack,
     required Uint8List selfie,
-  }) {
-    return _api.submit(nidFront: nidFront, nidBack: nidBack, selfie: selfie);
+  }) async {
+    final model = await _apiDataSource.submitVerification(
+      nidFront: nidFront,
+      nidBack: nidBack,
+      selfie: selfie,
+    );
+    return model.toEntity();
   }
 }

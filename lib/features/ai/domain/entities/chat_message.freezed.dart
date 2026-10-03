@@ -14,16 +14,11 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) {
-  return _ChatMessage.fromJson(json);
-}
-
 /// @nodoc
 mixin _$ChatMessage {
-  String get role => throw _privateConstructorUsedError;
+  ChatRole get role => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ChatMessageCopyWith<ChatMessage> get copyWith =>
       throw _privateConstructorUsedError;
@@ -35,7 +30,7 @@ abstract class $ChatMessageCopyWith<$Res> {
           ChatMessage value, $Res Function(ChatMessage) then) =
       _$ChatMessageCopyWithImpl<$Res, ChatMessage>;
   @useResult
-  $Res call({String role, String content});
+  $Res call({ChatRole role, String content});
 }
 
 /// @nodoc
@@ -58,7 +53,7 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
       role: null == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String,
+              as ChatRole,
       content: null == content
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
@@ -75,7 +70,7 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       __$$ChatMessageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String role, String content});
+  $Res call({ChatRole role, String content});
 }
 
 /// @nodoc
@@ -96,7 +91,7 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
       role: null == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String,
+              as ChatRole,
       content: null == content
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
@@ -106,15 +101,13 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$ChatMessageImpl implements _ChatMessage {
-  const _$ChatMessageImpl({required this.role, required this.content});
 
-  factory _$ChatMessageImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ChatMessageImplFromJson(json);
+class _$ChatMessageImpl extends _ChatMessage {
+  const _$ChatMessageImpl({required this.role, required this.content})
+      : super._();
 
   @override
-  final String role;
+  final ChatRole role;
   @override
   final String content;
 
@@ -132,7 +125,6 @@ class _$ChatMessageImpl implements _ChatMessage {
             (identical(other.content, content) || other.content == content));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, role, content);
 
@@ -141,25 +133,16 @@ class _$ChatMessageImpl implements _ChatMessage {
   @pragma('vm:prefer-inline')
   _$$ChatMessageImplCopyWith<_$ChatMessageImpl> get copyWith =>
       __$$ChatMessageImplCopyWithImpl<_$ChatMessageImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ChatMessageImplToJson(
-      this,
-    );
-  }
 }
 
-abstract class _ChatMessage implements ChatMessage {
+abstract class _ChatMessage extends ChatMessage {
   const factory _ChatMessage(
-      {required final String role,
+      {required final ChatRole role,
       required final String content}) = _$ChatMessageImpl;
-
-  factory _ChatMessage.fromJson(Map<String, dynamic> json) =
-      _$ChatMessageImpl.fromJson;
+  const _ChatMessage._() : super._();
 
   @override
-  String get role;
+  ChatRole get role;
   @override
   String get content;
   @override

@@ -64,7 +64,7 @@ class MotionSettingsStore {
 
   static const _k = 'motion_guard.';
 
-  Future<MotionSettings> load() async {
+  Future<MotionSettings> loadMotionSettings() async {
     Future<bool> b(String key, bool def) async {
       final v = await _storage.read(key: '$_k$key');
       return v == null ? def : v == '1';
@@ -80,7 +80,7 @@ class MotionSettingsStore {
     );
   }
 
-  Future<void> save(MotionSettings s) async {
+  Future<void> saveMotionSettings(MotionSettings s) async {
     await _storage.write(key: '${_k}enabled', value: s.enabled ? '1' : '0');
     await _storage.write(key: '${_k}sensitivity', value: s.sensitivity.name);
     await _storage.write(key: '${_k}fallAutoSos', value: s.fallAutoSos ? '1' : '0');

@@ -1,63 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sheshield/core/di/injection.dart';
-import 'package:sheshield/core/services/device_location_service.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sheshield/core/di/service_providers.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
+import 'package:sheshield/core/utils/context_extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Asks for a destination, then opens Google Maps walking directions
-/// from the device's current location -- same "hand off to the external
-/// Maps app" pattern already used for helper mode
-/// (helper_alert_detail_screen.dart) and the SOS alarm screen.
+/// Asks for a destination, then opens Google Maps walking directions from
+/// the device's current location: the same "hand off to the external Maps
+/// app" pattern used by helper mode and the SOS alarm screen.
 Future<void> showSafeRouteSheet(BuildContext context) async {
-  final messenger = ScaffoldMessenger.of(context);
+  final locationService =
+      ProviderScope.containerOf(context).read(deviceLocationServiceProvider);
 
   final destination = await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: true,
-    builder: (_) => const _SafeRouteSheetBody(),
+    builder: (_) => const SafeRouteSheet(),
   );
   if (destination == null || destination.trim().isEmpty) return;
 
-  final position = await getIt<DeviceLocationService>().getCurrentPosition();
-  final uri = position != null
-      ? Uri.parse(
-          'https://www.google.com/maps/dir/?api=1'
-          '&origin=${position.latitude},${position.longitude}'
-          '&destination=${Uri.encodeComponent(destination)}'
-          '&travelmode=walking',
-        )
-      : Uri.parse(
-          'https://www.google.com/maps/dir/?api=1'
-          '&destination=${Uri.encodeComponent(destination)}'
-          '&travelmode=walking',
-        );
+  final position = await locationService.getCurrentPosition();
+  final origin = position == null
+      ? ''
+      : '&origin=${position.latitude},${position.longitude}';
+  final directionsUri = Uri.parse(
+    'https://www.google.com/maps/dir/?api=1$origin'
+    '&destination=${Uri.encodeComponent(destination)}&travelmode=walking',
+  );
 
-  final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
-  if (!opened) {
-    messenger.showSnackBar(const SnackBar(content: Text("Couldn't open Maps.")));
-  }
+  final didOpen = await launchUrl(directionsUri, mode: LaunchMode.externalApplication);
+  if (!didOpen && context.mounted) context.showMessage("Couldn't open Maps.");
 }
 
-class _SafeRouteSheetBody extends ConsumerStatefulWidget {
-  const _SafeRouteSheetBody();
+class SafeRouteSheet extends HookConsumerWidget {
+  const SafeRouteSheet({super.key});
 
   @override
-  ConsumerState<_SafeRouteSheetBody> createState() => _SafeRouteSheetBodyState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final destinationController = useTextEditingController();
 
-class _SafeRouteSheetBodyState extends ConsumerState<_SafeRouteSheetBody> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = resolvePalette(context, ref);
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -78,24 +61,24 @@ class _SafeRouteSheetBodyState extends ConsumerState<_SafeRouteSheetBody> {
             const SizedBox(height: 6),
             Text(
               "We'll open walking directions from your current location.",
-              style: TextStyle(color: colors.textSecondary, fontSize: 12.5),
+              style: TextStyle(color: palette.textSecondary, fontSize: 12.5),
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: _controller,
+              controller: destinationController,
               autofocus: true,
               decoration: const InputDecoration(
                 labelText: 'Destination',
                 hintText: 'Home, a police station, an address...',
                 border: OutlineInputBorder(),
               ),
-              onSubmitted: (v) => Navigator.of(context).pop(v),
+              onSubmitted: (value) => Navigator.of(context).pop(value),
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(_controller.text),
+                onPressed: () => Navigator.of(context).pop(destinationController.text),
                 child: const Text('Get directions'),
               ),
             ),

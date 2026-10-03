@@ -1,8 +1,9 @@
-import '../repositories/i_report_repository.dart';
+import 'package:sheshield/features/report/domain/repositories/report_repository.dart';
 
 class UnblockUserUseCase {
-  const UnblockUserUseCase(this._repository);
-  final IReportRepository _repository;
+  const UnblockUserUseCase(this._reportRepository);
 
-  Future<void> call(String userId) => _repository.unblock(userId);
+  final ReportRepository _reportRepository;
+
+  Future<void> call(String userId) => _reportRepository.unblockUser(userId);
 }

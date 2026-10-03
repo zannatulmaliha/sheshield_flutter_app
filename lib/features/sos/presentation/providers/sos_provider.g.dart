@@ -6,12 +6,10 @@ part of 'sos_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sosControllerHash() => r'd3f737e1ad56ea081ba9dc98a9ccb9a3592e7511';
+String _$sosControllerHash() => r'7a9466ada4476069f0c00b1984156fdbf2e2e77c';
 
-/// Owns the currently-active SOS alert, if any. Starts at `null` --
-/// there is nothing to fetch on app launch, unlike helper status,
-/// since an alert only exists once the user actually sends one in
-/// this session.
+/// Owns the currently active SOS alert, if any. Starts at `null`: an alert
+/// only exists once the user sends one this session.
 ///
 /// Copied from [SosController].
 @ProviderFor(SosController)

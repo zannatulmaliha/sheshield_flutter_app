@@ -1,98 +1,128 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sheshield/core/di/injection.dart';
+import 'package:sheshield/core/di/service_providers.dart';
+import 'package:sheshield/core/error/app_failure.dart';
 import 'package:sheshield/core/services/device_location_service.dart';
 import 'package:sheshield/features/helper/domain/entities/helper_status.dart';
-import 'package:sheshield/features/helper/domain/repositories/i_helper_repository.dart';
 import 'package:sheshield/features/helper/domain/usecases/get_helper_status_usecase.dart';
 import 'package:sheshield/features/helper/domain/usecases/set_helper_status_usecase.dart';
+import 'package:sheshield/features/helper/presentation/providers/helper_use_case_providers.dart';
 
 part 'helper_status_provider.g.dart';
 
-/// Owns "am I active, and at what radius". [toggleActive] and
-/// [setRadius] are the only way anything else in the app changes this
-/// state -- both go through the domain use cases, never straight to
-/// the repository.
+/// Owns "am I active, and at what radius". [toggleActive], [setRadius] and
+/// [setMutualConnectionOptIn] are the only ways anything else in the app
+/// changes this state.
 @riverpod
 class HelperStatusController extends _$HelperStatusController {
   static const _fallback = HelperStatus(isActive: false, radiusKm: 3);
 
+  late final GetHelperStatusUseCase _getHelperStatus =
+      ref.read(getHelperStatusUseCaseProvider);
+  late final SetHelperStatusUseCase _setHelperStatus =
+      ref.read(setHelperStatusUseCaseProvider);
+  late final DeviceLocationService _locationService =
+      ref.read(deviceLocationServiceProvider);
+
   @override
   Future<HelperStatus> build() async {
     try {
-      return await getIt<GetHelperStatusUseCase>().call();
-    } on HelperFailure {
-      // Can't read status -> default to inactive. Never guess "on":
-      // that would put someone in the responder pool without them
-      // having chosen to be there.
+      return await _getHelperStatus();
+    } on AppFailure {
+      // Can't read status -> default to inactive. Never guess "on": that
+      // would put someone in the responder pool without them choosing to be.
       return _fallback;
     }
   }
 
-  /// Returns null on success, or a message to show the user.
-  Future<String?> toggleActive(bool value) async {
+  /// Returns null on success, or a message to show the person.
+  Future<String?> toggleActive(bool isActive) async {
     final previous = state.valueOrNull ?? _fallback;
 
-    double? lat, lng;
-    if (value) {
-      final position = await getIt<DeviceLocationService>().getCurrentPosition();
+    double? latitude;
+    double? longitude;
+    if (isActive) {
+      final position = await _locationService.getCurrentPosition();
       if (position == null) return 'Location permission is needed to go active.';
-      lat = position.latitude;
-      lng = position.longitude;
+      latitude = position.latitude;
+      longitude = position.longitude;
     }
 
     state = const AsyncLoading<HelperStatus>().copyWithPrevious(state);
     try {
-      final updated = await getIt<SetHelperStatusUseCase>().call(
-        isActive: value,
+      final updated = await _setHelperStatus(
+        isActive: isActive,
         radiusKm: previous.radiusKm,
-        latitude: lat,
-        longitude: lng,
+        latitude: latitude,
+        longitude: longitude,
         mutualConnectionOptIn: previous.mutualConnectionOptIn,
       );
       state = AsyncData(updated);
       return null;
-    } on HelperFailure catch (e) {
+    } on AppFailure catch (failure) {
       state = AsyncData(previous);
-      return e.message;
+      return failure.message;
     }
   }
 
-  /// Optimistically updates the local radius immediately (the slider
-  /// must never feel laggy), then syncs it to the server only if
-  /// currently active.
-  Future<void> setRadius(double km) async {
+  /// Re-sends the helper's position while active. The server only matches
+  /// alerts against a location updated within the last 15 minutes, so
+  /// without this the nearby list silently empties. Best-effort.
+  Future<void> refreshLocation() async {
+    final current = state.valueOrNull;
+    if (current == null || !current.isActive) return;
+    try {
+      final position = await _locationService.getCurrentPosition();
+      if (position == null) return;
+      // Deliberately does NOT assign `state`: the nearby-alerts controller
+      // watches this provider, so changing it here would loop.
+      await _setHelperStatus(
+        isActive: true,
+        radiusKm: current.radiusKm,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        mutualConnectionOptIn: current.mutualConnectionOptIn,
+      );
+    } on AppFailure {
+      // keep the last known position
+    } catch (_) {
+      // location plugin errors are equally non-fatal here
+    }
+  }
+
+  /// Updates the local radius at once (the slider must never feel laggy),
+  /// then syncs to the server only while active.
+  Future<void> setRadius(double radiusKm) async {
     final previous = state.valueOrNull;
     if (previous == null) return;
-    state = AsyncData(previous.copyWith(radiusKm: km));
+    state = AsyncData(previous.copyWith(radiusKm: radiusKm));
     if (!previous.isActive) return;
     try {
-      await getIt<SetHelperStatusUseCase>().call(
+      await _setHelperStatus(
         isActive: true,
-        radiusKm: km,
+        radiusKm: radiusKm,
         mutualConnectionOptIn: previous.mutualConnectionOptIn,
       );
-    } on HelperFailure {
-      // Leave the slider where the user put it; the next successful
-      // sync (or the next toggle) reconciles with the server.
+    } on AppFailure {
+      // Leave the slider where the person put it; the next successful
+      // sync reconciles with the server.
     }
   }
 
-  /// The helper-side half of the §10 double opt-in -- restricted to
-  /// verified helpers server-side, same as every other helper-only
-  /// action. Optimistic like [setRadius]; only synced to the server
-  /// while active since inactive helpers are never matched anyway.
-  Future<void> setMutualConnectionOptIn(bool value) async {
+  /// Helper side of the §10 double opt-in (verified helpers only,
+  /// server-side). Optimistic like [setRadius].
+  Future<void> setMutualConnectionOptIn(bool isOptedIn) async {
     final previous = state.valueOrNull;
     if (previous == null) return;
-    state = AsyncData(previous.copyWith(mutualConnectionOptIn: value));
+    state = AsyncData(previous.copyWith(mutualConnectionOptIn: isOptedIn));
     try {
-      final updated = await getIt<SetHelperStatusUseCase>().call(
-        isActive: previous.isActive,
-        radiusKm: previous.radiusKm,
-        mutualConnectionOptIn: value,
+      state = AsyncData(
+        await _setHelperStatus(
+          isActive: previous.isActive,
+          radiusKm: previous.radiusKm,
+          mutualConnectionOptIn: isOptedIn,
+        ),
       );
-      state = AsyncData(updated);
-    } on HelperFailure {
+    } on AppFailure {
       state = AsyncData(previous);
     }
   }

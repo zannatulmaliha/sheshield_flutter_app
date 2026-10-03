@@ -1,9 +1,10 @@
-import '../entities/helper_status.dart';
-import '../repositories/i_helper_repository.dart';
+import 'package:sheshield/features/helper/domain/entities/helper_status.dart';
+import 'package:sheshield/features/helper/domain/repositories/helper_status_repository.dart';
 
 class GetHelperStatusUseCase {
-  const GetHelperStatusUseCase(this._repository);
-  final IHelperRepository _repository;
+  const GetHelperStatusUseCase(this._helperStatusRepository);
 
-  Future<HelperStatus> call() => _repository.fetchStatus();
+  final HelperStatusRepository _helperStatusRepository;
+
+  Future<HelperStatus> call() => _helperStatusRepository.fetchStatus();
 }

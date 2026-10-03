@@ -1,11 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sheshield/core/theme/app_theme_mode.dart';
-import 'package:sheshield/features/settings/domain/repositories/i_theme_mode_repository.dart';
+import 'package:sheshield/features/settings/domain/repositories/theme_mode_repository.dart';
 
 /// Persists the chosen [AppThemeMode] to secure storage -- same
 /// [FlutterSecureStorage] singleton [LocaleRepositoryImpl] already uses,
 /// rather than pulling in shared_preferences for one more string.
-class ThemeModeRepositoryImpl implements IThemeModeRepository {
+class ThemeModeRepositoryImpl implements ThemeModeRepository {
   ThemeModeRepositoryImpl(this._storage);
 
   static const _themeModeKey = 'sheshield_theme_mode';

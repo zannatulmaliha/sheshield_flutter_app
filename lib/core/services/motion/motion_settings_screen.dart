@@ -41,7 +41,7 @@ class MotionSettingsScreen extends ConsumerWidget {
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text('Detect falls, sprints and struggles',
-                  style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800)),
+                  style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800),),
               subtitle: Text(
                 'Uses your phone\'s motion sensors, analysed only on this phone. Raw sensor data is never uploaded. '
                 'A notification stays visible while this is on.',
@@ -55,7 +55,7 @@ class MotionSettingsScreen extends ConsumerWidget {
             Text('Sensitivity', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
             Text('Higher catches more, but asks "Are you OK?" more often. Every detection is confirmed with you first.',
-                style: TextStyle(color: colors.textSecondary, fontSize: 12.5)),
+                style: TextStyle(color: colors.textSecondary, fontSize: 12.5),),
             const SizedBox(height: 12),
             SegmentedButton<MotionSensitivity>(
               segments: [for (final v in MotionSensitivity.values) ButtonSegment(value: v, label: Text(v.label))],
@@ -67,7 +67,7 @@ class MotionSettingsScreen extends ConsumerWidget {
             Text('If you don\'t answer "Are you OK?"', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
             Text('You always get a 20-30 second countdown first. Choose what happens when it runs out.',
-                style: TextStyle(color: colors.textSecondary, fontSize: 12.5)),
+                style: TextStyle(color: colors.textSecondary, fontSize: 12.5),),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('After a fall'),
@@ -93,7 +93,7 @@ class MotionSettingsScreen extends ConsumerWidget {
             const SizedBox(height: 4),
             Text('Only the type of event, how confident it was and your answer are stored (for your own history). '
                 'They are deleted automatically after 30 days.',
-                style: TextStyle(color: colors.textSecondary, fontSize: 12.5)),
+                style: TextStyle(color: colors.textSecondary, fontSize: 12.5),),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               onPressed: () async {

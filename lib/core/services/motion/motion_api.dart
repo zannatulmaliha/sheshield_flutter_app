@@ -30,7 +30,7 @@ class MotionApi {
         if (sosId != null) 'sosId': sosId,
         if (latitude != null && longitude != null) ...{'latitude': latitude, 'longitude': longitude},
         'occurredAt': (occurredAt ?? DateTime.now()).toUtc().toIso8601String(),
-      });
+      },);
     } on DioException {
       // swallowed on purpose
     }

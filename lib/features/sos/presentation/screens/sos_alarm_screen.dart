@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/di/injection.dart';
-import 'package:sheshield/core/services/device_alarm_service.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sheshield/core/di/service_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Shown full-screen the instant a push from a linked trusted contact's
-/// SOS arrives (see PushService), in every app state -- foreground,
-/// backgrounded, or freshly launched from a killed state by tapping the
-/// notification. Pushed directly on the root navigator rather than as a
-/// go_router route, so it appears on top of whatever the person was doing
-/// without fighting the router's auth/role redirect logic.
-class SosAlarmScreen extends StatefulWidget {
+/// Shown full-screen the instant a push from a linked trusted contact's SOS
+/// arrives (see PushService), in every app state. Pushed directly on the
+/// root navigator rather than as a go_router route, so it appears on top of
+/// whatever the person was doing without fighting the router's auth/role
+/// redirect. The alarm sounds while this screen is mounted.
+class SosAlarmScreen extends HookConsumerWidget {
   const SosAlarmScreen({
     super.key,
     required this.senderName,
@@ -17,36 +17,28 @@ class SosAlarmScreen extends StatefulWidget {
     required this.longitude,
   });
 
+  static const _alarmColor = Color(0xFFC2185B);
+
   final String senderName;
   final double latitude;
   final double longitude;
 
   @override
-  State<SosAlarmScreen> createState() => _SosAlarmScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final alarmService = ref.read(deviceAlarmServiceProvider);
 
-class _SosAlarmScreenState extends State<SosAlarmScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getIt<DeviceAlarmService>().start();
-  }
+    useEffect(() {
+      alarmService.start();
+      return alarmService.stop;
+    }, const [],);
 
-  @override
-  void dispose() {
-    getIt<DeviceAlarmService>().stop();
-    super.dispose();
-  }
+    Future<void> openLocation() => launchUrl(
+          Uri.parse('https://maps.google.com/?q=$latitude,$longitude'),
+          mode: LaunchMode.externalApplication,
+        );
 
-  Future<void> _openLocation() async {
-    final uri = Uri.parse('https://maps.google.com/?q=${widget.latitude},${widget.longitude}');
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFC2185B),
+      backgroundColor: _alarmColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -65,7 +57,7 @@ class _SosAlarmScreenState extends State<SosAlarmScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                '${widget.senderName} needs help right now.',
+                '$senderName needs help right now.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
@@ -73,10 +65,10 @@ class _SosAlarmScreenState extends State<SosAlarmScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _openLocation,
+                  onPressed: openLocation,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFC2185B),
+                    foregroundColor: _alarmColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   icon: const Icon(Icons.map_rounded),

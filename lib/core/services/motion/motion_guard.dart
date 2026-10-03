@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sheshield/core/di/injection.dart';
+import 'package:sheshield/core/di/service_providers.dart';
 import 'package:sheshield/core/router/app_router.dart';
-import 'package:sheshield/core/services/device_location_service.dart';
 import 'package:sheshield/features/sos/presentation/providers/sos_provider.dart';
 
 import 'motion_api.dart';
@@ -84,7 +83,7 @@ class MotionGuardController extends Notifier<MotionGuardState> {
   Future<void> init() async {
     if (_initStarted) return;
     _initStarted = true;
-    final s = await getIt<MotionSettingsStore>().load();
+    final s = await ref.read(motionSettingsStoreProvider).loadMotionSettings();
     state = state.copyWith(settings: s, loaded: true);
     if (s.enabled) await _startSensing();
   }
@@ -93,7 +92,7 @@ class MotionGuardController extends Notifier<MotionGuardState> {
     final wasEnabled = state.settings.enabled;
     final sensChanged = next.sensitivity != state.settings.sensitivity;
     state = state.copyWith(settings: next);
-    await getIt<MotionSettingsStore>().save(next);
+    await ref.read(motionSettingsStoreProvider).saveMotionSettings(next);
     if (next.enabled && (!wasEnabled || sensChanged)) {
       await _startSensing();
     } else if (!next.enabled && wasEnabled) {
@@ -183,13 +182,16 @@ class MotionGuardController extends Notifier<MotionGuardState> {
     }
 
     // Log for the person's own history (best effort, never blocks the SOS).
-    final pos = await getIt<DeviceLocationService>().getCurrentPosition().timeout(const Duration(seconds: 3), onTimeout: () => null);
-    unawaited(getIt<MotionApi>().report(
+    final pos = await ref
+        .read(deviceLocationServiceProvider)
+        .getCurrentPosition()
+        .timeout(const Duration(seconds: 3), onTimeout: () => null);
+    unawaited(ref.read(motionApiProvider).report(
       p.event,
       response: response,
       sosId: sosId,
       latitude: pos?.latitude,
       longitude: pos?.longitude,
-    ));
+    ),);
   }
 }

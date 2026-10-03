@@ -14,23 +14,16 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-AlertSummary _$AlertSummaryFromJson(Map<String, dynamic> json) {
-  return _AlertSummary.fromJson(json);
-}
-
 /// @nodoc
 mixin _$AlertSummary {
   String get id => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  @DateTimeConverter()
+  AlertStatus get status => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
-  @NullableDateTimeConverter()
   DateTime? get resolvedAt => throw _privateConstructorUsedError;
   int get sentCount => throw _privateConstructorUsedError;
   int get failedCount => throw _privateConstructorUsedError;
   int get totalCount => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $AlertSummaryCopyWith<AlertSummary> get copyWith =>
       throw _privateConstructorUsedError;
@@ -44,9 +37,9 @@ abstract class $AlertSummaryCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String status,
-      @DateTimeConverter() DateTime createdAt,
-      @NullableDateTimeConverter() DateTime? resolvedAt,
+      AlertStatus status,
+      DateTime createdAt,
+      DateTime? resolvedAt,
       int sentCount,
       int failedCount,
       int totalCount});
@@ -81,7 +74,7 @@ class _$AlertSummaryCopyWithImpl<$Res, $Val extends AlertSummary>
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as AlertStatus,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -116,9 +109,9 @@ abstract class _$$AlertSummaryImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      String status,
-      @DateTimeConverter() DateTime createdAt,
-      @NullableDateTimeConverter() DateTime? resolvedAt,
+      AlertStatus status,
+      DateTime createdAt,
+      DateTime? resolvedAt,
       int sentCount,
       int failedCount,
       int totalCount});
@@ -151,7 +144,7 @@ class __$$AlertSummaryImplCopyWithImpl<$Res>
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as AlertStatus,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -177,30 +170,25 @@ class __$$AlertSummaryImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$AlertSummaryImpl extends _AlertSummary {
   const _$AlertSummaryImpl(
       {required this.id,
       required this.status,
-      @DateTimeConverter() required this.createdAt,
-      @NullableDateTimeConverter() this.resolvedAt,
+      required this.createdAt,
+      this.resolvedAt,
       this.sentCount = 0,
       this.failedCount = 0,
       this.totalCount = 0})
       : super._();
 
-  factory _$AlertSummaryImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AlertSummaryImplFromJson(json);
-
   @override
   final String id;
   @override
-  final String status;
+  final AlertStatus status;
   @override
-  @DateTimeConverter()
   final DateTime createdAt;
   @override
-  @NullableDateTimeConverter()
   final DateTime? resolvedAt;
   @override
   @JsonKey()
@@ -236,7 +224,6 @@ class _$AlertSummaryImpl extends _AlertSummary {
                 other.totalCount == totalCount));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, status, createdAt,
       resolvedAt, sentCount, failedCount, totalCount);
@@ -246,38 +233,26 @@ class _$AlertSummaryImpl extends _AlertSummary {
   @pragma('vm:prefer-inline')
   _$$AlertSummaryImplCopyWith<_$AlertSummaryImpl> get copyWith =>
       __$$AlertSummaryImplCopyWithImpl<_$AlertSummaryImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AlertSummaryImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _AlertSummary extends AlertSummary {
   const factory _AlertSummary(
       {required final String id,
-      required final String status,
-      @DateTimeConverter() required final DateTime createdAt,
-      @NullableDateTimeConverter() final DateTime? resolvedAt,
+      required final AlertStatus status,
+      required final DateTime createdAt,
+      final DateTime? resolvedAt,
       final int sentCount,
       final int failedCount,
       final int totalCount}) = _$AlertSummaryImpl;
   const _AlertSummary._() : super._();
 
-  factory _AlertSummary.fromJson(Map<String, dynamic> json) =
-      _$AlertSummaryImpl.fromJson;
-
   @override
   String get id;
   @override
-  String get status;
+  AlertStatus get status;
   @override
-  @DateTimeConverter()
   DateTime get createdAt;
   @override
-  @NullableDateTimeConverter()
   DateTime? get resolvedAt;
   @override
   int get sentCount;

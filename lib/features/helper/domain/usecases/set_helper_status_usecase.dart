@@ -1,9 +1,10 @@
-import '../entities/helper_status.dart';
-import '../repositories/i_helper_repository.dart';
+import 'package:sheshield/features/helper/domain/entities/helper_status.dart';
+import 'package:sheshield/features/helper/domain/repositories/helper_status_repository.dart';
 
 class SetHelperStatusUseCase {
-  const SetHelperStatusUseCase(this._repository);
-  final IHelperRepository _repository;
+  const SetHelperStatusUseCase(this._helperStatusRepository);
+
+  final HelperStatusRepository _helperStatusRepository;
 
   Future<HelperStatus> call({
     required bool isActive,
@@ -11,13 +12,12 @@ class SetHelperStatusUseCase {
     double? latitude,
     double? longitude,
     bool mutualConnectionOptIn = false,
-  }) {
-    return _repository.setStatus(
-      isActive: isActive,
-      radiusKm: radiusKm,
-      latitude: latitude,
-      longitude: longitude,
-      mutualConnectionOptIn: mutualConnectionOptIn,
-    );
-  }
+  }) =>
+      _helperStatusRepository.setStatus(
+        isActive: isActive,
+        radiusKm: radiusKm,
+        latitude: latitude,
+        longitude: longitude,
+        mutualConnectionOptIn: mutualConnectionOptIn,
+      );
 }

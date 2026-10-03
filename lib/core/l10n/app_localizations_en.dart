@@ -208,6 +208,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInTimer => 'Check-In Timer';
 
   @override
+  String get dangerZone => 'Danger Zone';
+
+  @override
+  String get dangerZoneLegendLow => 'Low activity';
+
+  @override
+  String get dangerZoneLegendMedium => 'Medium activity';
+
+  @override
+  String get dangerZoneLegendHigh => 'High activity';
+
+  @override
   String get checkInSheetTitle => 'Set a check-in timer';
 
   @override

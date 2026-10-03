@@ -1,71 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sheshield/core/router/app_router.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/features/user/presentation/screens/fake_call_screen.dart';
 
 const _callerPresets = ['Mom', 'Dad', 'Boss', 'Unknown'];
-const _delayPresets = [Duration.zero, Duration(seconds: 5), Duration(seconds: 15)];
+const _delayPresets = [
+  Duration.zero,
+  Duration(seconds: 5),
+  Duration(seconds: 15),
+  Duration(seconds: 30),
+];
 
-/// Bottom sheet to pick a caller name and ring delay, then trigger
-/// [FakeCallScreen] on the root navigator so it appears full-screen on
-/// top of whatever's on screen -- same pattern PushService uses for the
+/// Bottom sheet to pick a caller name and ring delay, then show
+/// [FakeCallScreen] on the root navigator so it appears full-screen on top
+/// of whatever is on screen: the same pattern PushService uses for the
 /// incoming-SOS overlay.
 Future<void> showFakeCallSheet(BuildContext context) {
-  return showModalBottomSheet(
+  return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => const _FakeCallSheet(),
+    builder: (_) => const FakeCallSheet(),
   );
 }
 
-class _FakeCallSheet extends ConsumerStatefulWidget {
-  const _FakeCallSheet();
-
-  @override
-  ConsumerState<_FakeCallSheet> createState() => _FakeCallSheetState();
+void _showFakeCall(String callerName) {
+  rootNavigatorKey.currentState?.push(
+    MaterialPageRoute<void>(
+      builder: (_) => FakeCallScreen(callerName: callerName),
+      fullscreenDialog: true,
+    ),
+  );
 }
 
-class _FakeCallSheetState extends ConsumerState<_FakeCallSheet> {
-  String _caller = _callerPresets.first;
-  Duration _delay = Duration.zero;
-
-  void _push(String caller) {
-    rootNavigatorKey.currentState?.push(
-      MaterialPageRoute(
-        builder: (_) => FakeCallScreen(callerName: caller),
-        fullscreenDialog: true,
-      ),
+void _scheduleFakeCall(String callerName, Duration delay) {
+  if (delay == Duration.zero) {
+    _showFakeCall(callerName);
+    return;
+  }
+  final rootContext = rootNavigatorKey.currentContext;
+  if (rootContext != null) {
+    ScaffoldMessenger.maybeOf(rootContext)?.showSnackBar(
+      SnackBar(content: Text('Fake call from $callerName in ${delay.inSeconds}s')),
     );
   }
+  Future<void>.delayed(delay, () => _showFakeCall(callerName));
+}
 
-  void _trigger() {
-    final caller = _caller;
-    final delay = _delay;
-    Navigator.of(context).pop();
-
-    if (delay == Duration.zero) {
-      _push(caller);
-      return;
-    }
-    final rootContext = rootNavigatorKey.currentContext;
-    if (rootContext != null) {
-      ScaffoldMessenger.maybeOf(rootContext)?.showSnackBar(
-        SnackBar(content: Text('Fake call from $caller in ${delay.inSeconds}s')),
-      );
-    }
-    Future.delayed(delay, () => _push(caller));
-  }
+class FakeCallSheet extends HookConsumerWidget {
+  const FakeCallSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final colors = resolvePalette(context, ref);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final caller = useState(_callerPresets.first);
+    final delay = useState(Duration.zero);
+    final labelStyle = TextStyle(
+      fontWeight: FontWeight.w700,
+      fontSize: 13,
+      color: palette.textSecondary,
+    );
+
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
         decoration: BoxDecoration(
-          color: colors.surface,
+          color: palette.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -77,50 +79,41 @@ class _FakeCallSheetState extends ConsumerState<_FakeCallSheet> {
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
             ),
             const SizedBox(height: 16),
-            Text(
-              'Caller',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-                color: colors.textSecondary,
-              ),
-            ),
+            Text('Caller', style: labelStyle),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: _callerPresets
-                  .map((c) => ChoiceChip(
-                        label: Text(c),
-                        selected: _caller == c,
-                        onSelected: (_) => setState(() => _caller = c),
-                      ))
-                  .toList(),
+              children: [
+                for (final preset in _callerPresets)
+                  ChoiceChip(
+                    label: Text(preset),
+                    selected: caller.value == preset,
+                    onSelected: (_) => caller.value = preset,
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
-            Text(
-              'Ring after',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-                color: colors.textSecondary,
-              ),
-            ),
+            Text('Ring after', style: labelStyle),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: _delayPresets
-                  .map((d) => ChoiceChip(
-                        label: Text(d == Duration.zero ? 'Now' : '${d.inSeconds}s'),
-                        selected: _delay == d,
-                        onSelected: (_) => setState(() => _delay = d),
-                      ))
-                  .toList(),
+              children: [
+                for (final preset in _delayPresets)
+                  ChoiceChip(
+                    label: Text(preset == Duration.zero ? 'Now' : '${preset.inSeconds}s'),
+                    selected: delay.value == preset,
+                    onSelected: (_) => delay.value = preset,
+                  ),
+              ],
             ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _trigger,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _scheduleFakeCall(caller.value, delay.value);
+                },
                 child: const Text('Start'),
               ),
             ),

@@ -1,9 +1,10 @@
+import 'package:sheshield/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sheshield/shared/entities/app_user.dart';
-import '../repositories/i_auth_repository.dart';
 
 class UpdateProfileUseCase {
-  const UpdateProfileUseCase(this._repository);
-  final IAuthRepository _repository;
+  const UpdateProfileUseCase(this._authRepository);
+
+  final AuthRepository _authRepository;
 
   Future<AppUser> call({
     String? name,
@@ -11,7 +12,7 @@ class UpdateProfileUseCase {
     String? countryCode,
     String? address,
   }) =>
-      _repository.updateProfile(
+      _authRepository.updateProfile(
         name: name,
         phone: phone,
         countryCode: countryCode,

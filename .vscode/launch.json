@@ -2,13 +2,34 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "SheShield (USB phone, local backend)",
+      "name": "SheShield dev (USB phone, local backend)",
       "request": "launch",
       "type": "dart",
+      "program": "lib/main_dev.dart",
       "preLaunchTask": "adb-reverse-8080",
-      "args": [
-        "--dart-define=API_BASE_URL=http://localhost:8080/api/v1"
-      ]
+      "args": ["--flavor", "dev", "--dart-define=API_BASE_URL=http://localhost:8080/api/v1"]
+    },
+    {
+      "name": "SheShield dev",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "args": ["--flavor", "dev"]
+    },
+    {
+      "name": "SheShield staging",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "staging"]
+    },
+    {
+      "name": "SheShield production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_production.dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "production"]
     }
   ]
 }

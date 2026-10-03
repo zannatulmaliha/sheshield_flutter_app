@@ -6,10 +6,10 @@ part of 'ai_chat_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$aiChatControllerHash() => r'39cbe9451c43cf579e6d4d5f0835efbefc7be572';
+String _$aiChatControllerHash() => r'60e412ae9f79357689eb1ca61f7ce5347ae0ee84';
 
-/// Owns the Ask AI Guardian conversation for the lifetime of the app
-/// session (in-memory only -- a fresh app launch starts a new chat).
+/// Owns the Ask AI Guardian conversation for the app session (in memory
+/// only; a fresh launch starts a new chat).
 ///
 /// Copied from [AiChatController].
 @ProviderFor(AiChatController)

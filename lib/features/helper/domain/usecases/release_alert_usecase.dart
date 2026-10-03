@@ -1,8 +1,9 @@
-import '../repositories/i_helper_repository.dart';
+import 'package:sheshield/features/helper/domain/repositories/helper_alert_repository.dart';
 
 class ReleaseAlertUseCase {
-  const ReleaseAlertUseCase(this._repository);
-  final IHelperRepository _repository;
+  const ReleaseAlertUseCase(this._helperAlertRepository);
 
-  Future<void> call(String alertId) => _repository.release(alertId);
+  final HelperAlertRepository _helperAlertRepository;
+
+  Future<void> call(String alertId) => _helperAlertRepository.releaseAlert(alertId);
 }

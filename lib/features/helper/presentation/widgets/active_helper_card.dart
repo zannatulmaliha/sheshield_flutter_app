@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sheshield/features/helper/presentation/helper_colors.dart';
-import 'package:sheshield/core/theme/app_theme.dart';
 import 'package:sheshield/features/helper/domain/entities/helper_status.dart';
 
 /// Pure display widget -- takes the current [HelperStatus] and reports
@@ -26,7 +25,7 @@ class ActiveHelperCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final active = status.isActive;
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: active
             ? LinearGradient(
@@ -42,7 +41,7 @@ class ActiveHelperCard extends StatelessWidget {
             color: (active ? context.hp.primary : Colors.black)
                 .withValues(alpha: active ? 0.28 : 0.07),
             blurRadius: 20,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -52,7 +51,7 @@ class ActiveHelperCard extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.shield_moon_rounded, color: active ? Colors.white : context.hp.primary),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   active ? "You're active" : 'Go active to respond to alerts',
@@ -81,7 +80,7 @@ class ActiveHelperCard extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'Response radius: ${status.radiusKm.toStringAsFixed(1)} km',
             style: TextStyle(
@@ -99,7 +98,7 @@ class ActiveHelperCard extends StatelessWidget {
             label: '${status.radiusKm.toStringAsFixed(1)} km',
             onChanged: onRadiusChanged,
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Row(
             children: [
               Expanded(

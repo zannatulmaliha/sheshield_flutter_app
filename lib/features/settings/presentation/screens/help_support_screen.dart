@@ -8,13 +8,13 @@ import 'package:sheshield/core/theme/app_theme.dart';
 const _faq = <(String, String)>[
   (
     'How does the SOS button work?',
-    "Pressing SOS sends your live location to every trusted contact by SMS, and starts a live-tracking link they "
+    'Pressing SOS sends your live location to every trusted contact by SMS, and starts a live-tracking link they '
         "can open with no login. Contacts who've linked their own SheShield account also get an instant alarm push.",
   ),
   (
-    "What does the Check-In Timer do?",
+    'What does the Check-In Timer do?',
     "Set a timer before doing something risky. If you don't check in ('I'm Safe') before it reaches zero, an SOS "
-        "is sent automatically -- the same alert the SOS button sends.",
+        'is sent automatically -- the same alert the SOS button sends.',
   ),
   (
     'Why does the app need location and SMS permissions?',
@@ -24,7 +24,7 @@ const _faq = <(String, String)>[
   (
     'Will my trusted contacts know when I press SOS?',
     "Yes -- every trusted contact gets a text with your location the moment you press SOS. There's no silent or "
-        "delayed mode.",
+        'delayed mode.',
   ),
 ];
 
@@ -51,7 +51,7 @@ class HelpSupportScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = resolvePalette(context, ref);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: colors.background,

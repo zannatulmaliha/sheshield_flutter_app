@@ -1,179 +1,86 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:sheshield/core/di/injection.dart';
-import 'package:sheshield/features/chat/data/sos_chat_api.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sheshield/features/chat/presentation/providers/sos_chat_provider.dart';
+import 'package:sheshield/features/chat/presentation/widgets/chat_safety_banner.dart';
+import 'package:sheshield/features/chat/presentation/widgets/sos_chat_app_bar_title.dart';
+import 'package:sheshield/features/chat/presentation/widgets/sos_chat_bubble.dart';
+import 'package:sheshield/features/chat/presentation/widgets/sos_chat_composer.dart';
 
 /// Full-screen in-app chat for one SOS, used by both the helper (from the
 /// response screen) and the requester. Nobody ever sees a phone number or
-/// name here; messages are labelled only "You" / "Helper" / "Person in need".
-class SosChatScreen extends StatefulWidget {
+/// name; messages are labelled only "Helper" / "Person in need".
+class SosChatScreen extends HookConsumerWidget {
   const SosChatScreen({super.key, required this.sosId, required this.iAmHelper});
+
   final String sosId;
   final bool iAmHelper;
 
   @override
-  State<SosChatScreen> createState() => _SosChatScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chat = ref.watch(sosChatControllerProvider(sosId));
+    final textController = useTextEditingController();
+    final scrollController = useScrollController();
+    final otherPartyLabel = iAmHelper ? 'Person in need' : 'Helper';
 
-class _SosChatScreenState extends State<SosChatScreen> {
-  final _api = getIt<SosChatApi>();
-  final _controller = TextEditingController();
-  final _scroll = ScrollController();
-  final List<SosChatMessage> _messages = [];
-  Timer? _poll;
-  bool _sending = false;
-  bool _closed = false;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _refresh();
-    _poll = Timer.periodic(const Duration(seconds: 3), (_) => _refresh());
-  }
-
-  @override
-  void dispose() {
-    _poll?.cancel();
-    _controller.dispose();
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  int get _cursor => _messages.isEmpty ? 0 : _messages.last.seq;
-
-  Future<void> _refresh() async {
-    if (_closed) return;
-    try {
-      final fresh = await _api.list(widget.sosId, after: _cursor);
-      if (!mounted) return;
-      if (fresh.isNotEmpty) {
-        setState(() {
-          final known = _messages.map((m) => m.seq).toSet();
-          _messages.addAll(fresh.where((m) => !known.contains(m.seq)));
-          _error = null;
-        });
-        _jumpToEnd();
-      }
-    } on SosChatException catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.message;
-        _closed = e.closed;
+    // Jump to the newest message whenever one arrives.
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients) {
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
+        }
       });
+      return null;
+    }, [chat.messages.length],);
+
+    void sendTypedText() {
+      final typedText = textController.text;
+      if (typedText.trim().isEmpty || chat.isSending || chat.isClosed) return;
+      textController.clear();
+      ref.read(sosChatControllerProvider(sosId).notifier).send(typedText);
     }
-  }
 
-  void _jumpToEnd() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scroll.hasClients) _scroll.jumpTo(_scroll.position.maxScrollExtent);
-    });
-  }
-
-  Future<void> _send() async {
-    final text = _controller.text.trim();
-    if (text.isEmpty || _sending || _closed) return;
-    setState(() => _sending = true);
-    try {
-      final m = await _api.send(widget.sosId, text);
-      if (!mounted) return;
-      _controller.clear();
-      setState(() {
-        if (!_messages.any((x) => x.seq == m.seq)) _messages.add(m);
-        _error = null;
-      });
-      _jumpToEnd();
-    } on SosChatException catch (e) {
-      if (mounted) setState(() {
-        _error = e.message;
-        _closed = e.closed;
-      });
-    } finally {
-      if (mounted) setState(() => _sending = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final other = widget.iAmHelper ? 'Person in need' : 'Helper';
     return Scaffold(
-      appBar: AppBar(title: Text('Chat with ${widget.iAmHelper ? 'person in need' : 'your helper'}')),
+      appBar: AppBar(
+        title: SosChatAppBarTitle(sosId: sosId, iAmHelper: iAmHelper),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              color: Colors.amber.shade100,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: const Text(
-                'Keep it in the app: phone numbers and social handles are not needed and are flagged for safety review.',
-                style: TextStyle(fontSize: 11.5, color: Colors.black87),
-              ),
-            ),
+            const ChatSafetyBanner(),
             Expanded(
-              child: _messages.isEmpty
-                  ? const Center(child: Text('No messages yet. Say hello.', style: TextStyle(color: Colors.grey)))
+              child: chat.messages.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No messages yet. Say hello.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
                   : ListView.builder(
-                      controller: _scroll,
+                      controller: scrollController,
                       padding: const EdgeInsets.all(14),
-                      itemCount: _messages.length,
-                      itemBuilder: (_, i) {
-                        final m = _messages[i];
-                        return Align(
-                          alignment: m.mine ? Alignment.centerRight : Alignment.centerLeft,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 4),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
-                            decoration: BoxDecoration(
-                              color: m.mine ? const Color(0xFF7C3AED) : const Color(0xFFE5E7EB),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (!m.mine)
-                                  Text(other, style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Colors.black54)),
-                                Text(m.body, style: TextStyle(color: m.mine ? Colors.white : Colors.black87, fontSize: 14.5)),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                      itemCount: chat.messages.length,
+                      itemBuilder: (context, index) => SosChatBubble(
+                        message: chat.messages[index],
+                        otherPartyLabel: otherPartyLabel,
+                      ),
                     ),
             ),
-            if (_error != null)
+            if (chat.errorMessage != null)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                child: Text(_closed ? 'This emergency has ended, so the chat is closed.' : _error!,
-                    style: const TextStyle(color: Colors.redAccent, fontSize: 12)),
+                child: Text(
+                  chat.isClosed
+                      ? 'This emergency has ended, so the chat is closed.'
+                      : chat.errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                ),
               ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      enabled: !_closed,
-                      maxLength: 500,
-                      minLines: 1,
-                      maxLines: 3,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _send(),
-                      decoration: const InputDecoration(counterText: '', hintText: 'Type a message', border: OutlineInputBorder()),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton.filled(
-                    onPressed: (_sending || _closed) ? null : _send,
-                    icon: _sending
-                        ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Icon(Icons.send_rounded),
-                  ),
-                ],
-              ),
+            SosChatComposer(
+              controller: textController,
+              isEnabled: !chat.isClosed,
+              isSending: chat.isSending,
+              onSend: sendTypedText,
             ),
           ],
         ),

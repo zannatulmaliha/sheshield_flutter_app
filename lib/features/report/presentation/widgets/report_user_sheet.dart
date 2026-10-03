@@ -1,82 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sheshield/core/di/injection.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sheshield/core/theme/app_palette.dart';
 import 'package:sheshield/core/theme/app_theme.dart';
-import '../../domain/entities/report_category.dart';
-import '../../domain/repositories/i_report_repository.dart';
-import '../../domain/usecases/block_user_usecase.dart';
-import '../../domain/usecases/file_report_usecase.dart';
+import 'package:sheshield/core/utils/context_extensions.dart';
+import 'package:sheshield/features/report/domain/entities/report_category.dart';
+import 'package:sheshield/features/report/presentation/providers/report_submitter.dart';
+import 'package:sheshield/features/report/presentation/widgets/report_category_picker.dart';
 
-/// Opens the report sheet, then (only if the person also chose to) confirms
-/// and files a block -- one-tap, reversible, no explanation required (spec
-/// §5). Shows a snackbar with the outcome; swallows nothing silently.
+typedef ReportSelection = ({ReportCategory category, bool alsoBlock});
+
+/// Opens the report sheet, then files the report (and an optional block --
+/// one-tap, reversible, spec §5) and shows the outcome in a snackbar.
 Future<void> showReportUserSheet(
   BuildContext context, {
   required String reportedId,
   required String reporterRole,
   String? sosId,
 }) async {
-  final messenger = ScaffoldMessenger.of(context);
+  final reportSubmitter = ProviderScope.containerOf(context).read(reportSubmitterProvider);
 
-  final result = await showModalBottomSheet<_ReportResult>(
+  final selection = await showModalBottomSheet<ReportSelection>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (_) => const _ReportUserSheet(),
+    builder: (_) => const ReportUserSheet(),
   );
-  if (result == null) return;
+  if (selection == null) return;
 
-  try {
-    await getIt<FileReportUseCase>().call(
-      reportedId: reportedId,
-      category: result.category,
-      reporterRole: reporterRole,
-      sosId: sosId,
-    );
-    messenger.showSnackBar(const SnackBar(content: Text('Report filed. A reviewer will look into this.')));
-  } on ReportFailure catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text(e.message)));
-    return;
-  }
-
-  if (result.alsoBlock) {
-    try {
-      await getIt<BlockUserUseCase>().call(reportedId);
-      messenger.showSnackBar(const SnackBar(content: Text('Blocked. You can unblock them anytime from Settings.')));
-    } on ReportFailure catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }
+  final messages = await reportSubmitter.submit(
+    reportedId: reportedId,
+    category: selection.category,
+    reporterRole: reporterRole,
+    alsoBlock: selection.alsoBlock,
+    sosId: sosId,
+  );
+  if (context.mounted) context.showMessage(messages.join('\n'));
 }
 
-class _ReportResult {
-  const _ReportResult(this.category, this.alsoBlock);
-  final ReportCategory category;
-  final bool alsoBlock;
-}
-
-class _ReportUserSheet extends ConsumerStatefulWidget {
-  const _ReportUserSheet();
+class ReportUserSheet extends HookConsumerWidget {
+  const ReportUserSheet({super.key});
 
   @override
-  ConsumerState<_ReportUserSheet> createState() => _ReportUserSheetState();
-}
-
-class _ReportUserSheetState extends ConsumerState<_ReportUserSheet> {
-  ReportCategory? _selected;
-  bool _alsoBlock = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = resolvePalette(context, ref);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = resolvePalette(context, ref);
+    final selectedCategory = useState<ReportCategory?>(null);
+    final alsoBlock = useState(false);
 
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
         decoration: BoxDecoration(
-          color: colors.surface,
+          color: palette.surface,
           borderRadius: BorderRadius.circular(28),
           boxShadow: softShadow(opacity: 0.18),
         ),
@@ -86,57 +62,74 @@ class _ReportUserSheetState extends ConsumerState<_ReportUserSheet> {
           children: [
             Text(
               'What happened?',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: colors.textPrimary),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 17,
+                color: palette.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'This goes to a human reviewer, not an automated system.',
-              style: TextStyle(fontSize: 12.5, color: colors.textSecondary),
+              style: TextStyle(fontSize: 12.5, color: palette.textSecondary),
             ),
             const SizedBox(height: 8),
-            RadioGroup<ReportCategory>(
-              groupValue: _selected,
-              onChanged: (v) => setState(() => _selected = v),
-              child: Column(
-                children: [
-                  for (final category in ReportCategory.values)
-                    RadioListTile<ReportCategory>(
-                      contentPadding: EdgeInsets.zero,
-                      value: category,
-                      title: Text(category.label, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
-                      activeColor: colors.primary,
-                    ),
-                ],
-              ),
+            ReportCategoryPicker(
+              selectedCategory: selectedCategory.value,
+              onCategoryChanged: (category) => selectedCategory.value = category,
+              palette: palette,
             ),
-            const SizedBox(height: 4),
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
-              value: _alsoBlock,
-              onChanged: (v) => setState(() => _alsoBlock = v ?? false),
+              value: alsoBlock.value,
+              onChanged: (isChecked) => alsoBlock.value = isChecked ?? false,
               controlAffinity: ListTileControlAffinity.leading,
-              title: Text('Also block this person', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
-              activeColor: colors.primary,
+              activeColor: palette.primary,
+              title: Text(
+                'Also block this person',
+                style: TextStyle(
+                  color: palette.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.sosEnd,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                onPressed: _selected == null
-                    ? null
-                    : () => Navigator.of(context).pop(_ReportResult(_selected!, _alsoBlock)),
-                child: const Text('Submit report', style: TextStyle(fontWeight: FontWeight.w800)),
-              ),
+            _SubmitReportButton(
+              palette: palette,
+              onPressed: selectedCategory.value == null
+                  ? null
+                  : () => Navigator.of(context).pop((
+                        category: selectedCategory.value!,
+                        alsoBlock: alsoBlock.value,
+                      ),),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SubmitReportButton extends StatelessWidget {
+  const _SubmitReportButton({required this.palette, required this.onPressed});
+
+  final AppPalette palette;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: palette.sosEnd,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      onPressed: onPressed,
+      child: const Text(
+        'Submit report',
+        style: TextStyle(fontWeight: FontWeight.w800),
       ),
     );
   }
